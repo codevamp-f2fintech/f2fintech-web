@@ -7,16 +7,18 @@ const pages = [
     title: "Blog",
     href: "/blogs",
   },
+  {
+    title: "Comparison",
+    href: "/comparison",
+  },
 
   {
     title: "Login",
     href: "/login",
   },
-
 ];
 
 const products = [
-
   {
     title: "Business Loan",
     href: "/businessloan",
@@ -41,6 +43,5 @@ const products = [
     title: "ECommerceBusinessLoan",
     href: "/eCommerceBusinessLoan",
   },
-
-]
+];
 export { pages, products };

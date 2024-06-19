@@ -14,6 +14,7 @@ import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
 import { useMode } from "./theme";
+import Comparison from "./components/comparison/Comparison";
 
 function App() {
   const [theme] = useMode();
@@ -42,6 +43,7 @@ function App() {
         />
 
         <Route exact path="/blogs" element={<Blogs />} />
+        <Route exact path="/comparison" element={<Comparison />} />
       </Routes>
       <Footer />
     </ThemeProvider>
