@@ -31,6 +31,7 @@ export default function ResponsiveAppBar() {
     <Box
       sx={{
         display: "flex",
+        zIndex: "100",
         height: "13vh",
       }}
     >

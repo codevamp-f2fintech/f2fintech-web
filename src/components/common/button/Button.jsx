@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export default function ButtonComp(props) {
   return (
@@ -21,7 +22,12 @@ export default function ButtonComp(props) {
           lineHeight: "1.5rem",
         }}
       >
-        {props.title}
+        <Link
+          to="/applicationForm"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          Apply Now
+        </Link>
       </Button>
     </Box>
   );
