@@ -1,5 +1,6 @@
 import { Box, Button } from "@mui/material";
 import PropTypes from 'prop-types';
+
 export default function ButtonComp(props) {
   return (
     <Box

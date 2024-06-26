@@ -6,10 +6,13 @@
  * restrictions set forth in your license agreement with F2 FINTECH.
  */
 
+
 import axios from "axios";
 
+const ENV = import.meta.env;
+
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080/api/v1",
+  baseURL: ENV.VITE_BASE_URL,
   withCredentials: true,
   validateStatus: (status) => (status >= 200 && status < 300) || status == 404,
   timeout: 10000,
