@@ -9,7 +9,7 @@ const Customers = ({ customersdata }) => {
     <Container
       maxWidth="false"
       sx={{
-        height: "90vh",
+        height: "105vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -29,7 +29,7 @@ const Customers = ({ customersdata }) => {
       >
         What our Customers have to say.
       </Typography>
-      <Carousel height={"59vh"}>
+      <Carousel height={"70vh"}>
         {customersdata.map((customers, i) => (
           <Paper
             sx={{
@@ -38,7 +38,6 @@ const Customers = ({ customersdata }) => {
               justifyContent: "space-between",
               alignItems: "center",
               boxShadow: 0,
-              height: "59vh",
             }}
           >
             <Avatar
