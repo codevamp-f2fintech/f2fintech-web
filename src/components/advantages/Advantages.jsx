@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Grid, Typography } from "@mui/material";
+import PropTypes from 'prop-types';
 
 
 
@@ -129,3 +130,14 @@ export default function Advantages({ advantagesData }) {
     </React.Fragment>
   );
 }
+
+// PropTypes definition for Advantages component
+Advantages.propTypes = {
+  advantagesData: PropTypes.arrayOf(
+    PropTypes.shape({
+      logo: PropTypes.node.isRequired,
+      title: PropTypes.string.isRequired,
+      subtitle: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};

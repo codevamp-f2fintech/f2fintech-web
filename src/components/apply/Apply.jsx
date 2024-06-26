@@ -1,5 +1,6 @@
 import { Box, Container, Grid, Typography, useTheme } from "@mui/material";
 import { tokens, themeSettings } from "../../theme";
+
 export default function Apply() {
   const theme = useTheme();
   const colors = tokens(theme);
