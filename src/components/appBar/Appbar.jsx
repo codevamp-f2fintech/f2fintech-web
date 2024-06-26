@@ -1,5 +1,4 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
+
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
@@ -21,12 +20,6 @@ export default function ResponsiveAppBar() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
   }
-  const handleMouseEnter = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMouseOut = () => {
-    setAnchorEl(null);
-  };
   return (
     <Box
       sx={{

@@ -1,5 +1,5 @@
 import { Box, Button } from "@mui/material";
-
+import PropTypes from 'prop-types';
 export default function ButtonComp(props) {
   return (
     <Box
@@ -26,3 +26,8 @@ export default function ButtonComp(props) {
     </Box>
   );
 }
+
+ButtonComp.propTypes = {
+  title: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
+};

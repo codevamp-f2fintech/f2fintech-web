@@ -1,5 +1,6 @@
 import { Avatar, Container, Typography, Box, Paper } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
+import PropTypes from 'prop-types';
 import React from "react";
 
 const Customers = ({ customersdata }) => {
@@ -64,6 +65,17 @@ const Customers = ({ customersdata }) => {
       </Carousel>
     </Container>
   );
+};
+
+Customers.propTypes = {
+  customersdata: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      img: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      address: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default Customers;
