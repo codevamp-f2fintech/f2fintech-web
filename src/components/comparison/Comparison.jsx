@@ -44,13 +44,14 @@ const Filter = ({ filter, setFilter }) => {
       sx={{
         display: "flex",
         justifyContent: "flex-end",
-        borderRadius: "10px", // Rounded corners
+        borderRadius: "10px",
       }}
     >
       <FormControl
         fullWidth
         sx={{
           width: "15%",
+          borderRadius: "15px",
         }}
       >
         <InputLabel id="filter-label">Sort By</InputLabel>
@@ -178,6 +179,7 @@ const ProductCard = ({ result, cardRef, label }) => (
             overflow: "hidden",
             textOverflow: "ellipsis",
             background: "rgba(6,55,158,1)",
+            marginBottom: "5px",
           }}
         >
           Apply Now
@@ -193,6 +195,7 @@ const ProductCard = ({ result, cardRef, label }) => (
             overflow: "hidden",
             textOverflow: "ellipsis",
             background: "blue",
+            marginBottom: "5px",
           }}
         >
           Learn More
