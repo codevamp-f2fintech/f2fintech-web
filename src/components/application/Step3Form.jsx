@@ -1,51 +1,105 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { TextField, Box, Button } from "@mui/material";
+import { Formik, Form } from "formik";
+import { Box, Typography, Container, TextField, Button } from "@mui/material";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
   field1: Yup.string().required("Required"),
 });
 
-const Step3Form = ({ initialValues, onSubmit }) => (
+const Step3Form = ({ handleNext }) => (
   <Formik
-    initialValues={initialValues}
     validationSchema={validationSchema}
-    onSubmit={onSubmit}
+    onSubmit={handleNext}
   >
     {({ isSubmitting }) => (
       <Form>
-        <Box
+        <Container
           sx={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
             alignItems: "center",
-            margin: "15px 15px",
-            gap: 2,
+            width: "100%",
+            marginBottom: "15px",
           }}
         >
-          <TextField
-            // as={TextField}
-            disableUnderline={true}
-            variant="filled"
-            name="field1"
-            label="Name"
+          <Box
             sx={{
-              width: "75%",
-              height: "50px",
-              fontSize: "16px",
-              borderRadius: "10px",
-              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
-            fullWidth
-          />
-          <ErrorMessage
-            name="field1"
-            component="div"
-            style={{ color: "red" }}
-          />
-        </Box>
+          >
+            <Typography
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                fontFamily: "bold 10px",
+                fontSize: "4vh",
+                fontWeight: "300vh",
+              }}
+            >
+              Statement Upload
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: "-moz-initial",
+                fontSize: "2.5vh",
+                color: "gray",
+              }}
+            >
+              Step 3/6
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <input
+                type="file"
+                id="file-input"
+                style={{ display: "none" }}
+                aria-label="Select file"
+              />
+              <Button
+                variant="contained"
+                component="span"
+                sx={{
+                  marginTop: "30px",
+                  width: "200px",
+                  color: "white",
+                  backgroundColor: "gray",
+                  border: "ButtonShadow",
+                  "&:hover": {
+                    backgroundColor: "silver",
+                  },
+                }}
+                onClick={() => document.getElementById("file-input").click()}
+              >
+                Select file
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                sx={{
+                  color: "white",
+                  fontWeight: "500",
+                  fontSize: "1rem",
+                  lineHeight: "1.5rem",
+                  mt: 2,
+                }}
+              >
+                Upload
+              </Button>
+            </Box>
+          </Box>
+        </Container>
       </Form>
     )}
   </Formik>

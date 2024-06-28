@@ -87,13 +87,9 @@ const MultiStepForm = () => {
   const getStepContent = (step) => {
     switch (step) {
       case 0:
-        return (
-          <Step1Form initialValues={formValues[step]} onSubmit={handleSubmit} />
-        );
+        return <Step1Form handleNext={handleNext} />;
       case 1:
-        return (
-          <Step2Form initialValues={formValues[step]} onSubmit={handleSubmit} />
-        );
+        return <Step2Form handleNext={handleNext} />;
       case 2:
         return (
           <Step3Form initialValues={formValues[step]} onSubmit={handleSubmit} />
@@ -125,29 +121,11 @@ const MultiStepForm = () => {
             alignItems: "center",
             flexDirection: "column",
             width: "50%",
-            border: " 1px solid red",
+            overflowY: "auto", // Enable vertical scrolling
+            maxHeight: "260vh", // Adjust height as needed
+            border: "1px solid red",
           }}
         >
-          {/* <Typography
-            sx={{
-              fontFamily: "bold 10px",
-              fontSize: "4vh",
-              fontWeight: "300vh",
-              
-              
-            }}
-          >
-            Basic Details 1
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: "-moz-initial",
-              fontSize: "2.5vh",
-              color:"gray"
-            }}
-          >
-            Step 1/6
-          </Typography> */}
           <Box sx={{ width: "100%" }}>
             <Box>
               {activeStep === steps.length ? (
@@ -201,6 +179,10 @@ const MultiStepForm = () => {
             alignItems: "center",
             border: "1px solid blue",
             width: "50%",
+            position: "sticky", // Make the right box sticky
+            top: 0,
+            height: "100vh",
+            overflowY: "auto",
           }}
         >
           <Typography variant="h4" align="center" sx={{ marginBottom: "20px" }}>
