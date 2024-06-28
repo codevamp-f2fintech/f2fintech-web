@@ -14,6 +14,8 @@ import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
 import { useMode } from "./theme";
+import Comparison from "./components/comparison/Comparison";
+import ImportLoanProvider from "./components/importExcelData/ImportLoanProvider";
 
 function App() {
   const [theme] = useMode();
@@ -24,24 +26,13 @@ function App() {
         <Route exact path="/" element={<Home />} />
         <Route exact path="/businessLoan" element={<Businessloan />} />
         <Route exact path="/MsmeLoan" element={<MsmeLoan />} />
-        <Route
-          exact
-          path="/SmallBusinessLoan"
-          element={<SmallBusinessLoan />}
-        />
+        <Route exact path="/SmallBusinessLoan" element={<SmallBusinessLoan />} />
         <Route exact path="/UnsecuredLoan" element={<UnsecuredLoan />} />
-        <Route
-          exact
-          path="/BusinessLoanForWomen"
-          element={<BusinessLoanForWomen />}
-        />
-        <Route
-          exact
-          path="/ECommerceBusinessLoan"
-          element={<ECommerceBusinessLoan />}
-        />
-
+        <Route exact path="/BusinessLoanForWomen" element={<BusinessLoanForWomen />} />
+        <Route exact path="/ECommerceBusinessLoan" element={<ECommerceBusinessLoan />} />
         <Route exact path="/blogs" element={<Blogs />} />
+        <Route exact path="/comparison" element={<Comparison />} />
+        <Route exact path="/ImportLoanProvider" element={<ImportLoanProvider />} />
       </Routes>
       <Footer />
     </ThemeProvider>

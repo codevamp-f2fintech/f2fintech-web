@@ -1,0 +1,36 @@
+[
+    {
+      "title": "Bajaj Finserv",
+      "img": "../public/bajaj.jpg",
+      "price": "Free",
+      "features": [
+        "Online Banking",
+        "Mobile Banking",
+        "ATM Access",
+        "24/7 Customer Support"
+      ]
+    },
+    {
+      "title": "Bajaj Finserv",
+      "img": "../public/bajaj.jpg",
+      "price": "Starting from 7.5%",
+      "features": [
+        "Flexible Repayment Options",
+        "Low Interest Rates",
+        "Quick Approval Process",
+        "Variety of Loan Types"
+      ]
+    },
+    {
+      "title": "Bajaj Finserv",
+      "img": "../public/bajaj.jpg",
+      "price": "Annual Fee: $0 - $500",
+      "features": [
+        "Cashback Rewards",
+        "Travel Rewards",
+        "No Foreign Transaction Fees",
+        "Fraud Protection"
+      ]
+    }
+  ]
+  

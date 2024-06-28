@@ -1,7 +1,10 @@
 import React from "react";
+import ImportLoanProvider from "../importExcelData/ImportLoanProvider";
 
 const Blogs = () => {
-  return <></>;
+  return (
+    <ImportLoanProvider/>
+  );
 };
 
 export default Blogs;
