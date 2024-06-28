@@ -14,6 +14,7 @@ import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
 import ApplicationForm from "./components/application/ApplicationForm";
+import Step2Form from "./components/application/Step2Form";
 import { useMode } from "./theme";
 
 function App() {
@@ -44,7 +45,10 @@ function App() {
 
         <Route exact path="/blogs" element={<Blogs />} />
         <Route exact path="/applicationForm" element={<ApplicationForm />} />
-        <Route exact path="/applicationForm" element={<ApplicationForm />} />
+        {/* <Route exact path="/numberOtp" element={<NumberOtp />} /> */}
+        <Route exact path="/step2Form" element={<Step2Form />} />
+
+
       </Routes>
       <Footer />
     </ThemeProvider>

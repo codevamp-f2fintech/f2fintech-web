@@ -1,18 +1,24 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { TextField, Box, Container, Typography, Button } from "@mui/material";
+import { Formik, Form } from "formik";
+import { Box, Container, Typography,Button } from "@mui/material";
 import * as Yup from "yup";
 
+import OtpPan from "./OtpPan";
+const initialValues = {
+  otp: "",
+};
+
 const validationSchema = Yup.object({
-  field1: Yup.string().required("Required"),
+  otp: Yup.string().required("Required"),
 });
 
-const Step2Form = ({ initialValues, onSubmit }) => (
+const Step2Form = ({ handleNext }) => (
   <Formik
     initialValues={initialValues}
     validationSchema={validationSchema}
-    onSubmit={onSubmit}
+    onSubmit={handleNext}
   >
+    
     {({ isSubmitting }) => (
       <Form>
         <Container>
@@ -52,26 +58,22 @@ const Step2Form = ({ initialValues, onSubmit }) => (
               gap: 2,
             }}
           >
-            <TextField
-              // as={TextField}
-              disableUnderline={true}
-              variant="filled"
-              name="field1"
-              label="Name"
+            <OtpPan />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              onClick={handleNext}
               sx={{
-                width: "75%",
-                height: "50px",
-                fontSize: "16px",
-                borderRadius: "10px",
-                overflow: "hidden",
+                color: "white",
+                fontWeight: "500",
+                fontSize: "1rem",
+                lineHeight: "1.5rem",
+                mt: 2,
               }}
-              fullWidth
-            />
-            <ErrorMessage
-              name="field1"
-              component="div"
-              style={{ color: "red" }}
-            />
+            >
+              Submit
+            </Button>
           </Box>
         </Container>
       </Form>
