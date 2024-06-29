@@ -1,0 +1,10 @@
+::-webkit-scrollbar {
+  display: none;
+}
+
+.smallList li {
+  font-size: 18px;
+  font-weight: lighter;
+  font-family: initial;
+}
+    
