@@ -1,7 +1,11 @@
 import React from "react";
-
+import Intro from "../intro/Intro";
 const Blogs = () => {
-  return <></>;
+  return (
+    <>
+      <Intro />
+    </>
+  );
 };
 
 export default Blogs;
