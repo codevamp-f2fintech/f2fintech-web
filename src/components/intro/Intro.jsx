@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Box, Container, Typography } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
+import PropTypes from "prop-types";
+
 import ButtonComp from "../common/button/Button";
 
 const fetchCarouselItems = async () => {
@@ -182,3 +184,8 @@ export default function IntroCarousel() {
     );
   }
 }
+Intro.propTypes = {
+  title: PropTypes.string.isRequired,
+  home: PropTypes.bool.isRequired,
+  homeimg: PropTypes.string.isRequired,
+};

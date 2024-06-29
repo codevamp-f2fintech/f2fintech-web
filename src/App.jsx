@@ -13,6 +13,7 @@ import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan"
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
+import ApplicationForm from "./components/application/ApplicationForm";
 import { useMode } from "./theme";
 import Comparison from "./components/comparison/Comparison";
 
@@ -44,6 +45,7 @@ function App() {
 
         <Route exact path="/blogs" element={<Blogs />} />
         <Route exact path="/comparison" element={<Comparison />} />
+        <Route exact path="/applicationForm" element={<ApplicationForm />} />
       </Routes>
       <Footer />
     </ThemeProvider>
