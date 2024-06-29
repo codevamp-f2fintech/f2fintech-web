@@ -1,0 +1,20 @@
+[
+  {
+    "title": "HDFC",
+    "home": true,
+    "homeimg": "/hdfc.jpg",
+    "interestRate": "5.5%"
+  },
+  {
+    "title": "AXIS",
+    "home": true,
+    "homeimg": "/axisimage.jpg",
+    "interestRate": "6.0%"
+  },
+  {
+    "title": "BAJAJ FINSERV",
+    "home": true,
+    "homeimg": "/bajajimage.avif",
+    "interestRate": "7.0%"
+  }
+]
