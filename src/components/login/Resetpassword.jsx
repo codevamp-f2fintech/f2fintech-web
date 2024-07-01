@@ -73,7 +73,7 @@ export default function ResetPassword() {
           setSuccess(result.message);
           setOpen(true);
           setTimeout(() => {
-            navigate("/login"); // Redirect to sign-in page after 3 seconds
+            navigate("/login"); // Redirect to login page after 3 seconds
           }, 1000);
         } else {
           setError(result.message);
