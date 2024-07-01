@@ -18,6 +18,7 @@ import {
   MenuItem,
   CircularProgress,
   Rating,
+  FormControlLabel,
 } from "@mui/material";
 
 import styled from "@emotion/styled";
@@ -25,7 +26,6 @@ import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import Data from "../data/Data.json";
 import Advantages from "../../components/advantages/Advantages";
-
 import { advantagesData } from "../data/Data.jsx";
 import { customersdata } from "../../components/data/data";
 import Customers from "../customers/Customers";
@@ -70,7 +70,13 @@ const Filter = ({ filter, setFilter }) => {
   );
 };
 
-const ProductCard = ({ result, cardRef, label }) => (
+const ProductCard = ({
+  result,
+  cardRef,
+  label,
+  handleCheckboxChange,
+  isChecked,
+}) => (
   <Grid item xs={12} sm={6} md={4} ref={cardRef}>
     <Card
       sx={{
@@ -87,23 +93,13 @@ const ProductCard = ({ result, cardRef, label }) => (
             "0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.15)",
         },
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "scale(1.05)";
-        e.currentTarget.style.boxShadow =
-          "0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.15)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "scale(1)";
-        e.currentTarget.style.boxShadow =
-          "0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)";
-      }}
     >
       <CardActionArea>
         <Box sx={{ position: "relative" }}>
           <CardMedia
             component="img"
             height="200"
-            image={`/${result.img}`} // Ensure this is the correct path
+            image={`/${result.img}`}
             alt={result.title}
             sx={{
               borderTopLeftRadius: "20px",
@@ -111,7 +107,6 @@ const ProductCard = ({ result, cardRef, label }) => (
             }}
           />
           <Checkbox
-            {...label}
             icon={<FavoriteBorder />}
             checkedIcon={<Favorite sx={{ color: "red" }} />}
             sx={{ position: "absolute", top: 16, right: 16 }}
@@ -132,7 +127,7 @@ const ProductCard = ({ result, cardRef, label }) => (
             sx={{
               color: "secondary",
             }}
-            defaultValue={2.5}
+            value={result.rating}
             precision={0.5}
           />
           <Typography
@@ -169,6 +164,22 @@ const ProductCard = ({ result, cardRef, label }) => (
         </CardContent>
       </CardActionArea>
       <CardActions>
+        <FormControlLabel
+          control={
+            <Checkbox
+              {...label}
+              checked={isChecked}
+              onChange={() => handleCheckboxChange(result)}
+              sx={{
+                "&.Mui-checked": {
+                  color: "green",
+                },
+              }}
+            />
+          }
+          label="Compare"
+          sx={{ zIndex: 10 }}
+        />
         <Button
           size="small"
           variant="contained"
@@ -205,9 +216,10 @@ const ProductCard = ({ result, cardRef, label }) => (
   </Grid>
 );
 
-export default function Comparison() {
+export default function Listing() {
   const [filter, setFilter] = useState("interestRate");
   const [loading, setLoading] = useState(true);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const cardRefs = useRef([]);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -218,7 +230,17 @@ export default function Comparison() {
 
     return () => clearTimeout(timer);
   }, []);
-  // Function to sort data based on filter
+
+  const handleCheckboxChange = (product) => {
+    setSelectedProducts((prevSelectedProducts) => {
+      if (prevSelectedProducts.includes(product)) {
+        return prevSelectedProducts.filter((p) => p !== product);
+      } else {
+        return [...prevSelectedProducts, product];
+      }
+    });
+  };
+
   const getFilteredData = () => {
     let sortedData = [...Data];
     if (filter === "interestRate") {
@@ -226,7 +248,7 @@ export default function Comparison() {
     } else if (filter === "rating") {
       sortedData.sort((a, b) => b.rating - a.rating);
     }
-    return sortedData.slice(0, 9); // Get top 9 results
+    return sortedData.slice(0, 9);
   };
 
   const filteredData = getFilteredData();
@@ -269,10 +291,70 @@ export default function Comparison() {
                       result={result}
                       cardRef={(el) => (cardRefs.current[index] = el)}
                       label={label}
+                      handleCheckboxChange={handleCheckboxChange}
+                      isChecked={selectedProducts.includes(result)}
                     />
                   ))
                 )}
               </Grid>
+            </Container>
+          </Grid>
+          <Grid item xs={12} sm={9} md={12} sx={{ padding: 2 }}>
+            <Container maxWidth="lg">
+              <Box
+                sx={{
+                  marginTop: 2,
+                  padding: 5,
+                  borderRadius: 2,
+                  background:
+                    "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
+                  borderRadius: "0% 100% 0% 100% / 0% 100% 0% 100%",
+                }}
+              >
+                <Typography variant="h5" gutterBottom>
+                  Selected Products for Comparison
+                </Typography>
+                {selectedProducts.length > 0 ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 2,
+                    }}
+                  >
+                    {selectedProducts.map((product, idx) => (
+                      <Box
+                        key={idx}
+                        sx={{
+                          padding: 2,
+                          backgroundColor: "white",
+                          borderRadius: 2,
+                          boxShadow: 1,
+                        }}
+                      >
+                        <Typography variant="h6">{product.title}</Typography>
+                        <Typography variant="body2">
+                          Interest Rate: {product.interestRate}
+                        </Typography>
+                        <Typography variant="body2">
+                          Rating: {product.rating}
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          size="small"
+                          sx={{ mt: 1 }}
+                          onClick={() => handleCheckboxChange(product)}
+                        >
+                          Remove
+                        </Button>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography variant="body1">No products selected</Typography>
+                )}
+              </Box>
             </Container>
           </Grid>
         </Grid>

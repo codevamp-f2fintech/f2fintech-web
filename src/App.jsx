@@ -15,7 +15,8 @@ import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoan
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
 import ApplicationForm from "./components/application/ApplicationForm";
 import { useMode } from "./theme";
-import Comparison from "./components/comparison/Comparison";
+import Listing from "./components/providers/Listing";
+import Compare from "./components/providers/Compare";
 
 function App() {
   const [theme] = useMode();
@@ -44,7 +45,9 @@ function App() {
         />
 
         <Route exact path="/blogs" element={<Blogs />} />
-        <Route exact path="/comparison" element={<Comparison />} />
+
+        <Route path="/providers/listing " element={<Listing />} />
+        <Route path="/providers/compare" element={<Compare />} />
         <Route exact path="/applicationForm" element={<ApplicationForm />} />
       </Routes>
       <Footer />
