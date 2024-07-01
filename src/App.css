@@ -2,6 +2,10 @@
   display: none;
 }
 
+* {
+  margin: 0;
+}
+
 .smallList li {
   font-size: 18px;
   font-weight: lighter;
