@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import { Box, Container } from "@mui/material";
+import React from "react";
 
-import { Container } from "@mui/material";
-
-import Signin from "./Signin";
-import Signup from "./Signup";
-import Transition from "./Transition";
-
-const LoginPage = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
-  console.log("issignup", isSignUp);
-
+const Login = () => {
   return (
     <Container
       sx={{
@@ -28,4 +20,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;

@@ -1,13 +1,15 @@
+import React from "react";
 import { Avatar, Container, Typography, Box, Paper } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
-import React from "react";
+import PropTypes from 'prop-types';
+
 
 const Customers = ({ customersdata }) => {
   return (
     <Container
       maxWidth="false"
       sx={{
-        height: "90vh",
+        height: "105vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -27,7 +29,7 @@ const Customers = ({ customersdata }) => {
       >
         What our Customers have to say.
       </Typography>
-      <Carousel height={"59vh"}>
+      <Carousel height={"70vh"}>
         {customersdata.map((customers, i) => (
           <Paper
             sx={{
@@ -36,7 +38,6 @@ const Customers = ({ customersdata }) => {
               justifyContent: "space-between",
               alignItems: "center",
               boxShadow: 0,
-              height: "59vh",
             }}
           >
             <Avatar
@@ -64,6 +65,17 @@ const Customers = ({ customersdata }) => {
       </Carousel>
     </Container>
   );
+};
+
+Customers.propTypes = {
+  customersdata: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      img: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      address: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default Customers;
