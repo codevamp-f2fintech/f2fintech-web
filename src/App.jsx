@@ -8,6 +8,7 @@ import ResponsiveAppBar from "./components/appBar/Appbar";
 import Home from "./components/home/Home";
 import Login from "./components/login/Login";
 import Blogs from "./components/blogs/Blogs";
+import ResetPassword from "./components/login/Resetpassword";
 import Businessloan from "./components/businessloan/Businessloan";
 import MsmeLoan from "./components/msmeLoan/MsmeLoan";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
@@ -48,6 +49,7 @@ function App() {
             />
 
             <Route exact path="/blogs" element={<Blogs />} />
+            <Route exact path="/reset-password" element={<ResetPassword />} />
           </Routes>
           <Footer />
         </>

@@ -22,7 +22,7 @@ const LoginPage = () => {
       }}
     >
       <Signin isSignUp={isSignUp} />
-      <Signup isSignUp={isSignUp} />
+      <Signup isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
       <Transition isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
     </Container>
   );
