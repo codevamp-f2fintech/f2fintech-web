@@ -1,9 +1,9 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { Box, Container, Typography,Button } from "@mui/material";
+import { Box, Container, Typography, Button } from "@mui/material";
 import * as Yup from "yup";
 
-import OtpPan from "./OtpPan";
+import Otp from "./Otp";
 const initialValues = {
   otp: "",
 };
@@ -18,7 +18,6 @@ const Step2Form = ({ handleNext }) => (
     validationSchema={validationSchema}
     onSubmit={handleNext}
   >
-    
     {({ isSubmitting }) => (
       <Form>
         <Container>
@@ -58,7 +57,7 @@ const Step2Form = ({ handleNext }) => (
               gap: 2,
             }}
           >
-            <OtpPan />
+            <Otp />
             <Button
               type="submit"
               variant="contained"

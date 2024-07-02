@@ -123,7 +123,6 @@ const MultiStepForm = () => {
             width: "50%",
             overflowY: "auto", // Enable vertical scrolling
             maxHeight: "260vh", // Adjust height as needed
-            border: "1px solid red",
           }}
         >
           <Box sx={{ width: "100%" }}>
@@ -177,7 +176,6 @@ const MultiStepForm = () => {
             backgroundColor: "#f5f5f5",
             justifyContent: "center",
             alignItems: "center",
-            border: "1px solid blue",
             width: "50%",
             position: "sticky", // Make the right box sticky
             top: 0,

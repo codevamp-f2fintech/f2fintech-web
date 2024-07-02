@@ -9,21 +9,52 @@ import {
   DialogActions,
   DialogTitle,
   DialogContent,
+  FormControl,
   FormGroup,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  styled,
   TextField,
   Typography,
+  useRadioGroup,
 } from "@mui/material";
+import PropTypes from "prop-types";
 import applicationValidation from "./applicationValidation";
 import Otp from "./Otp";
-import PincodeChecker from "./PinCode";
-import "./Button.css";
+
+const StyledFormControlLabel = styled((props) => (
+  <FormControlLabel {...props} />
+))(({ theme, checked }) => ({
+  ".MuiFormControlLabel-label": checked && {
+    color: theme.palette.primary.main,
+  },
+}));
+
+function MyFormControlLabel(props) {
+  const radioGroup = useRadioGroup();
+
+  let checked = false;
+
+  if (radioGroup) {
+    checked = radioGroup.value === props.value;
+  }
+
+  return <StyledFormControlLabel checked={checked} {...props} />;
+}
+
+MyFormControlLabel.propTypes = {
+  value: PropTypes.any,
+};
 
 const initialValues = {
   name: "",
   number: "",
   email: "",
-  pincode1: "", // Changed from 'pincode' to 'pincode1' to avoid naming conflicts
+  pincode1: "",
   pan: "",
   gst: "",
   company_name: "",
@@ -39,11 +70,7 @@ const Step1Form = ({ handleNext }) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [doYouHaveGSTRegistration, setDoYouHaveGSTRegistration] =
     useState(false);
-  const [hasCompanyName, setHasCompanyName] = useState(false);
-  const [showPincodeChecker, setShowPincodeChecker] = useState(false); // State to manage when to show PincodeChecker
-  const [pincode, setPincode] = useState("");
-  const [pincodeType, setPincodeType] = useState("");
-  const [isPincodeValid, setIsPincodeValid] = useState(false);
+  const [companyNameOption, setCompanyNameOption] = useState(""); // Add state for radio button selection
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -63,7 +90,6 @@ const Step1Form = ({ handleNext }) => {
   };
 
   const handleOtpSubmit = () => {
-    // Add any OTP validation logic here if needed
     handleNext();
     handleClose();
   };
@@ -72,22 +98,34 @@ const Step1Form = ({ handleNext }) => {
     setDoYouHaveGSTRegistration(event.target.checked);
   };
 
-  const handleCompanyNameCheckboxChange = (event) => {
-    setHasCompanyName(event.target.checked);
+  const handleCompanyNameOptionChange = (event) => {
+    setCompanyNameOption(event.target.value);
   };
 
-  const handlePincodeSubmit = () => {
-    // Handle pincode submission here if needed
-    setShowPincodeChecker(true); // Hide PincodeChecker after submission if necessary
-  };
+  const MyFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
+    margin: theme.spacing(1),
+    "& .MuiTypography-root": {
+      fontWeight: "bold",
+    },
+  }));
 
+  // Custom styled Box
+  const CustomBox = styled(Box)(({ theme }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: theme.spacing(2),
+    backgroundColor: "white",
+    boxShadow: theme.shadows[3],
+    // borderRadius: theme.shape.borderRadius,
+    margin: theme.spacing(1),
+  }));
   return (
     <>
       <Formik
         initialValues={initialValues}
         validationSchema={applicationValidation}
         onSubmit={(values, actions) => {
-          setShowPincodeChecker(true); // Show PincodeChecker when form is submitted
           handleClickOpen();
         }}
       >
@@ -165,6 +203,7 @@ const Step1Form = ({ handleNext }) => {
                 />
 
                 <TextField
+                  type="number"
                   variant="filled"
                   name="number"
                   label="Number"
@@ -185,6 +224,7 @@ const Step1Form = ({ handleNext }) => {
 
                 <TextField
                   variant="filled"
+                  type="email"
                   name="email"
                   label="E-mail"
                   value={values.email}
@@ -201,7 +241,7 @@ const Step1Form = ({ handleNext }) => {
                   }}
                   fullWidth
                 />
-                 <TextField
+                <TextField
                   variant="filled"
                   name="pincode"
                   label="Pincode"
@@ -219,7 +259,6 @@ const Step1Form = ({ handleNext }) => {
                   }}
                   fullWidth
                 />
-
 
                 {/* Conditionally render PincodeChecker */}
                 {/* {showPincodeChecker && (
@@ -253,6 +292,246 @@ const Step1Form = ({ handleNext }) => {
                   fullWidth
                 />
 
+                <Typography sx={{ marginRight: "138px", font: "18px bold" }}>
+                  Is your Company Registered?
+                </Typography>
+                <RadioGroup
+                  name="company_name"
+                  value={companyNameOption}
+                  onChange={handleCompanyNameOptionChange}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    marginRight: "150px",
+                  }}
+                >
+                  <MyFormControlLabel
+                    value="yes"
+                    label={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      >
+                        Yes
+                      </Box>
+                    }
+                    control={
+                      <Radio
+                        sx={{
+                          "& .MuiSvgIcon-root": {
+                            visibility: "hidden",
+                          },
+                          position: "absolute", // Ensure the radio button does not take up space
+                        }}
+                      />
+                    }
+                    sx={{
+                      padding: "20px",
+                      borderRadius: "4px",
+                      boxShadow:
+                        "rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      border: "2px solid transparent",
+                      "&:hover": {
+                        borderColor: "blue",
+                      },
+                      "&.Mui-checked": {
+                        borderColor: "blue",
+                      },
+                      "& .Mui-checked + &": {
+                        borderColor: "blue",
+                      },
+                    }}
+                  />
+                  <MyFormControlLabel
+                    value="no"
+                    label={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      >
+                        No
+                      </Box>
+                    }
+                    control={
+                      <Radio
+                        sx={{
+                          "& .MuiSvgIcon-root": {
+                            visibility: "hidden",
+                          },
+                          position: "absolute", // Ensure the radio button does not take up space
+                        }}
+                      />
+                    }
+                    sx={{
+                      padding: "20px",
+                      borderRadius: "4px",
+                      boxShadow:
+                        "rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      border: "2px solid transparent",
+                      "&:hover": {
+                        borderColor: "blue",
+                      },
+                      "&.Mui-checked": {
+                        borderColor: "blue",
+                      },
+                      "& .Mui-checked + &": {
+                        borderColor: "blue",
+                      },
+                    }}
+                  />
+                </RadioGroup>
+
+                {companyNameOption === "yes" && (
+                  <TextField
+                    variant="filled"
+                    name="company_name"
+                    label="Company Name"
+                    value={values.company_name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.company_name && Boolean(errors.company_name)}
+                    helperText={touched.company_name && errors.company_name}
+                    sx={{
+                      width: "75%",
+                      height: "50px",
+                      fontSize: "16px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                    }}
+                    fullWidth
+                  />
+                )}
+
+                {/* <FormControlLabel
+                  sx={{ marginRight: "211px" }}
+                  label="Company Name?"
+                  control={
+                    <Checkbox
+                      color="default"
+                      name="company_name"
+                      checked={hasCompanyName}
+                      onChange={handleCompanyNameCheckboxChange}
+                    />
+                  }
+                />
+
+                {hasCompanyName && (
+                  <TextField
+                    variant="filled"
+                    name="company_name"
+                    label="Company Name"
+                    value={values.company_name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.company_name && Boolean(errors.company_name)}
+                    helperText={touched.company_name && errors.company_name}
+                    sx={{
+                      width: "75%",
+                      height: "50px",
+                      fontSize: "16px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                    }}
+                    fullWidth
+                  />
+                )} */}
+                <FormControl
+                  variant="filled"
+                  sx={{
+                    width: "75%",
+                    height: "50px",
+                    fontSize: "16px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <InputLabel>Entity Type</InputLabel>
+                  <Select variant="filled" name="entity_type">
+                    <MenuItem value="A+">Sole Proprietorship</MenuItem>
+                    <MenuItem value="A-">Partnership</MenuItem>
+                    <MenuItem value="B+"> LLC</MenuItem>
+                    <MenuItem value="B-">Corporation</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {/* <TextField
+                  variant="filled"
+                  name="entity_type"
+                  label="Entity Type"
+                  value={values.entity_type}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.entity_type && Boolean(errors.entity_type)}
+                  helperText={touched.entity_type && errors.entity_type}
+                  sx={{
+                    width: "75%",
+                    height: "50px",
+                    fontSize: "16px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                  }}
+                  fullWidth
+                /> */}
+                <FormControl
+                  variant="filled"
+                  sx={{
+                    width: "75%",
+                    height: "50px",
+                    fontSize: "16px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <InputLabel>Bank Account Type</InputLabel>
+                  <Select variant="filled" name="bank-account_type">
+                    <MenuItem value="A+">Savings Account</MenuItem>
+                    <MenuItem value="A-">Current Account</MenuItem>
+                    <MenuItem value="B+">Fixed Deposit Account</MenuItem>
+                    <MenuItem value="B-">Recurring Deposit Account</MenuItem>
+                  </Select>
+                </FormControl>
+                {/* 
+                <TextField
+                  variant="filled"
+                  name="bank_account_type"
+                  label="Bank Account Type"
+                  value={values.bank_account_type}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={
+                    touched.bank_account_type &&
+                    Boolean(errors.bank_account_type)
+                  }
+                  helperText={
+                    touched.bank_account_type && errors.bank_account_type
+                  }
+                  sx={{
+                    width: "75%",
+                    height: "50px",
+                    fontSize: "16px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                  }}
+                  fullWidth
+                /> */}
                 <FormControlLabel
                   sx={{ marginRight: "110px" }}
                   label="Do you have GST Registration?"
@@ -286,84 +565,6 @@ const Step1Form = ({ handleNext }) => {
                     fullWidth
                   />
                 )}
-
-                <FormControlLabel
-                  sx={{ marginRight: "211px" }}
-                  label="Company Name?"
-                  control={
-                    <Checkbox
-                      color="default"
-                      name="company_name"
-                      checked={hasCompanyName}
-                      onChange={handleCompanyNameCheckboxChange}
-                    />
-                  }
-                />
-
-                {hasCompanyName && (
-                  <TextField
-                    variant="filled"
-                    name="company_name"
-                    label="Company Name"
-                    value={values.company_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.company_name && Boolean(errors.company_name)}
-                    helperText={touched.company_name && errors.company_name}
-                    sx={{
-                      width: "75%",
-                      height: "50px",
-                      fontSize: "16px",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                    }}
-                    fullWidth
-                  />
-                )}
-
-                <TextField
-                  variant="filled"
-                  name="entity_type"
-                  label="Entity Type"
-                  value={values.entity_type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.entity_type && Boolean(errors.entity_type)}
-                  helperText={touched.entity_type && errors.entity_type}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                  }}
-                  fullWidth
-                />
-
-                <TextField
-                  variant="filled"
-                  name="bank_account_type"
-                  label="Bank Account Type"
-                  value={values.bank_account_type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={
-                    touched.bank_account_type &&
-                    Boolean(errors.bank_account_type)
-                  }
-                  helperText={
-                    touched.bank_account_type && errors.bank_account_type
-                  }
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                  }}
-                  fullWidth
-                />
-
                 <TextField
                   variant="filled"
                   name="industry_type"
@@ -455,9 +656,9 @@ const Step1Form = ({ handleNext }) => {
                 </FormGroup>
 
                 <Button
-                  type="submit"
                   variant="contained"
                   color="primary"
+                  onClick={handleClickOpen}
                   sx={{
                     color: "white",
                     fontWeight: "500",
