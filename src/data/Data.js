@@ -13,6 +13,12 @@ const pages = [
     href: "/login",
   },
 
+  
+  {
+    title: "Loan-Tracking",
+    href: "/loantrackingscreendesign",
+  },
+
 ];
 
 
