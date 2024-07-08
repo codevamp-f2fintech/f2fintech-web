@@ -1,11 +1,7 @@
 import React from "react";
-import FavoritePage from "../favourite/FavouritePage";
+// import FavoritePage from "../favourite/FavouritePage";
 const Blogs = () => {
-  return (
-    <>
-      <FavoritePage />
-    </>
-  );
+  return <>{/* <FavoritePage /> */}</>;
 };
 
 export default Blogs;
