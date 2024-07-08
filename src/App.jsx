@@ -46,8 +46,8 @@ function App() {
 
         <Route exact path="/blogs" element={<Blogs />} />
 
-        <Route path="/providers/listing " element={<Listing />} />
-        <Route path="/providers/compare" element={<Compare />} />
+        <Route path="/providers" element={<Listing />} />
+        <Route path="/providers/Compare" element={<Compare />} />
         <Route exact path="/applicationForm" element={<ApplicationForm />} />
       </Routes>
       <Footer />

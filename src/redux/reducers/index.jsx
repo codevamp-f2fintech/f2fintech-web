@@ -7,11 +7,12 @@
  */
 
 import { combineReducers } from "redux";
-
-import { setExampleReducer } from "./exampleReducer";
+import favoriteReducer from "./favoriteReducer";
+import { setLoanProvidersReducer } from "./LoanProviderReducer";
 
 const rootReducers = combineReducers({
-  example: setExampleReducer,
+  allLoanProviders: setLoanProvidersReducer,
+  favorites: favoriteReducer,
 });
 
 export default rootReducers;

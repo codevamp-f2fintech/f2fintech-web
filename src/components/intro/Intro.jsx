@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
 import axios from "axios";
 import { Box, Container, Typography } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
+import API from "../../apis";
 
 import ButtonComp from "../common/button/Button";
-
-const fetchCarouselItems = async () => {
-  try {
-    const response = await axios.get(
-      "http://localhost:8080/api/v1/get-loan-provider"
-    );
-    console.log("API Response:", response.data);
-    return response.data.data.rows;
-  } catch (error) {
-    console.error("Error fetching carousel items:", error);
-    return [];
-  }
-};
 
 function Intro({ title, home, homeimg, interestRate, text }) {
   return (
@@ -146,44 +136,47 @@ function Intro({ title, home, homeimg, interestRate, text }) {
 export default function IntroCarousel() {
   const [carouselItems, setCarouselItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const loanProviders = useSelector((state) => state.allLoanProviders);
 
   useEffect(() => {
-    const getCarouselItems = async () => {
-      const items = await fetchCarouselItems();
-      setCarouselItems(items);
-      setLoading(false);
-    };
-
-    getCarouselItems();
+    API.LoanProviderAPI.getAll()
+      .then((response) => {
+        console.log(response, "loanproviderapi");
+        if (response.data.status === "Success") {
+          dispatch(
+            setLoanProviders({
+              listData: response.data.data.rows,
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error, "loanproviderapierror");
+      });
   }, []);
 
-  if (loading) {
-    return <Typography sx={{ textAlign: "center" }}>Loading...</Typography>; //
-  } else if (carouselItems.length > 0) {
-    return (
-      <Carousel autoPlay interval={3000}>
-        {carouselItems.map((item, index) => (
-          <Intro
-            key={index}
-            title={item.title}
-            home={item.home}
-            homeimg={item.homeimage}
-            interestRate={item.interest_rate}
-            text={{
-              description: item.description,
-              short_description: item.short_description,
-              long_description: item.long_description,
-            }}
-          />
-        ))}
-      </Carousel>
-    );
-  } else {
-    return (
-      <Typography sx={{ textAlign: "center" }}>No items available</Typography>
-    );
-  }
+  console.log(loanProviders?.listData);
+  return (
+    <Carousel autoPlay interval={3000}>
+      {loanProviders?.listData?.map((item, index) => (
+        <Intro
+          key={index}
+          title={item.title}
+          home={item.home}
+          homeimg={item.homeimage}
+          interestRate={item.interest_rate}
+          text={{
+            description: item.description,
+            short_description: item.short_description,
+            long_description: item.long_description,
+          }}
+        />
+      ))}
+    </Carousel>
+  );
 }
+
 Intro.propTypes = {
   title: PropTypes.string.isRequired,
   home: PropTypes.bool.isRequired,

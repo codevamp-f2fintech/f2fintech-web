@@ -8,9 +8,9 @@
 
 import { ActionTypes } from "../constants/action-types";
 
-export const exampleAction = (data) => {
+export const setLoanProviders = (data) => {
   return {
-    type: ActionTypes,
+    type: ActionTypes.SET_LOAN_PROVIDERS,
     payload: data,
   };
 };

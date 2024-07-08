@@ -13,7 +13,7 @@ const pages = [
   },
   {
     title: "Compare",
-    href: "/providers",
+    href: "/providers/compare",
   },
 
   {

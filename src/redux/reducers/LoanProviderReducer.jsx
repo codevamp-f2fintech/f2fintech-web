@@ -12,9 +12,9 @@ const initialState = {
   listData: [],
 };
 
-export const setExampleReducer = (state = initialState, action) => {
+export const setLoanProvidersReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ActionTypes:
+    case ActionTypes.SET_LOAN_PROVIDERS:
       return {
         ...state,
         listData: action.payload.listData,
