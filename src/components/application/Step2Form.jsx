@@ -44,7 +44,7 @@ const Step2Form = ({ handleNext }) => (
                 color: "gray",
               }}
             >
-              Step 2/6
+              Step 2/5
             </Typography>
           </Box>
           <Box

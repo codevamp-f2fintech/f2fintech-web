@@ -10,7 +10,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 export default function ResponsiveAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [isHovered, setIsHovered] = useState(false);
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -80,7 +79,6 @@ export default function ResponsiveAppBar() {
               height: "40px",
               textTransform: "none",
               fontSize: "1rem",
-              // border: "0.01em solid rgba(6,55,158,1)",
               borderRadius: "22px",
               marginRight: "10px",
               color: " rgba(6,55,158,1)",
@@ -130,7 +128,6 @@ export default function ResponsiveAppBar() {
                 height: "40px",
                 textTransform: "none",
                 fontSize: "1rem",
-                // border: "0.01em solid silver",
                 borderRadius: "22px",
                 marginLeft: "10px",
                 marginRight: "10px",

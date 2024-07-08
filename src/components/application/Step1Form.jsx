@@ -65,7 +65,7 @@ const initialValues = {
   refrrel_id: "",
 };
 
-const Step1Form = ({ handleNext }) => {
+const Step1Form = ({ handleNext, loanType, setLoanType }) => {
   const [open, setOpen] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [doYouHaveGSTRegistration, setDoYouHaveGSTRegistration] =
@@ -95,6 +95,7 @@ const Step1Form = ({ handleNext }) => {
   };
 
   const handleGSTCheckboxChange = (event) => {
+    setLoanType(event.target.checked ? 'business' : 'personal')
     setDoYouHaveGSTRegistration(event.target.checked);
   };
 
@@ -170,7 +171,7 @@ const Step1Form = ({ handleNext }) => {
                     color: "gray",
                   }}
                 >
-                  Step 1/6
+                  Step 1/5
                 </Typography>
               </Box>
               <Box
@@ -292,7 +293,7 @@ const Step1Form = ({ handleNext }) => {
                   fullWidth
                 />
 
-                <Typography sx={{ marginRight: "138px", font: "18px bold" }}>
+                <Typography sx={{ marginRight: "130px", font: "18px bold" }}>
                   Is your Company Registered?
                 </Typography>
                 <RadioGroup
@@ -305,8 +306,18 @@ const Step1Form = ({ handleNext }) => {
                     marginRight: "150px",
                   }}
                 >
-                  <MyFormControlLabel
+                  <FormControlLabel
                     value="yes"
+                    control={
+                      <Radio
+                        sx={{
+                          "& .MuiSvgIcon-root": {
+                            visibility: "hidden",
+                          },
+                          position: "absolute", // Ensure the radio button does not take up space
+                        }}
+                      />
+                    }
                     label={
                       <Box
                         sx={{
@@ -320,6 +331,27 @@ const Step1Form = ({ handleNext }) => {
                         Yes
                       </Box>
                     }
+                    sx={{
+                      padding: "1px 30px",
+                      height: "40px",
+                      borderRadius: "15px",
+                      boxShadow:
+                        "rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      border:
+                        companyNameOption === "yes"
+                          ? "1px solid skyblue"
+                          : "2px solid transparent",
+                      "&:hover": {
+                        borderColor: "lightblue",
+                      },
+                    }}
+                  />
+                  <FormControlLabel
+                    value="no"
                     control={
                       <Radio
                         sx={{
@@ -330,29 +362,6 @@ const Step1Form = ({ handleNext }) => {
                         }}
                       />
                     }
-                    sx={{
-                      padding: "20px",
-                      borderRadius: "4px",
-                      boxShadow:
-                        "rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      position: "relative",
-                      border: "2px solid transparent",
-                      "&:hover": {
-                        borderColor: "blue",
-                      },
-                      "&.Mui-checked": {
-                        borderColor: "blue",
-                      },
-                      "& .Mui-checked + &": {
-                        borderColor: "blue",
-                      },
-                    }}
-                  />
-                  <MyFormControlLabel
-                    value="no"
                     label={
                       <Box
                         sx={{
@@ -366,34 +375,22 @@ const Step1Form = ({ handleNext }) => {
                         No
                       </Box>
                     }
-                    control={
-                      <Radio
-                        sx={{
-                          "& .MuiSvgIcon-root": {
-                            visibility: "hidden",
-                          },
-                          position: "absolute", // Ensure the radio button does not take up space
-                        }}
-                      />
-                    }
                     sx={{
-                      padding: "20px",
-                      borderRadius: "4px",
+                      padding: "1px 30px",
+                      height: "40px",
+                      borderRadius: "15px",
                       boxShadow:
                         "rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
                       position: "relative",
-                      border: "2px solid transparent",
+                      border:
+                        companyNameOption === "no"
+                          ? "1px solid skyblue"
+                          : "2px solid transparent",
                       "&:hover": {
-                        borderColor: "blue",
-                      },
-                      "&.Mui-checked": {
-                        borderColor: "blue",
-                      },
-                      "& .Mui-checked + &": {
-                        borderColor: "blue",
+                        borderColor: "lightblue",
                       },
                     }}
                   />
@@ -415,11 +412,11 @@ const Step1Form = ({ handleNext }) => {
                       fontSize: "16px",
                       borderRadius: "10px",
                       overflow: "hidden",
+                      
                     }}
                     fullWidth
                   />
                 )}
-
                 {/* <FormControlLabel
                   sx={{ marginRight: "211px" }}
                   label="Company Name?"

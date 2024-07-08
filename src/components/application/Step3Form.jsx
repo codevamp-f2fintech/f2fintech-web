@@ -48,7 +48,7 @@ const Step3Form = ({ handleNext }) => (
                 color: "gray",
               }}
             >
-              Step 3/6
+              Step 3/5
             </Typography>
 
             <Box

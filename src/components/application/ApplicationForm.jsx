@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import {
+  Box,
+  Button,
   Container,
-  Stepper,
   Step,
   StepLabel,
-  Button,
+  Stepper,
   Typography,
-  Box,
 } from "@mui/material";
 import Step1Form from "./Step1Form";
 import Step2Form from "./Step2Form";
 import Step3Form from "./Step3Form";
 import Step4Form from "./Step4Form";
 import Step5Form from "./Step5Form";
-import Step6Form from "./Step6Form";
+// import Step6Form from "./Step6Form";
 
 const steps_form = [
   {
@@ -36,13 +36,13 @@ const steps_form = [
     label: "Business Details",
     icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/business-details.svg",
   },
-  {
-    label: "Disbursal",
-    icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/disbursal.svg",
-  },
+  // {
+  //   label: "Disbursal",
+  //   icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/disbursal.svg",
+  // },
 ];
 
-const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
+const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"];
 
 const initialValues = [
   { field1: "" },
@@ -50,12 +50,13 @@ const initialValues = [
   { field3: "" },
   { field4: "" },
   { field5: "" },
-  { field6: "" },
+  // { field6: "" },
 ];
 
 const MultiStepForm = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [formValues, setFormValues] = useState(initialValues);
+  const [loanType, setLoanType] = useState("");
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -87,7 +88,7 @@ const MultiStepForm = () => {
   const getStepContent = (step) => {
     switch (step) {
       case 0:
-        return <Step1Form handleNext={handleNext} />;
+        return <Step1Form setLoanType={setLoanType} handleNext={handleNext} />;
       case 1:
         return <Step2Form handleNext={handleNext} />;
       case 2:
@@ -100,12 +101,17 @@ const MultiStepForm = () => {
         );
       case 4:
         return (
-          <Step5Form initialValues={formValues[step]} onSubmit={handleSubmit} />
+          loanType === "business" && (
+            <Step5Form
+              initialValues={formValues[step]}
+              onSubmit={handleSubmit}
+            />
+          )
         );
-      case 5:
-        return (
-          <Step6Form initialValues={formValues[step]} onSubmit={handleSubmit} />
-        );
+      // case 5:
+      //   return (
+      //     <Step6Form initialValues={formValues[step]} onSubmit={handleSubmit} />
+      //   );
       default:
         return "Unknown step";
     }

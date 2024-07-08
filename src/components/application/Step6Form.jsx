@@ -1,75 +1,183 @@
-import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { TextField, Box, Button, Typography } from "@mui/material";
-import * as Yup from "yup";
+// import React from "react";
+// import PropTypes from "prop-types";
+// import { styled } from "@mui/material/styles";
+// import Stack from "@mui/material/Stack";
+// import Stepper from "@mui/material/Stepper";
+// import Step from "@mui/material/Step";
+// import StepLabel from "@mui/material/StepLabel";
+// import Check from "@mui/icons-material/Check";
+// import SettingsIcon from "@mui/icons-material/Settings";
+// import GroupAddIcon from "@mui/icons-material/GroupAdd";
+// import VideoLabelIcon from "@mui/icons-material/VideoLabel";
+// import StepConnector, {
+//   stepConnectorClasses,
+// } from "@mui/material/StepConnector";
 
-const validationSchema = Yup.object({
-  field1: Yup.string().required("Required"),
-});
+// const QontoConnector = styled(StepConnector)(({ theme }) => ({
+//   [`&.${stepConnectorClasses.alternativeLabel}`]: {
+//     top: 10,
+//     left: "calc(-50% + 16px)",
+//     right: "calc(50% + 16px)",
+//   },
+//   [`&.${stepConnectorClasses.active}`]: {
+//     [`& .${stepConnectorClasses.line}`]: {
+//       borderColor: "#784af4",
+//     },
+//   },
+//   [`&.${stepConnectorClasses.completed}`]: {
+//     [`& .${stepConnectorClasses.line}`]: {
+//       borderColor: "#784af4",
+//     },
+//   },
+//   [`& .${stepConnectorClasses.line}`]: {
+//     borderColor:
+//       theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
+//     borderTopWidth: 3,
+//     borderRadius: 1,
+//   },
+// }));
 
-const Step6Form = ({ initialValues, onSubmit }) => (
-  <Formik
-    initialValues={initialValues}
-    validationSchema={validationSchema}
-    onSubmit={onSubmit}
-  >
-    {({ isSubmitting }) => (
-      <Form>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: "15px 15px",
-            gap: 2,
-          }}
-        >
-          <Typography
-            sx={{
-              display: "flex",
-              flexDirection: "column",
+// const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
+//   color: theme.palette.mode === "dark" ? theme.palette.grey[700] : "#eaeaf0",
+//   display: "flex",
+//   height: 22,
+//   alignItems: "center",
+//   ...(ownerState.active && {
+//     color: "#784af4",
+//   }),
+//   "& .QontoStepIcon-completedIcon": {
+//     color: "#784af4",
+//     zIndex: 1,
+//     fontSize: 18,
+//   },
+//   "& .QontoStepIcon-circle": {
+//     width: 8,
+//     height: 8,
+//     borderRadius: "50%",
+//     backgroundColor: "currentColor",
+//   },
+// }));
 
-              fontFamily: "bold 10px",
-              fontSize: "4vh",
-              fontWeight: "300vh",
-            }}
-          >
-            Disbursal
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: "-moz-initial",
-              fontSize: "2.5vh",
-              color: "gray",
-            }}
-          >
-            Step 6/6
-          </Typography>
-          <TextField
-            // as={TextField}
-            disableUnderline={true}
-            variant="filled"
-            name="field1"
-            label="Name"
-            sx={{
-              width: "75%",
-              height: "50px",
-              fontSize: "16px",
-              borderRadius: "10px",
-              overflow: "hidden",
-            }}
-            fullWidth
-          />
-          <ErrorMessage
-            name="field1"
-            component="div"
-            style={{ color: "red" }}
-          />
-        </Box>
-      </Form>
-    )}
-  </Formik>
-);
+// function QontoStepIcon(props) {
+//   const { active, completed, className } = props;
 
-export default Step6Form;
+//   return (
+//     <QontoStepIconRoot ownerState={{ active }} className={className}>
+//       {completed ? (
+//         <Check className="QontoStepIcon-completedIcon" />
+//       ) : (
+//         <div className="QontoStepIcon-circle" />
+//       )}
+//     </QontoStepIconRoot>
+//   );
+// }
+
+// QontoStepIcon.propTypes = {
+//   active: PropTypes.bool,
+//   className: PropTypes.string,
+//   completed: PropTypes.bool,
+// };
+
+// const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+//   [`&.${stepConnectorClasses.alternativeLabel}`]: {
+//     top: 22,
+//   },
+//   [`&.${stepConnectorClasses.active}`]: {
+//     [`& .${stepConnectorClasses.line}`]: {
+//       backgroundImage:
+//         "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+//     },
+//   },
+//   [`&.${stepConnectorClasses.completed}`]: {
+//     [`& .${stepConnectorClasses.line}`]: {
+//       backgroundImage:
+//         "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+//     },
+//   },
+//   [`& .${stepConnectorClasses.line}`]: {
+//     height: 3,
+//     border: 0,
+//     backgroundColor:
+//       theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
+//     borderRadius: 1,
+//   },
+// }));
+
+// const ColorlibStepIconRoot = styled("div")(({ theme, ownerState }) => ({
+//   backgroundColor:
+//     theme.palette.mode === "dark" ? theme.palette.grey[700] : "#ccc",
+//   zIndex: 1,
+//   color: "#fff",
+//   width: 50,
+//   height: 50,
+//   display: "flex",
+//   borderRadius: "50%",
+//   justifyContent: "center",
+//   alignItems: "center",
+//   ...(ownerState.active && {
+//     backgroundImage:
+//       "linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)",
+//     boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+//   }),
+//   ...(ownerState.completed && {
+//     backgroundImage:
+//       "linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)",
+//   }),
+// }));
+
+// function ColorlibStepIcon(props) {
+//   const { active, completed, className } = props;
+
+//   const icons = {
+//     1: <SettingsIcon />,
+//     2: <GroupAddIcon />,
+//     3: <VideoLabelIcon />,
+//   };
+
+//   return (
+//     <ColorlibStepIconRoot
+//       ownerState={{ completed, active }}
+//       className={className}
+//     >
+//       {icons[String(props.icon)]}
+//     </ColorlibStepIconRoot>
+//   );
+// }
+
+// ColorlibStepIcon.propTypes = {
+//   active: PropTypes.bool,
+//   className: PropTypes.string,
+//   completed: PropTypes.bool,
+//   icon: PropTypes.node,
+// };
+
+// const steps = [
+//   "Select campaign settings",
+//   "Create an ad group",
+//   "Create an ad",
+// ];
+
+// export default function CustomizedSteppers() {
+//   return (
+//     <Stack sx={{ width: "100%" }} spacing={4}>
+//       <Stepper alternativeLabel activeStep={1} connector={<QontoConnector />}>
+//         {steps.map((label) => (
+//           <Step key={label}>
+//             <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
+//           </Step>
+//         ))}
+//       </Stepper>
+//       <Stepper
+//         alternativeLabel
+//         activeStep={1}
+//         connector={<ColorlibConnector />}
+//       >
+//         {steps.map((label) => (
+//           <Step key={label}>
+//             <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+//           </Step>
+//         ))}
+//       </Stepper>
+//     </Stack>
+//   );
+// }

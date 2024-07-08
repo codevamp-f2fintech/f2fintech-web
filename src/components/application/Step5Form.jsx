@@ -44,10 +44,9 @@ const Step5Form = ({ initialValues, onSubmit }) => (
               color: "gray",
             }}
           >
-            Step 5/6
+            Step 5/5
           </Typography>
           <TextField
-            // as={TextField}
             disableUnderline={true}
             variant="filled"
             name="field1"

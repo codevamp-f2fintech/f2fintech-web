@@ -3,18 +3,17 @@ import { ThemeProvider } from "@mui/material";
 
 import "./App.css";
 
-import Footer from "./components/footer/Footer";
-import ResponsiveAppBar from "./components/appBar/Appbar";
-import Home from "./components/home/Home";
+import ApplicationForm from "./components/application/ApplicationForm";
 import Blogs from "./components/blogs/Blogs";
 import Businessloan from "./components/businessloan/Businessloan";
-import MsmeLoan from "./components/msmeLoan/MsmeLoan";
-import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
-import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
-import ApplicationForm from "./components/application/ApplicationForm";
-import Step2Form from "./components/application/Step2Form";
+import Footer from "./components/footer/Footer";
+import Home from "./components/home/Home";
+import MsmeLoan from "./components/msmeLoan/MsmeLoan";
+import ResponsiveAppBar from "./components/appBar/Appbar";
+import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
+import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import { useMode } from "./theme";
 
 function App() {
@@ -45,8 +44,6 @@ function App() {
 
         <Route exact path="/blogs" element={<Blogs />} />
         <Route exact path="/applicationForm" element={<ApplicationForm />} />
-        {/* <Route exact path="/numberOtp" element={<NumberOtp />} /> */}
-        <Route exact path="/step2Form" element={<Step2Form />} />
 
 
       </Routes>
