@@ -41,11 +41,8 @@ function App() {
           path="/ECommerceBusinessLoan"
           element={<ECommerceBusinessLoan />}
         />
-
         <Route exact path="/blogs" element={<Blogs />} />
         <Route exact path="/applicationForm" element={<ApplicationForm />} />
-
-
       </Routes>
       <Footer />
     </ThemeProvider>

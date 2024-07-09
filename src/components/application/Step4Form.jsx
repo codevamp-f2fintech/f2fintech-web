@@ -50,7 +50,7 @@ const Step4Form = ({ initialValues, onSubmit }) => {
                 color: "gray",
               }}
             >
-              Step 4/5hhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjjjjjjjjjjjjjjjt
+              Step 4/5
             </Typography>
             <TextField
               disableUnderline={true}
@@ -83,7 +83,8 @@ const Step4Form = ({ initialValues, onSubmit }) => {
             </Typography>
             <ImagePicker
               preview={aadharFront}
-      tttttttttttttttttt        setPreview={setAadharFront}
+              tttttttttttttttttt
+              setPreview={setAadharFront}
               label="Aadhar Front"
             />
             <ImagePicker
@@ -94,7 +95,7 @@ const Step4Form = ({ initialValues, onSubmit }) => {
             <Typography
               sx={{
                 fontFamily: "-moz-initial",
-                fontSize: "3vh",hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+                fontSize: "3vh",
                 color: "black",
               }}
             >

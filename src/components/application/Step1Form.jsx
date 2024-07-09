@@ -64,6 +64,15 @@ const initialValues = {
   sub_industry_type: "",
   refrrel_id: "",
 };
+const sendOtpToNumber = async (number) => {
+  // This is a mock function. Replace this with an actual API call.
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log(`OTP sent to number: ${number}`);
+      resolve(true);
+    }, 1000);
+  });
+};
 
 const Step1Form = ({ handleNext, loanType, setLoanType }) => {
   const [open, setOpen] = useState(false);
@@ -121,13 +130,18 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
     // borderRadius: theme.shape.borderRadius,
     margin: theme.spacing(1),
   }));
+
+  
   return (
     <>
       <Formik
         initialValues={initialValues}
         validationSchema={applicationValidation}
-        onSubmit={(values, actions) => {
-          handleClickOpen();
+        onSubmit={async (values, actions) => {
+          const otpSent = await sendOtpToNumber(values.number);
+          if (otpSent) {
+            handleClickOpen();
+          }
         }}
       >
         {({
