@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Container,
   Box,
@@ -10,7 +11,6 @@ import {
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { Link } from "react-router-dom";
 
 import { pages, products } from "../../data/Data";
 const Footer = () => {

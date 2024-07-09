@@ -1,4 +1,5 @@
 import { Box, Container, Typography } from "@mui/material";
+import PropTypes from 'prop-types';
 
 import ButtonComp from "../common/button/Button";
 
@@ -117,3 +118,9 @@ export default function Intro({ title, home, homeimg }) {
     </Container>
   );
 }
+
+Intro.propTypes = {
+  title: PropTypes.string.isRequired,
+  home: PropTypes.bool.isRequired,
+  homeimg: PropTypes.string.isRequired,
+};

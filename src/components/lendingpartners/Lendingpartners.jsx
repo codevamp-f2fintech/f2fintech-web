@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import { Container, Typography } from "@mui/material";
 import { lendingpartnerData } from "../data/Data";
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -12,6 +13,7 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   color: theme.palette.text.secondary,
 }));
+
 export default function LendingPartners() {
   return (
     <Container

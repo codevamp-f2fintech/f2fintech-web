@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material";
+import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
 export default function ButtonComp(props) {
@@ -23,7 +24,7 @@ export default function ButtonComp(props) {
         }}
       >
         <Link
-          to="/applicationForm"
+          to="/application-form"
           style={{ textDecoration: "none", color: "inherit" }}
         >
           Apply Now
@@ -32,3 +33,8 @@ export default function ButtonComp(props) {
     </Box>
   );
 }
+
+ButtonComp.propTypes = {
+  title: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
+};
