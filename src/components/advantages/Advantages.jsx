@@ -5,9 +5,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Grid, Typography } from "@mui/material";
-import PropTypes from 'prop-types';
-
-
+import PropTypes from "prop-types";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

@@ -13,7 +13,6 @@ import {
   MenuItem,
   IconButton,
   Popover,
-  Modal,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
@@ -37,7 +36,6 @@ const StyledCard = styled(Box)(({ theme }) => ({
     transform: "scale(1.05)",
     boxShadow: "0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.15)",
   },
-  cursor: "pointer",
 }));
 
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
@@ -56,11 +54,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontSize: "0.8rem",
   padding: "0.25rem 0.5rem",
   minWidth: "80px",
-  transition: "background-color 0.3s, color 0.3s",
-  "&:hover": {
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.common.white,
-  },
 }));
 
 const ProductCard = ({
@@ -73,10 +66,9 @@ const ProductCard = ({
   handleFavoriteToggle,
   isCompared,
   handleCompareToggle,
-  onCardClick,
 }) => {
   return (
-    <StyledCard onClick={onCardClick}>
+    <StyledCard>
       <Box sx={{ position: "relative" }}>
         <img
           src={homeimg}
@@ -87,10 +79,7 @@ const ProductCard = ({
           icon={<FavoriteBorder />}
           checkedIcon={<Favorite sx={{ color: "red" }} />}
           checked={isFavorite}
-          onChange={(e) => {
-            e.stopPropagation();
-            handleFavoriteToggle();
-          }}
+          onChange={handleFavoriteToggle}
         />
       </Box>
       <Box p={2}>
@@ -122,20 +111,11 @@ const ProductCard = ({
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-        ></Box>
-        <Box
-          mt={2}
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
         >
           <ButtonComp title="Calculate Returns" width="160px" />
           <Checkbox
             checked={isCompared}
-            onChange={(e) => {
-              e.stopPropagation();
-              handleCompareToggle();
-            }}
+            onChange={handleCompareToggle}
             sx={{ ml: "auto" }}
           />
         </Box>
@@ -154,7 +134,6 @@ ProductCard.propTypes = {
   handleFavoriteToggle: PropTypes.func.isRequired,
   isCompared: PropTypes.bool.isRequired,
   handleCompareToggle: PropTypes.func.isRequired,
-  onCardClick: PropTypes.func.isRequired,
 };
 
 const Filter = ({ filter, setFilter }) => (
@@ -175,13 +154,42 @@ const Filter = ({ filter, setFilter }) => (
   </Box>
 );
 
+// const FavoriteList = ({ favorites, handleFavoriteToggle }) => (
+//   <Box sx={{ marginTop: 4 }}>
+//     <Typography variant="h5" sx={{ marginBottom: 2 }}>
+//       Favorite Items
+//     </Typography>
+//     <Grid container spacing={4}>
+//       {favorites.map((item, index) => (
+//         <Grid item xs={12} sm={6} md={4} key={index}>
+//           <ProductCard
+//             title={item.title}
+//             home={item.home}
+//             homeimg={item.homeimage}
+//             interestRate={item.interest_rate}
+//             text={{
+//               description: item.description,
+//               short_description: item.short_description,
+//               long_description: item.long_description,
+//             }}
+//             isFavorite={true}
+//             handleFavoriteToggle={() => handleFavoriteToggle(item)}
+//             isCompared={false} // Assuming no comparison on favorite list
+//             handleCompareToggle={() => {}}
+//           />
+//         </Grid>
+//       ))}
+//     </Grid>
+//   </Box>
+// );
+
 const Listing = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("interestRate");
   const [favorites, setFavorites] = useState([]);
   const [compares, setCompares] = useState([]);
+  const [showFavorites, setShowFavorites] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [modalData, setModalData] = useState(null);
   const dispatch = useDispatch();
   const loanProviders = useSelector((state) => state.allLoanProviders);
 
@@ -232,12 +240,8 @@ const Listing = () => {
     handlePopoverClose();
   };
 
-  const handleCardClick = (item) => {
-    setModalData(item);
-  };
-
-  const handleCloseModal = () => {
-    setModalData(null);
+  const toggleShowFavorites = () => {
+    setShowFavorites(!showFavorites);
   };
 
   const open = Boolean(anchorEl);
@@ -270,9 +274,24 @@ const Listing = () => {
   return (
     <Container sx={{ marginTop: 4 }}>
       <Filter filter={filter} setFilter={setFilter} />
+      {/* <Button
+        variant="contained"
+        color="primary"
+        onClick={toggleShowFavorites}
+        sx={{ marginBottom: 2 }}
+      >
+        {showFavorites ? "Hide Favorites" : "Show Favorites"}
+      </Button> */}
+      {showFavorites && (
+        <FavoriteList
+          favorites={favorites}
+          handleFavoriteToggle={handleFavoriteToggle}
+          onClick={handleFavoriteToggle}
+        />
+      )}
       <Grid container spacing={4}>
         {getFilteredData().map((item, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+          <Grid item xs={18} sm={6} md={4} key={index}>
             <ProductCard
               title={item.title}
               home={item.home}
@@ -287,7 +306,6 @@ const Listing = () => {
               handleFavoriteToggle={() => handleFavoriteToggle(item)}
               isCompared={compares.includes(item)}
               handleCompareToggle={() => handleCompareToggle(item)}
-              onCardClick={() => handleCardClick(item)}
             />
           </Grid>
         ))}
@@ -311,7 +329,7 @@ const Listing = () => {
           <Popover
             open={open}
             anchorEl={anchorEl}
-            anchorOrigin={{ vertical: "top", horizontal: "left" }}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
             transformOrigin={{ vertical: "bottom", horizontal: "right" }}
             onClose={handlePopoverClose}
           >
@@ -359,44 +377,6 @@ const Listing = () => {
             </Box>
           </Popover>
         </Box>
-      )}
-      {modalData && (
-        <Modal
-          open={Boolean(modalData)}
-          onClose={handleCloseModal}
-          aria-labelledby="modal-title"
-          aria-describedby="modal-description"
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
-              borderRadius: "15px",
-            }}
-          >
-            <Typography id="modal-title" variant="h6" component="h2">
-              {modalData.title}
-            </Typography>
-            <Typography id="modal-description" sx={{ mt: 2 }}>
-              {modalData.description}
-            </Typography>
-            <Button
-              onClick={handleCloseModal}
-              sx={{ mt: 2 }}
-              variant="contained"
-              color="primary"
-            >
-              Close
-            </Button>
-          </Box>
-        </Modal>
       )}
     </Container>
   );
