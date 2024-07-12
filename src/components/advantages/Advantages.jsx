@@ -135,7 +135,7 @@ Advantages.propTypes = {
     PropTypes.shape({
       logo: PropTypes.node.isRequired,
       title: PropTypes.string.isRequired,
-      subtitle: PropTypes.string.isRequired,
+      subtitle: PropTypes.string,
     })
   ).isRequired,
 };

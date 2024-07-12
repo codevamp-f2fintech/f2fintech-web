@@ -9,9 +9,11 @@
 import { combineReducers } from "redux";
 
 import { setExampleReducer } from "./exampleReducer";
+import { displayToastReducer } from "./ToastReducer";
 
 const rootReducers = combineReducers({
   example: setExampleReducer,
+  toastInfo: displayToastReducer,
 });
 
 export default rootReducers;

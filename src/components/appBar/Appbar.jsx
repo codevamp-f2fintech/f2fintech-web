@@ -1,18 +1,21 @@
-import * as React from "react";
-
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { MenuItem, Menu, Typography, Box } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import { pages, products } from "../../data/Data";
-import { Link, useNavigate } from "react-router-dom";
+import { Utility } from "../utility";
 
 export default function ResponsiveAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const { getLocalStorage, remLocalStorage } = Utility();
+
+  const customer = getLocalStorage("customerInfo");
+  const username = customer?.name;
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,8 +34,7 @@ export default function ResponsiveAppBar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("name");
-    localStorage.removeItem("token");
+    remLocalStorage("customerInfo");
     handleUserMenuClose();
     navigate("/");
   };
@@ -86,6 +88,7 @@ export default function ResponsiveAppBar() {
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "center",
+            marginRight: "2%",
           }}
         >
           <Button
@@ -101,7 +104,7 @@ export default function ResponsiveAppBar() {
               borderRadius: "22px",
               marginRight: "10px",
               color: " rgba(6,55,158,1)",
-              backgroundColor: "#EEEEEE",
+              // backgroundColor: "#EEEEEE",
             }}
           >
             Products
@@ -139,13 +142,13 @@ export default function ResponsiveAppBar() {
             ))}
           </Menu>
           {pages.map((page) => {
-            const user = localStorage.getItem("name");
-            if (page.title === "Login" && user) {
+            if (page.title === "Login" && username) {
               return (
-                <div key={user}>
+                <div key={username}>
                   <Button
                     color="inherit"
                     onClick={handleUserMenuOpen}
+                    endIcon={<ArrowDropDownIcon />}
                     sx={{
                       height: "40px",
                       textTransform: "none",
@@ -153,10 +156,13 @@ export default function ResponsiveAppBar() {
                       borderRadius: "22px",
                       marginLeft: "10px",
                       marginRight: "10px",
-                      backgroundColor: "#EEEEEE",
+                      // backgroundColor: "#EEEEEE",
                     }}
                   >
-                    {user}
+                    {username
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join(".")}
                   </Button>
                   <Menu
                     id="user-menu-appbar"
@@ -174,7 +180,9 @@ export default function ResponsiveAppBar() {
                     getContentAnchorEl={null}
                   >
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    <MenuItem>Profile</MenuItem>
+                    <MenuItem component="a" href="/profile">
+                      Profile
+                    </MenuItem>
                     <MenuItem onClick={handleResetPassword}>
                       Reset password
                     </MenuItem>
@@ -195,7 +203,7 @@ export default function ResponsiveAppBar() {
                   borderRadius: "22px",
                   marginLeft: "10px",
                   marginRight: "10px",
-                  backgroundColor: "#EEEEEE",
+                  // backgroundColor: "#EEEEEE",
                 }}
               >
                 {page.title}

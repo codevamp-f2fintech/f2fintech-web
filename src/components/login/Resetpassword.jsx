@@ -120,168 +120,171 @@ export default function ResetPassword() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <Typography
-        variant="h4"
-        sx={{
-          fontSize: "3vw",
-          fontWeight: "700",
-          fontFamily: "verdana",
-          textAlign: "center",
-          lineHeight: "1.75rem",
-          marginBottom: "5vh",
-        }}
-      >
-        Reset Password
-      </Typography>
-      <Box
-        component="form"
-        onSubmit={formik.handleSubmit}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 3,
-          width: "100%",
-          maxWidth: 400,
-        }}
-      >
-        {error && <Alert severity="error">{error}</Alert>}
-        {success && <Alert severity="success">{success}</Alert>}
-        <TextField
-          name="currentPassword"
-          type={showCurrentPassword ? "text" : "password"}
-          label="Current Password"
-          variant="filled"
-          value={formik.values.currentPassword}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          InputProps={{
-            disableUnderline: true,
-            sx: {
-              width: "25rem",
-              borderRadius: "20px",
-              backgroundColor: "darkGray",
-            },
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => handleClickShowPassword("currentPassword")}
-                  edge="end"
-                >
-                  {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+      <Box>
+        <Typography
+          variant="h4"
           sx={{
-            borderRadius: "20px",
-            overflow: "hidden",
-          }}
-          error={
-            formik.touched.currentPassword &&
-            Boolean(formik.errors.currentPassword)
-          }
-          helperText={
-            formik.touched.currentPassword && formik.errors.currentPassword
-          }
-        />
-        <TextField
-          name="newPassword"
-          type={showNewPassword ? "text" : "password"}
-          label="New Password"
-          variant="filled"
-          value={formik.values.newPassword}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          InputProps={{
-            disableUnderline: true,
-            sx: {
-              width: "25rem",
-              borderRadius: "20px",
-              backgroundColor: "darkGray",
-            },
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => handleClickShowPassword("newPassword")}
-                  edge="end"
-                >
-                  {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            borderRadius: "20px",
-            overflow: "hidden",
-          }}
-          error={
-            formik.touched.newPassword && Boolean(formik.errors.newPassword)
-          }
-          helperText={formik.touched.newPassword && formik.errors.newPassword}
-        />
-        <TextField
-          name="confirmPassword"
-          type={showConfirmPassword ? "text" : "password"}
-          label="Confirm New Password"
-          variant="filled"
-          value={formik.values.confirmPassword}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          InputProps={{
-            disableUnderline: true,
-            sx: {
-              width: "25rem",
-              borderRadius: "20px",
-              backgroundColor: "darkGray",
-            },
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => handleClickShowPassword("confirmPassword")}
-                  edge="end"
-                >
-                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            borderRadius: "20px",
-            overflow: "hidden",
-          }}
-          error={
-            formik.touched.confirmPassword &&
-            Boolean(formik.errors.confirmPassword)
-          }
-          helperText={
-            formik.touched.confirmPassword && formik.errors.confirmPassword
-          }
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "white",
-            fontWeight: "500",
-            fontSize: "1rem",
-            lineHeight: "1.5rem",
-            width: "30vh",
+            fontSize: "3vw",
+            fontWeight: "700",
+            fontFamily: "verdana",
+            textAlign: "center",
+            lineHeight: "1.75rem",
+            marginBottom: "5vh",
           }}
         >
           Reset Password
-        </Button>
-        <Toast
-          msg={"Password successfully changed"} // Message to display on success
-          open={open} // State to control visibility
-          setOpen={setOpen} // Function to control state
-          handleClose={handleClose} // Function to close the toast
-          anchorOrigin={{ vertical: "top", horizontal: "left" }} // Position of the toast
-        />
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={formik.handleSubmit}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 3,
+            width: "100%",
+            maxWidth: 400,
+          }}
+        >
+          {error && <Alert severity="error">{error}</Alert>}
+          {success && <Alert severity="success">{success}</Alert>}
+          <TextField
+            name="currentPassword"
+            type={showCurrentPassword ? "text" : "password"}
+            label="Current Password"
+            variant="filled"
+            value={formik.values.currentPassword}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            InputProps={{
+              disableUnderline: true,
+              sx: {
+                width: "25rem",
+                borderRadius: "20px",
+                backgroundColor: "darkGray",
+              },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => handleClickShowPassword("currentPassword")}
+                    edge="end"
+                  >
+                    {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              borderRadius: "20px",
+              overflow: "hidden",
+            }}
+            error={
+              formik.touched.currentPassword &&
+              Boolean(formik.errors.currentPassword)
+            }
+            helperText={
+              formik.touched.currentPassword && formik.errors.currentPassword
+            }
+          />
+          <TextField
+            name="newPassword"
+            type={showNewPassword ? "text" : "password"}
+            label="New Password"
+            variant="filled"
+            value={formik.values.newPassword}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            InputProps={{
+              disableUnderline: true,
+              sx: {
+                width: "25rem",
+                borderRadius: "20px",
+                backgroundColor: "darkGray",
+              },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => handleClickShowPassword("newPassword")}
+                    edge="end"
+                  >
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              borderRadius: "20px",
+              overflow: "hidden",
+            }}
+            error={
+              formik.touched.newPassword && Boolean(formik.errors.newPassword)
+            }
+            helperText={formik.touched.newPassword && formik.errors.newPassword}
+          />
+          <TextField
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            label="Confirm New Password"
+            variant="filled"
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            InputProps={{
+              disableUnderline: true,
+              sx: {
+                width: "25rem",
+                borderRadius: "20px",
+                backgroundColor: "darkGray",
+              },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => handleClickShowPassword("confirmPassword")}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              borderRadius: "20px",
+              overflow: "hidden",
+            }}
+            error={
+              formik.touched.confirmPassword &&
+              Boolean(formik.errors.confirmPassword)
+            }
+            helperText={
+              formik.touched.confirmPassword && formik.errors.confirmPassword
+            }
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "white",
+              fontWeight: "500",
+              fontSize: "1rem",
+              lineHeight: "1.5rem",
+              width: "30vh",
+              borderRadius: "20px",
+            }}
+          >
+            Reset Password
+          </Button>
+          <Toast
+            msg={"Password successfully changed"} // Message to display on success
+            open={open} // State to control visibility
+            setOpen={setOpen} // Function to control state
+            handleClose={handleClose} // Function to close the toast
+            anchorOrigin={{ vertical: "top", horizontal: "left" }} // Position of the toast
+          />
+        </Box>
       </Box>
     </Container>
   );

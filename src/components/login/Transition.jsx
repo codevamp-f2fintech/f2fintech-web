@@ -29,12 +29,12 @@ export default function Transition({ isSignUp, setIsSignUp }) {
     >
       <Box
         sx={{
-          height: "100vh",
+          height: "60vh",
           width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-evenly",
         }}
       >
         <Typography
@@ -62,14 +62,21 @@ export default function Transition({ isSignUp, setIsSignUp }) {
           {!isSignUp ? "Register" : "Sign in"} with your personal details to use
           all<br></br> of site features
         </Typography>
+        {/* <br></br>
+        <br></br>
+        <br></br>
+        <br></br> */}
         <Button
           variant="contained"
           onClick={() => setIsSignUp(!isSignUp)} //isSignUp = true !isSignUp = false
           sx={{
+            width: "10vw",
             color: "white",
             fontWeight: "500",
             fontSize: "1rem",
             lineHeight: "1.5rem",
+            borderRadius: "20px",
+            top: "-2vh",
           }}
         >
           {!isSignUp ? "Sign Up" : "Sign In"}
