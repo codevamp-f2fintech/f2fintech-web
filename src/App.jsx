@@ -3,6 +3,7 @@ import { ThemeProvider } from "@mui/material";
 
 import "./App.css";
 
+import ApplicationForm from "./components/application/ApplicationForm";
 import Footer from "./components/footer/Footer";
 import ResponsiveAppBar from "./components/appBar/Appbar";
 import Home from "./components/home/Home";
@@ -10,12 +11,11 @@ import Login from "./components/login/Login";
 import Blogs from "./components/blogs/Blogs";
 import ResetPassword from "./components/login/Resetpassword";
 import Businessloan from "./components/businessloan/Businessloan";
+import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
+import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
 import MsmeLoan from "./components/msmeLoan/MsmeLoan";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
-import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
-import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
-import ApplicationForm from "./components/application/ApplicationForm";
 import { useMode } from "./theme";
 import Profile from "./components/login/Profile";
 
@@ -52,12 +52,12 @@ function App() {
 
             <Route exact path="/blogs" element={<Blogs />} />
             <Route exact path="/profile" element={<Profile />} />
+            <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
-              path="/applicationForm"
+              path="/application-form"
               element={<ApplicationForm />}
             />
-            <Route exact path="/reset-password" element={<ResetPassword />} />
           </Routes>
           <Footer />
         </>
