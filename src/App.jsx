@@ -17,6 +17,7 @@ import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoan
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
 import ApplicationForm from "./components/application/ApplicationForm";
 import { useMode } from "./theme";
+import Profile from "./components/login/Profile";
 
 function App() {
   const [theme] = useMode();
@@ -50,8 +51,13 @@ function App() {
             />
 
             <Route exact path="/blogs" element={<Blogs />} />
+            <Route exact path="/profile" element={<Profile />} />
+            <Route
+              exact
+              path="/applicationForm"
+              element={<ApplicationForm />}
+            />
             <Route exact path="/reset-password" element={<ResetPassword />} />
-             <Route exact path="/applicationForm" element={<ApplicationForm />} />
           </Routes>
           <Footer />
         </>

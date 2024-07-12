@@ -22,6 +22,34 @@ export const CustomerAPI = {
         : undefined,
     });
   },
+  /** Login customer
+   */
+  getCustomerProfile: async (customerId, cancel = false) => {
+    return await axiosInstance.request({
+      url: `/get-customer-profile/${customerId}`,
+      method: "GET",
+      signal: cancel
+        ? cancelApiObject[
+            this.getCustomerProfile.name
+          ].handleRequestCancellation().signal
+        : undefined,
+    });
+  },
+  updateCustomerProfile: async (newData) => {
+    console.log("newDAta", newData);
+    try {
+      const response = await axiosInstance.request({
+        url: `/update-customer-profile`,
+        method: "POST",
+        data: newData,
+      });
+      return response.data; // Optionally return data if needed
+    } catch (error) {
+      // Handle errors here
+      console.error("Error updating customer profile:", error);
+      throw error; // Rethrow or handle as needed
+    }
+  },
 };
 
 // defining the cancel API object for CustomerAPI

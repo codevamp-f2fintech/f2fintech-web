@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   TextField,
@@ -12,13 +13,16 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Toast from "../toast/Toast";
+import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
+import PasswordIcon from "@mui/icons-material/Password";
 
 import axiosClient from "../../api/apiClient";
+import { Utility } from "../utility";
 
 const SignInSchema = Yup.object().shape({
   contact: Yup.string()
     .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
-    .required(" number is required"),
+    .required("Contact number is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .max(20, "Password cannot be more than 20 characters")
@@ -26,57 +30,82 @@ const SignInSchema = Yup.object().shape({
 });
 
 export default function Signin({ isSignUp }) {
-  const [loading, setLoading] = useState(false); //1 . false (default)  2. on btn click true. 3.on response false
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [open, setOpen] = React.useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [forgotPasswordContact, setForgotPasswordContact] = useState("");
-  const navigate = useNavigate();
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [showError, setShowError] = useState("");
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
+  const dispatch = useDispatch();
+  const toastInfo = useSelector((state) => state.toastInfo);
+  const navigateTo = useNavigate();
+  const { setLocalStorage, toastAndNavigate } = Utility();
 
   const handleSubmit = (formData, resetForm) => {
-    console.log("calling api");
+    setLoading(true);
     axiosClient.post("/login", JSON.stringify(formData)).then((response) => {
-      console.log("api respo>>>", response);
       setLoading(false);
       if (response.data.status === "Success") {
-        console.log("api respo>>>2", response);
-        localStorage.setItem("token", response.data.data.token);
-        localStorage.setItem("name", response.data.data.name);
-        localStorage.setItem("id", response.data.data.id);
-        setOpen(true);
-        resetForm();
-        setTimeout(() => {
-          navigate("/"); // Redirect to sign-in page after 3 seconds
-        }, 1000);
+        const customerInfo = {
+          id: response.data.data.id,
+          name: response.data.data.name,
+          token: response.data.data.token,
+        };
+        setLocalStorage("customerInfo", customerInfo);
+        toastAndNavigate(
+          dispatch,
+          true,
+          "success",
+          "Signin Successful",
+          navigateTo,
+          "/"
+        );
       }
     });
   };
-  //
+
   const handleForgotPassword = () => {
     setForgotPasswordOpen(true);
   };
 
-  const handleForgotPasswordSubmit = () => {
+  const handleSendOtp = async () => {
     setLoading(true);
-    axiosClient
-      .post("/forgot-password", { contact: forgotPasswordContact })
-      .then((response) => {
-        console.log("forgot password respo", response);
-        setLoading(false);
-        setForgotPasswordOpen(false);
-        if (response.data.status === "Success") {
-          setOpen(true);
-        }
+    try {
+      const response = await axiosClient.post("/send-otp", {
+        contact: forgotPasswordContact,
       });
+      setLoading(false);
+      if (response.data.status === "Success") {
+        setOtpSent(true);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("OTP send error", error);
+    }
   };
+
+  const handleForgotPasswordSubmit = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosClient.post("/verify-otp", {
+        contact: forgotPasswordContact,
+        otp,
+      });
+      if (response.data.status === "Success") {
+        setForgotPasswordOpen(false);
+        setOtpSent(false);
+      } else {
+        setShowError("Invalid OTP");
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Forgot password error", error);
+    }
+  };
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -88,7 +117,7 @@ export default function Signin({ isSignUp }) {
   return (
     <Box
       sx={{
-        backgroundImage: "url('logo0000.jfif')",
+        backgroundImage: "url('l111.jpg')",
         width: "49.5%",
         height: "100vh",
         backgroundPosition: "bottom",
@@ -136,7 +165,6 @@ export default function Signin({ isSignUp }) {
           onSubmit={(formData, { resetForm }) => {
             setLoading(true);
             handleSubmit(formData, resetForm);
-            console.log(formData, "formData");
           }}
         >
           {({
@@ -166,6 +194,11 @@ export default function Signin({ isSignUp }) {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PhoneAndroidIcon />
+                    </InputAdornment>
+                  ),
                   disableUnderline: true,
                   sx: {
                     width: "25rem",
@@ -190,6 +223,11 @@ export default function Signin({ isSignUp }) {
                 onBlur={handleBlur}
                 autoComplete="off"
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PasswordIcon />
+                    </InputAdornment>
+                  ),
                   disableUnderline: true,
                   sx: {
                     width: "25rem",
@@ -225,7 +263,7 @@ export default function Signin({ isSignUp }) {
                   color: "black",
                 }}
               >
-                Forgot Pasword? <span> Click here</span>
+                Forgot Password? <span> Click here</span>
               </Button>
 
               <Button
@@ -233,10 +271,12 @@ export default function Signin({ isSignUp }) {
                 type="submit"
                 disabled={loading}
                 sx={{
+                  width: "10vw",
                   color: "white",
                   fontWeight: "500",
                   fontSize: "1rem",
                   lineHeight: "1.5rem",
+                  borderRadius: "20px",
                 }}
               >
                 Sign In
@@ -289,26 +329,68 @@ export default function Signin({ isSignUp }) {
                 overflow: "hidden",
               }}
             />
-            <Button
-              variant="contained"
-              onClick={handleForgotPasswordSubmit}
-              disabled={loading}
-              sx={{
-                color: "white",
-                fontWeight: "500",
-                fontSize: "1rem",
-                lineHeight: "1.5rem",
-              }}
-            >
-              Submit
-            </Button>
+            {!otpSent ? (
+              <Button
+                variant="contained"
+                onClick={handleSendOtp}
+                disabled={loading || forgotPasswordContact.length !== 10}
+                sx={{
+                  color: "white",
+                  fontWeight: "500",
+                  fontSize: "1rem",
+                  lineHeight: "1.5rem",
+                }}
+              >
+                Send OTP
+              </Button>
+            ) : (
+              <>
+                <TextField
+                  label="*OTP"
+                  type="number"
+                  variant="filled"
+                  autoComplete="off"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  inputProps={{
+                    maxLength: 6,
+                  }}
+                  InputProps={{
+                    disableUnderline: true,
+                    sx: {
+                      width: "25rem",
+                      borderRadius: "20px",
+                      backgroundColor: "darkGray",
+                    },
+                  }}
+                  sx={{
+                    borderRadius: "20px",
+                    overflow: "hidden",
+                  }}
+                  error={!!showError}
+                  helperText={showError}
+                />
+                <Button
+                  variant="contained"
+                  onClick={handleForgotPasswordSubmit}
+                  disabled={loading || otp.length !== 6}
+                  sx={{
+                    color: "white",
+                    fontWeight: "500",
+                    fontSize: "1rem",
+                    lineHeight: "1.5rem",
+                  }}
+                >
+                  Submit
+                </Button>
+              </>
+            )}
           </Box>
         )}
         <Toast
-          msg={"Signin successfully"}
-          open={open}
-          setOpen={setOpen}
-          handleClose={handleClose}
+          alerting={toastInfo.toastAlert}
+          message={toastInfo.toastMessage}
+          severity={toastInfo.toastSeverity}
           anchorOrigin={{ vertical: "top", horizontal: "left" }}
         />
       </Box>
