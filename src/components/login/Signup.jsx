@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   TextField,
   Button,
@@ -11,12 +13,17 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import PasswordIcon from "@mui/icons-material/Password";
+import EmailIcon from "@mui/icons-material/Email";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import Toast from "../toast/Toast";
 
+import Toast from "../toast/Toast";
 import axiosClient from "../../api/apiClient";
+import { Utility } from "../utility";
 
 const SignUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -36,15 +43,9 @@ export default function Signup({ isSignUp, setIsSignUp }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showError, setShowError] = useState("");
-  const [open, setOpen] = React.useState(false);
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
+  const dispatch = useDispatch();
+  const toastInfo = useSelector((state) => state.toastInfo);
+  const { toastAndNavigate } = Utility();
 
   useEffect(() => {
     let timer;
@@ -66,9 +67,17 @@ export default function Signup({ isSignUp, setIsSignUp }) {
       );
       setLoading(false);
       if (response.data.status === "Success") {
-        setOpen(true);
+        toastAndNavigate(
+          dispatch,
+          true,
+          "success",
+          "Signup Successful",
+          () => {},
+          null,
+          false,
+          () => setIsSignUp(false)
+        );
         resetForm();
-        setIsSignUp(false);
       }
     } catch (error) {
       setLoading(false);
@@ -92,7 +101,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
   return (
     <Box
       sx={{
-        backgroundImage: "url('logo00.jpg')",
+        backgroundImage: "url('signup.1.jpg')",
         width: "49.4%",
         borderRadius: "30% 0% 0% 30%",
         height: "100vh",
@@ -105,7 +114,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
     >
       <Box
         sx={{
-          height: "50vh",
+          height: "66vh",
           width: "50%",
           display: "flex",
           flexDirection: "column",
@@ -179,6 +188,11 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                 onBlur={handleBlur}
                 autoComplete="off"
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon />
+                    </InputAdornment>
+                  ),
                   disableUnderline: true,
                   sx: {
                     width: "25rem",
@@ -199,12 +213,15 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                 value={values.contact}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                inputProps={{
-                  maxLength: 10,
-                }}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PhoneAndroidIcon />
+                    </InputAdornment>
+                  ),
                   disableUnderline: true,
                   sx: {
+                    maxLength: 10,
                     width: "25rem",
                     borderRadius: "20px",
                     backgroundColor: "darkGray",
@@ -226,14 +243,16 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 autoComplete="off"
-                inputProps={{
-                  minLength: 6,
-                  maxLength: 20,
-                  backgroundColor: "darkGray",
-                }}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PasswordIcon />
+                    </InputAdornment>
+                  ),
                   disableUnderline: true,
                   sx: {
+                    minLength: 6,
+                    maxLength: 20,
                     width: "25rem",
                     borderRadius: "20px",
                     backgroundColor: "darkGray",
@@ -265,6 +284,11 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                 onBlur={handleBlur}
                 autoComplete="off"
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailIcon />
+                    </InputAdornment>
+                  ),
                   disableUnderline: true,
                   sx: {
                     width: "25rem",
@@ -307,9 +331,6 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                     backgroundColor: "darkGray",
                   }}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
                   <MenuItem value="male">Male</MenuItem>
                   <MenuItem value="female">Female</MenuItem>
                   <MenuItem value="other">Other</MenuItem>
@@ -333,6 +354,8 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                 disabled={loading}
                 type="submit"
                 sx={{
+                  borderRadius: "20px",
+                  width: "10vw",
                   color: "white",
                   fontWeight: "500",
                   fontSize: "1rem",
@@ -345,10 +368,9 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           )}
         </Formik>
         <Toast
-          msg={"Signup successfully"}
-          open={open}
-          setOpen={setOpen}
-          handleClose={handleClose}
+          alerting={toastInfo.toastAlert}
+          message={toastInfo.toastMessage}
+          severity={toastInfo.toastSeverity}
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
         />
       </Box>

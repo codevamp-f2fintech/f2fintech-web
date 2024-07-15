@@ -8,9 +8,11 @@
 
 import { combineReducers } from "redux";
 import { setLoanProvidersReducer } from "./LoanProviderReducer";
+import { displayToastReducer } from "./ToastReducer";
 
 const rootReducers = combineReducers({
   allLoanProviders: setLoanProvidersReducer,
+  toastInfo: displayToastReducer,
 });
 
 export default rootReducers;

@@ -19,6 +19,7 @@ const LoginPage = () => {
         justifyContent: "center",
         alignItems: "center",
         padding: "0 !important",
+        marginTop: "1vh",
       }}
     >
       <Signin isSignUp={isSignUp} />

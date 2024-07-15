@@ -17,6 +17,7 @@ import MsmeLoan from "./components/msmeLoan/MsmeLoan";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import { useMode } from "./theme";
+import Profile from "./components/login/Profile";
 import Listing from "./components/providers/Listing";
 import Compare from "./components/providers/Compare";
 
@@ -51,6 +52,7 @@ function App() {
               element={<ECommerceBusinessLoan />}
             />
             <Route exact path="/blogs" element={<Blogs />} />
+            <Route exact path="/profile" element={<Profile />} />
             <Route exact path="/providers" element={<Listing />} />
             <Route exact path="/providers/compare" element={<Compare />} />
             <Route
