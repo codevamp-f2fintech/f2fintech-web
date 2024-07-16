@@ -70,9 +70,12 @@ function App() {
           <Footer />
         </>
       ) : (
-        <Routes>
-          <Route exact path="/login" element={<Login />} />
-        </Routes>
+        <>
+          <ResponsiveAppBar />
+          <Routes>
+            <Route exact path="/login" element={<Login />} />
+          </Routes>
+        </>
       )}
     </ThemeProvider>
   );
