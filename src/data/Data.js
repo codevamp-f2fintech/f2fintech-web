@@ -20,6 +20,13 @@ const pages = [
     title: "Login",
     href: "/login",
   },
+
+  
+  {
+    title: "Loan-Tracking",
+    href: "/loantrackingscreendesign",
+  },
+
 ];
 
 const products = [

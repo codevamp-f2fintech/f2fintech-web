@@ -4,7 +4,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { MenuItem, Menu, Typography, Box } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
 import { pages, products } from "../../data/Data";
 import { Utility } from "../utility";
 
@@ -47,38 +46,20 @@ export default function ResponsiveAppBar() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
   }
+  const handleMouseEnter = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMouseOut = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        zIndex: "100",
-        height: "13vh",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          backgroundColor: "white",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            marginLeft: "2%",
-            width: "50%",
-          }}
-        >
+    <Box sx={{ display: "flex", height: "13vh" }}>
+      <Box sx={{ display: "flex", alignItems: "center", width: "100%", backgroundColor: "white" }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-start", marginLeft: "2%", width: "50%" }}>
           <Toolbar sx={{ display: "flex" }}>
             <Link to={pages[0].href}>
-              <img
-                src="f2Fintechlogo.png"
-                alt="Logo"
-                style={{ height: "100px", width: "100px" }}
-              />
+              <img src="f2Fintechlogo.png" alt="Logo" style={{ height: "100px", width: "100px" }} />
             </Link>
           </Toolbar>
         </Box>
