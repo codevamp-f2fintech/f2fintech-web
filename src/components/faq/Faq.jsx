@@ -32,7 +32,7 @@ const Faq = () => {
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
-              sx={{ fontSize: "1.3vw", boxShadow: "none" }}
+              sx={{ fontSize: "1.5vw", boxShadow: "none" }}
             >
               {faq.question}
             </AccordionSummary>

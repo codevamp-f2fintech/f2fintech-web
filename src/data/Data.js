@@ -8,9 +8,13 @@ const pages = [
     href: "/blogs",
   },
   {
-    title: "Comparison",
-    href: "/comparison",
+    title: "Providers",
+    href: "/providers",
   },
+  // {
+  //   title: "Compare",
+  //   href: "/providers/compare",
+  // },
 
   {
     title: "Login",

@@ -22,7 +22,7 @@ const Home = () => {
         home={true}
       />
       <Carousel />
-      <Calculator title="Happy place to apply for your loan" />
+      <Calculator />
       <Apply />
       <Advantages advantagesData={advantagesData} />
       <Eligibility />

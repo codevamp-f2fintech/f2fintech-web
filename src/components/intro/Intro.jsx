@@ -1,119 +1,184 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
+import axios from "axios";
 import { Box, Container, Typography } from "@mui/material";
+import Carousel from "react-material-ui-carousel";
+import PropTypes from "prop-types";
+import API from "../../apis";
 
 import ButtonComp from "../common/button/Button";
 
-export default function Intro({ title, home, homeimg }) {
+function Intro({ title, home, homeimg, interestRate, text }) {
   return (
     <Container
       sx={{
         display: "flex",
-        boxSizing: "content-box",
         padding: "0px !important",
         maxWidth: "100% !important",
-        height: "100vh",
-        marginTop: "0px !important",
+        height: "90vh",
+        marginTop: "10px !important",
+        backgroundColor: "#f8f8f8",
+        borderRadius: "10px",
+        boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+        overflow: "hidden",
       }}
     >
       <Box
         sx={{
-          margin: " 10px 85px",
-          height: "90vh",
-          zIndex: 2,
-          maxWidth: "40vw",
+          padding: "60px",
+          height: "100%",
+          maxWidth: "50%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-evenly",
+          justifyContent: "center",
+          alignItems: "flex-start",
         }}
       >
         <Typography
+          variant="h4"
           sx={{
-            variant: "h1",
-            display: "flex",
-            marginTop: "0px",
-            lineHeight: "5rem",
-            fontSize: "4.5vw",
+            fontSize: "2.5vw",
             fontWeight: "700",
+            color: "rgba(6,55,158,1)",
             textShadow: "1px 1px 2px gray",
+            marginBottom: "20px",
           }}
         >
           {title}
         </Typography>
         <Box
           sx={{
-            display: "flex",
-            width: "100vh",
-            justifyContent: "space-between",
+            marginBottom: "20px",
           }}
         >
           <Typography
             sx={{
-              fontFamily: "cursive",
               fontSize: "2.2vw",
-              lineHeight: "2.25rem",
-              marginTop: ".25rem",
               textShadow: "1px 1px 2px gray",
+              background: "#fff",
+              padding: "10px",
+              borderRadius: "5px",
             }}
           >
-            Upto<strong> ₹30 lakhs</strong> in 5 minutes.
+            {text.description}
           </Typography>
         </Box>
-        <ButtonComp title="Apply Now" width="160px" />
+
         {home && (
-          <Box>
+          <Box
+            sx={{
+              marginBottom: "20px",
+            }}
+          >
             <Typography
               sx={{
                 fontWeight: "400",
                 fontSize: "1.2vw",
-                lineHeight: "1.5",
-                margin: 0,
                 textShadow: "1px 1px 2px gray",
+                marginBottom: "10px",
               }}
             >
-              Powered by f2fintech & trusted by
+              {text.short_description}
             </Typography>
             <Typography
               sx={{
-                color: " rgba(6,55,158,1)",
+                color: "rgba(6,55,158,1)",
                 fontSize: "3vw",
-                lineHeight: "3.375rem",
-                marginTop: ".25rem",
                 fontWeight: "700",
                 textShadow: "1px 1px 2px gray",
+                marginBottom: "10px",
               }}
             >
-              30,00,000+
+              {interestRate}
             </Typography>
             <Typography
               sx={{
                 fontWeight: "700",
                 fontSize: "1.7vw",
-                lineHeight: "2rem",
-                marginTop: ".25rem",
                 textShadow: "1px 1px 2px gray",
               }}
             >
-              Businesses in India
+              {text.long_description}
             </Typography>
           </Box>
         )}
+        <ButtonComp title="Calculate Returns" width="190px" />
       </Box>
       <Box
         sx={{
-          backgroundColor: "white",
           display: "flex",
           justifyContent: "center",
-          alignItems: "flex-end",
-          height: "90vh",
+          marginLeft: "50px",
+          alignItems: "center",
+          marginTop: "110px",
+          marginRight: "10px",
+          height: "60%",
           width: "50%",
         }}
       >
         <img
-          height="625px"
-          style={{ overflow: "hidden" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            borderTopLeftRadius: "30px",
+            borderBottomRightRadius: "30px",
+          }}
           src={homeimg}
-          alt="null"
+          alt={title}
         />
       </Box>
     </Container>
   );
 }
+
+export default function IntroCarousel() {
+  const [carouselItems, setCarouselItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const loanProviders = useSelector((state) => state.allLoanProviders);
+
+  useEffect(() => {
+    API.LoanProviderAPI.getAll()
+      .then((response) => {
+        console.log(response, "loanproviderapi");
+        if (response.data.status === "Success") {
+          dispatch(
+            setLoanProviders({
+              listData: response.data.data.rows,
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error, "loanproviderapierror");
+      });
+  }, []);
+
+  console.log(loanProviders?.listData);
+  return (
+    <Carousel autoPlay interval={3000}>
+      {loanProviders?.listData?.map((item, index) => (
+        <Intro
+          key={index}
+          title={item.title}
+          home={item.home}
+          homeimg={item.homeimage}
+          interestRate={item.interest_rate}
+          text={{
+            description: item.description,
+            short_description: item.short_description,
+            long_description: item.long_description,
+          }}
+        />
+      ))}
+    </Carousel>
+  );
+}
+
+Intro.propTypes = {
+  title: PropTypes.string.isRequired,
+  home: PropTypes.bool.isRequired,
+  homeimg: PropTypes.string.isRequired,
+};
