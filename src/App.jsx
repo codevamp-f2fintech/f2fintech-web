@@ -1,28 +1,27 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
+
 import "./App.css";
+
 import ApplicationForm from "./components/application/ApplicationForm";
-import Footer from "./components/footer/Footer";
-import ResponsiveAppBar from "./components/appBar/Appbar";
-import Home from "./components/home/Home";
-import Login from "./components/login/Login";
 import Blogs from "./components/blogs/Blogs";
-import ResetPassword from "./components/login/Resetpassword";
 import Businessloan from "./components/businessloan/Businessloan";
 import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
+import Compare from "./components/providers/Compare";
 import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
+import Footer from "./components/footer/Footer";
+import Home from "./components/home/Home";
+import Listing from "./components/providers/Listing";
+import Login from "./components/login/Login";
 import MsmeLoan from "./components/msmeLoan/MsmeLoan";
+import Profile from "./components/login/Profile";
+import ResponsiveAppBar from "./components/appBar/Appbar";
+import ResetPassword from "./components/login/Resetpassword";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
-import BusinessLoanForWomen from "./components/businessLoanForWomen/BusinessLoanForWomen";
-import ECommerceBusinessLoan from "./components/eCommerceBusinessLoan/ECommerceBusinessLoan";
-import { useMode } from "./theme";
-import Profile from "./components/login/Profile";
-import Listing from "./components/providers/Listing";
-import Compare from "./components/providers/Compare";
-import LoanProviderComparisonPage from "./components/LoanProviderComparisonPage/LoanProviderComparisonPage";
-import LoanTrackingPage from "./components/loantrackingscreendesign/loantrackingscreendesign";
 
+import { useMode } from "./theme";
+import LoanProviderComparisonPage from "./components/LoanProviderComparisonPage/LoanProviderComparisonPage";
 
 function App() {
   const [theme] = useMode();

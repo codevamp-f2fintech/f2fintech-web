@@ -15,8 +15,8 @@ import TimerIcon from "@mui/icons-material/Timer";
 import HighlightIcon from "@mui/icons-material/Highlight";
 
 import logo1 from "../../../public/hdfc.jpeg";
-import logo2 from "../../../public/hdfc.jpeg";
-import logo3 from "../../../public/hdfc-image.webp";
+import logo2 from "../../../public/HDFC.png";
+import logo3 from "../../../public/hdfc_bank.jpg";
 
 const products = [
   {
