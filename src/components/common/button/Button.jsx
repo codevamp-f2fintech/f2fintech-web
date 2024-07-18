@@ -24,7 +24,7 @@ export default function ButtonComp(props) {
         }}
       >
         <Link
-          to="/applicationForm"
+          to="/application-form"
           style={{ textDecoration: "none", color: "inherit" }}
         >
           Apply Now

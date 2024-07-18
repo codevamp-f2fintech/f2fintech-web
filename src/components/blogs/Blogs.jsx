@@ -1,7 +1,13 @@
-import React from "react";
+
+import Intro from "../intro/Intro";
+// import FavoritePage from "../favourite/FavouritePage";
 
 const Blogs = () => {
-  return <></>;
+  return (
+    <>
+      <Intro />
+    {/* <FavoritePage /> */}</>
+  );
 };
 
 export default Blogs;

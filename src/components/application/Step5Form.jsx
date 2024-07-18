@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { TextField, Box, Button } from "@mui/material";
+import { TextField, Box, Button, Typography } from "@mui/material";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
@@ -15,7 +15,7 @@ const Step5Form = ({ initialValues, onSubmit }) => (
   >
     {({ isSubmitting }) => (
       <Form>
-       <Box
+        <Box
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -25,8 +25,28 @@ const Step5Form = ({ initialValues, onSubmit }) => (
             gap: 2,
           }}
         >
+          <Typography
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+
+              fontFamily: "bold 10px",
+              fontSize: "4vh",
+              fontWeight: "300vh",
+            }}
+          >
+            Business Details
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: "-moz-initial",
+              fontSize: "2.5vh",
+              color: "gray",
+            }}
+          >
+            Step 5/5
+          </Typography>
           <TextField
-            // as={TextField}
             disableUnderline={true}
             variant="filled"
             name="field1"

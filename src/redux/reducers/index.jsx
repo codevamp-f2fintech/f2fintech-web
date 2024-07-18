@@ -7,11 +7,12 @@
  */
 
 import { combineReducers } from "redux";
-
-import { setExampleReducer } from "./exampleReducer";
+import { setLoanProvidersReducer } from "./LoanProviderReducer";
+import { displayToastReducer } from "./ToastReducer";
 
 const rootReducers = combineReducers({
-  example: setExampleReducer,
+  allLoanProviders: setLoanProvidersReducer,
+  toastInfo: displayToastReducer,
 });
 
 export default rootReducers;
