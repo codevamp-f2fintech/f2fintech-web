@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
+import axios from "axios";
 import {
   Box,
   Button,
   Checkbox,
   Container,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  DialogContent,
   FormControl,
   FormGroup,
   FormControlLabel,
@@ -24,7 +21,6 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import applicationValidation from "./applicationValidation";
-import Otp from "./Otp";
 
 const StyledFormControlLabel = styled((props) => (
   <FormControlLabel {...props} />
@@ -54,7 +50,7 @@ const initialValues = {
   name: "",
   number: "",
   email: "",
-  pincode1: "",
+  pincode: "",
   pan: "",
   gst: "",
   company_name: "",
@@ -64,47 +60,37 @@ const initialValues = {
   sub_industry_type: "",
   refrrel_id: "",
 };
-const sendOtpToNumber = async (number) => {
-  // This is a mock function. Replace this with an actual API call.
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log(`OTP sent to number: ${number}`);
-      resolve(true);
-    }, 1000);
-  });
+
+const sendFormDataToAPI = async (formData) => {
+  try {
+    const response = await fetch(
+      "http://localhost:8080/api/v1/create-customer-info",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    console.log("Data stored in the database:", data);
+    return data;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+  }
 };
 
 const Step1Form = ({ handleNext, loanType, setLoanType }) => {
-  const [open, setOpen] = useState(false);
-  const [otp, setOtp] = useState(["", "", "", ""]);
   const [doYouHaveGSTRegistration, setDoYouHaveGSTRegistration] =
     useState(false);
   const [companyNameOption, setCompanyNameOption] = useState(""); // Add state for radio button selection
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleOtpChange = (index, event) => {
-    const value = event.target.value;
-    if (value.length <= 1) {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
-    }
-  };
-
-  const handleOtpSubmit = () => {
-    handleNext();
-    handleClose();
-  };
-
   const handleGSTCheckboxChange = (event) => {
-    setLoanType(event.target.checked ? 'business' : 'personal')
+    setLoanType(event.target.checked ? "business" : "personal");
     setDoYouHaveGSTRegistration(event.target.checked);
   };
 
@@ -131,18 +117,11 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
     margin: theme.spacing(1),
   }));
 
-  
   return (
     <>
       <Formik
         initialValues={initialValues}
         validationSchema={applicationValidation}
-        onSubmit={async (values, actions) => {
-          const otpSent = await sendOtpToNumber(values.number);
-          if (otpSent) {
-            handleClickOpen();
-          }
-        }}
       >
         {({
           values,
@@ -275,19 +254,6 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                   fullWidth
                 />
 
-                {/* Conditionally render PincodeChecker */}
-                {/* {showPincodeChecker && (
-                  <PincodeChecker
-                    pincode={pincode}
-                    setPincode={setPincode}
-                    pincodeType={pincodeType}
-                    setPincodeType={setPincodeType}
-                    isPincodeValid={isPincodeValid}
-                    setIsPincodeValid={setIsPincodeValid}
-                    onSubmit={handlePincodeSubmit}
-                  />
-                )}x */}
-
                 <TextField
                   variant="filled"
                   name="pan"
@@ -322,29 +288,8 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                 >
                   <FormControlLabel
                     value="yes"
-                    control={
-                      <Radio
-                        sx={{
-                          "& .MuiSvgIcon-root": {
-                            visibility: "hidden",
-                          },
-                          position: "absolute", // Ensure the radio button does not take up space
-                        }}
-                      />
-                    }
-                    label={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          width: "100%",
-                          height: "100%",
-                        }}
-                      >
-                        Yes
-                      </Box>
-                    }
+                    control={<Radio />}
+                    label="Yes"
                     sx={{
                       padding: "1px 30px",
                       height: "40px",
@@ -366,29 +311,8 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                   />
                   <FormControlLabel
                     value="no"
-                    control={
-                      <Radio
-                        sx={{
-                          "& .MuiSvgIcon-root": {
-                            visibility: "hidden",
-                          },
-                          position: "absolute", // Ensure the radio button does not take up space
-                        }}
-                      />
-                    }
-                    label={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          width: "100%",
-                          height: "100%",
-                        }}
-                      >
-                        No
-                      </Box>
-                    }
+                    control={<Radio />}
+                    label="No"
                     sx={{
                       padding: "1px 30px",
                       height: "40px",
@@ -426,44 +350,10 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                       fontSize: "16px",
                       borderRadius: "10px",
                       overflow: "hidden",
-                      
                     }}
                     fullWidth
                   />
                 )}
-                {/* <FormControlLabel
-                  sx={{ marginRight: "211px" }}
-                  label="Company Name?"
-                  control={
-                    <Checkbox
-                      color="default"
-                      name="company_name"
-                      checked={hasCompanyName}
-                      onChange={handleCompanyNameCheckboxChange}
-                    />
-                  }
-                />
-
-                {hasCompanyName && (
-                  <TextField
-                    variant="filled"
-                    name="company_name"
-                    label="Company Name"
-                    value={values.company_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.company_name && Boolean(errors.company_name)}
-                    helperText={touched.company_name && errors.company_name}
-                    sx={{
-                      width: "75%",
-                      height: "50px",
-                      fontSize: "16px",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                    }}
-                    fullWidth
-                  />
-                )} */}
                 <FormControl
                   variant="filled"
                   sx={{
@@ -475,32 +365,22 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                   }}
                 >
                   <InputLabel>Entity Type</InputLabel>
-                  <Select variant="filled" name="entity_type">
-                    <MenuItem value="A+">Sole Proprietorship</MenuItem>
-                    <MenuItem value="A-">Partnership</MenuItem>
-                    <MenuItem value="B+"> LLC</MenuItem>
-                    <MenuItem value="B-">Corporation</MenuItem>
+                  <Select
+                    variant="filled"
+                    name="entity_type"
+                    value={values.entity_type}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <MenuItem value="Sole Proprietorship">
+                      Sole Proprietorship
+                    </MenuItem>
+                    <MenuItem value="Partnership">Partnership</MenuItem>
+                    <MenuItem value="LLC">LLC</MenuItem>
+                    <MenuItem value="Corporation">Corporation</MenuItem>
                   </Select>
                 </FormControl>
 
-                {/* <TextField
-                  variant="filled"
-                  name="entity_type"
-                  label="Entity Type"
-                  value={values.entity_type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.entity_type && Boolean(errors.entity_type)}
-                  helperText={touched.entity_type && errors.entity_type}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                  }}
-                  fullWidth
-                /> */}
                 <FormControl
                   variant="filled"
                   sx={{
@@ -512,37 +392,24 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                   }}
                 >
                   <InputLabel>Bank Account Type</InputLabel>
-                  <Select variant="filled" name="bank-account_type">
-                    <MenuItem value="A+">Savings Account</MenuItem>
-                    <MenuItem value="A-">Current Account</MenuItem>
-                    <MenuItem value="B+">Fixed Deposit Account</MenuItem>
-                    <MenuItem value="B-">Recurring Deposit Account</MenuItem>
+                  <Select
+                    variant="filled"
+                    name="bank_account_type"
+                    value={values.bank_account_type}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <MenuItem value="Savings Account">Savings Account</MenuItem>
+                    <MenuItem value="Current Account">Current Account</MenuItem>
+                    <MenuItem value="Fixed Deposit Account">
+                      Fixed Deposit Account
+                    </MenuItem>
+                    <MenuItem value="Recurring Deposit Account">
+                      Recurring Deposit Account
+                    </MenuItem>
                   </Select>
                 </FormControl>
-                {/* 
-                <TextField
-                  variant="filled"
-                  name="bank_account_type"
-                  label="Bank Account Type"
-                  value={values.bank_account_type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={
-                    touched.bank_account_type &&
-                    Boolean(errors.bank_account_type)
-                  }
-                  helperText={
-                    touched.bank_account_type && errors.bank_account_type
-                  }
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                  }}
-                  fullWidth
-                /> */}
+
                 <FormControlLabel
                   sx={{ marginRight: "110px" }}
                   label="Do you have GST Registration?"
@@ -669,7 +536,8 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleClickOpen}
+                  type="button"
+                  onClick={() => sendFormDataToAPI(values)}
                   sx={{
                     color: "white",
                     fontWeight: "500",
@@ -685,17 +553,6 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
           </Form>
         )}
       </Formik>
-
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Enter OTP</DialogTitle>
-        <DialogContent>
-          <Otp length={4} onChange={(otp) => setOtp(otp)} value={otp} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleOtpSubmit}>Submit</Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 };

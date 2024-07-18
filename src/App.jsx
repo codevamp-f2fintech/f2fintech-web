@@ -18,6 +18,8 @@ import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan"
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import { useMode } from "./theme";
 import Profile from "./components/login/Profile";
+import Listing from "./components/providers/Listing";
+import Compare from "./components/providers/Compare";
 
 function App() {
   const [theme] = useMode();
@@ -49,9 +51,15 @@ function App() {
               path="/ECommerceBusinessLoan"
               element={<ECommerceBusinessLoan />}
             />
-
             <Route exact path="/blogs" element={<Blogs />} />
             <Route exact path="/profile" element={<Profile />} />
+            <Route exact path="/providers" element={<Listing />} />
+            <Route exact path="/providers/compare" element={<Compare />} />
+            <Route
+              exact
+              path="/applicationForm"
+              element={<ApplicationForm />}
+            />
             <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
