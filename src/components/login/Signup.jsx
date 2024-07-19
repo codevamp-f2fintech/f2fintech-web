@@ -12,6 +12,7 @@ import {
   InputLabel,
   InputAdornment,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
@@ -46,6 +47,8 @@ export default function Signup({ isSignUp, setIsSignUp }) {
   const dispatch = useDispatch();
   const toastInfo = useSelector((state) => state.toastInfo);
   const { toastAndNavigate } = Utility();
+  const isMobile = useMediaQuery("(max-width:480px)");
+  const isTab = useMediaQuery("(max-width:820px)");
 
   useEffect(() => {
     let timer;
@@ -102,20 +105,36 @@ export default function Signup({ isSignUp, setIsSignUp }) {
     <Box
       sx={{
         backgroundImage: "url('signup.1.jpg')",
-        width: "49.4%",
-        borderRadius: "30% 0% 0% 30%",
+        backgroundSize: isMobile ? "cover" : "contain",
+        backgroundRepeat: isMobile ? "no-repeat" : "",
+        width: {
+          xs: "100%", // For extra small screens
+          sm: "75%", // For small screens
+          md: "60%", // For medium screens
+          lg: "49.4%", // For large screens and above
+        },
+        borderRadius: {
+          xs: "0%", // For extra small screens
+          md: "30% 0% 0% 30%", // For medium screens and above
+        },
         height: "100vh",
-        backgroundPosition: "top",
+        backgroundPosition: isMobile ? "right" : "top",
         margin: "auto",
         display: "flex",
         justifyContent: "space-evenly",
-        alignItems: "center",
+        alignItems: isMobile ? "flex-start" : "center",
+        ...(!isSignUp && {
+          display: isMobile ? "none" : "",
+        }),
       }}
     >
       <Box
         sx={{
           height: "66vh",
-          width: "50%",
+          width: {
+            xs: "90%", // For extra small screens
+            md: "50%", // For medium screens and above
+          },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -136,11 +155,12 @@ export default function Signup({ isSignUp, setIsSignUp }) {
       >
         <Typography
           sx={{
-            fontSize: "2.3vw",
+            fontSize: isMobile ? "10vw" : "2.3vw",
             fontweight: "400",
             fontFamily: "verdana",
             textAlign: "center",
             lineHeight: "1.75rem",
+            marginTop: isMobile ? "13vh" : "",
           }}
         >
           Create Account
@@ -195,9 +215,14 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                   ),
                   disableUnderline: true,
                   sx: {
-                    width: "25rem",
+                    width: {
+                      xs: "20rem", // For extra small screens
+                      sm: "22rem", // For small screens
+                      md: "25rem", // For medium screens and above
+                    },
                     borderRadius: "20px",
                     backgroundColor: "darkGray",
+                    fontSize: "1vw",
                   },
                 }}
                 sx={{ borderRadius: "20px", overflow: "hidden" }}
@@ -222,9 +247,14 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                   disableUnderline: true,
                   sx: {
                     maxLength: 10,
-                    width: "25rem",
+                    width: {
+                      xs: "20rem", // For extra small screens
+                      sm: "22rem", // For small screens
+                      md: "25rem", // For medium screens and above
+                    },
                     borderRadius: "20px",
                     backgroundColor: "darkGray",
+                    fontSize: "1vw",
                   },
                 }}
                 sx={{
@@ -253,9 +283,14 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                   sx: {
                     minLength: 6,
                     maxLength: 20,
-                    width: "25rem",
+                    width: {
+                      xs: "20rem", // For extra small screens
+                      sm: "22rem", // For small screens
+                      md: "25rem", // For medium screens and above
+                    },
                     borderRadius: "20px",
                     backgroundColor: "darkGray",
+                    fontSize: "1vw",
                   },
 
                   endAdornment: (
@@ -291,9 +326,14 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                   ),
                   disableUnderline: true,
                   sx: {
-                    width: "25rem",
+                    width: {
+                      xs: "20rem", // For extra small screens
+                      sm: "22rem", // For small screens
+                      md: "25rem", // For medium screens and above
+                    },
                     borderRadius: "20px",
                     backgroundColor: "darkGray",
+                    fontSize: "1vw",
                   },
                 }}
                 sx={{ borderRadius: "20px", overflow: "hidden" }}
@@ -303,7 +343,11 @@ export default function Signup({ isSignUp, setIsSignUp }) {
               <FormControl
                 variant="filled"
                 sx={{
-                  width: "25rem",
+                  width: {
+                    xs: "20rem", // For extra small screens
+                    sm: "22rem", // For small screens
+                    md: "25rem", // For medium screens and above
+                  },
                   borderRadius: "20px",
                   overflow: "hidden",
                   "& .MuiFilledInput-root": {
@@ -329,6 +373,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                     borderRadius: "20px",
                     overflow: "hidden",
                     backgroundColor: "darkGray",
+                    fontSize: "1vw",
                   }}
                 >
                   <MenuItem value="male">Male</MenuItem>
@@ -355,10 +400,14 @@ export default function Signup({ isSignUp, setIsSignUp }) {
                 type="submit"
                 sx={{
                   borderRadius: "20px",
-                  width: "10vw",
+                  width: {
+                    xs: "50%", // For extra small screens
+                    sm: "30%", // For small screens
+                    md: "10vw", // For medium screens and above
+                  },
                   color: "white",
                   fontWeight: "500",
-                  fontSize: "1rem",
+                  fontSize: isMobile ? "5vw" : "1rem",
                   lineHeight: "1.5rem",
                 }}
               >

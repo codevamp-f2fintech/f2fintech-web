@@ -49,7 +49,11 @@ export default function ResetPassword() {
       setError(null);
       setSuccess(null);
 
-      const customerId = localStorage.getItem("id");
+      const customerInfo = localStorage.getItem("customerInfo");
+
+      const customerId = JSON.parse(customerInfo).id;
+
+      // console.log("customerId", JSON.parse(customerInfo), customerId);
       try {
         const response = await fetch(
           "http://localhost:8080/api/v1/reset-password",
@@ -120,7 +124,17 @@ export default function ResetPassword() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          marginLeft: "100vh",
+          height: "70vh",
+          width: "100vh",
+        }}
+      >
         <Typography
           variant="h4"
           sx={{
@@ -162,6 +176,7 @@ export default function ResetPassword() {
                 width: "25rem",
                 borderRadius: "20px",
                 backgroundColor: "darkGray",
+                fontSize: "1vw",
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -200,6 +215,7 @@ export default function ResetPassword() {
                 width: "25rem",
                 borderRadius: "20px",
                 backgroundColor: "darkGray",
+                fontSize: "1vw",
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -235,6 +251,7 @@ export default function ResetPassword() {
                 width: "25rem",
                 borderRadius: "20px",
                 backgroundColor: "darkGray",
+                fontSize: "1vw",
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -272,10 +289,11 @@ export default function ResetPassword() {
               fontSize: "1rem",
               lineHeight: "1.5rem",
               width: "30vh",
+              height: "5.5vh",
               borderRadius: "20px",
             }}
           >
-            Reset Password
+            Submit
           </Button>
           <Toast
             msg={"Password successfully changed"} // Message to display on success

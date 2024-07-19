@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import {
   TextField,
   Button,
@@ -8,14 +9,15 @@ import {
   Typography,
   InputAdornment,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import Toast from "../toast/Toast";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import PasswordIcon from "@mui/icons-material/Password";
 
+import { Formik, Form } from "formik";
 import axiosClient from "../../api/apiClient";
 import { Utility } from "../utility";
 
@@ -42,6 +44,8 @@ export default function Signin({ isSignUp }) {
   const toastInfo = useSelector((state) => state.toastInfo);
   const navigateTo = useNavigate();
   const { setLocalStorage, toastAndNavigate } = Utility();
+  const isMobile = useMediaQuery("(max-width:480px)");
+  const isTab = useMediaQuery("(max-width:820px)");
 
   const handleSubmit = (formData, resetForm) => {
     setLoading(true);
@@ -118,14 +122,29 @@ export default function Signin({ isSignUp }) {
     <Box
       sx={{
         backgroundImage: "url('l111.jpg')",
-        width: "49.5%",
+        width: {
+          xs: "100%", // For extra small screens
+          sm: "75%", // For small screens
+          md: "60%", // For medium screens
+          lg: "49.5%", // For large screens and above
+        },
+        backgroundSize: isMobile ? "cover" : isTab ? "cover" : "contain",
+        backgroundRepeat: isMobile ? "no-repeat" : isTab ? "no-repeat" : "",
+
         height: "100vh",
-        backgroundPosition: "bottom",
+        // backgroundPosition: "bottom",
         margin: "auto",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: "0% 30% 30% 0%",
+        borderRadius: isMobile
+          ? "0% 0% 0% 0%"
+          : isTab
+          ? "0% 30% 30% 0%"
+          : "0% 30% 30% 0%",
+        ...(isSignUp && {
+          display: isMobile ? "none" : "",
+        }),
       }}
     >
       <Box
@@ -134,6 +153,7 @@ export default function Signin({ isSignUp }) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          marginTop: isMobile ? "-60vw" : "",
           gap: 4,
           zIndex: 1,
           ...(isSignUp && {
@@ -150,7 +170,11 @@ export default function Signin({ isSignUp }) {
       >
         <Typography
           sx={{
-            fontSize: "2.3vw",
+            fontSize: {
+              xs: "10vw", // For extra small screens
+              sm: "3vw", // For small screens
+              md: "2.3vw", // For medium screens and above
+            },
             fontweight: "400",
             fontFamily: "verdana",
             textAlign: "center",
@@ -201,8 +225,13 @@ export default function Signin({ isSignUp }) {
                   ),
                   disableUnderline: true,
                   sx: {
-                    width: "25rem",
+                    width: {
+                      xs: "20rem", // For extra small screens
+                      sm: "22rem", // For small screens
+                      md: "25rem", // For medium screens and above
+                    },
                     borderRadius: "20px",
+                    fontSize: "1vw",
                     backgroundColor: "darkGray",
                   },
                 }}
@@ -230,8 +259,13 @@ export default function Signin({ isSignUp }) {
                   ),
                   disableUnderline: true,
                   sx: {
-                    width: "25rem",
+                    width: {
+                      xs: "20rem", // For extra small screens
+                      sm: "22rem", // For small screens
+                      md: "25rem", // For medium screens and above
+                    },
                     borderRadius: "20px",
+                    fontSize: "1vw",
                     backgroundColor: "darkGray",
                   },
                   endAdornment: (
@@ -271,10 +305,14 @@ export default function Signin({ isSignUp }) {
                 type="submit"
                 disabled={loading}
                 sx={{
-                  width: "10vw",
+                  width: {
+                    xs: "50%", // For extra small screens
+                    sm: "30%", // For small screens
+                    md: "10vw", // For medium screens and above
+                  },
                   color: "white",
                   fontWeight: "500",
-                  fontSize: "1rem",
+                  fontSize: isMobile ? "5vw" : "1vw",
                   lineHeight: "1.5rem",
                   borderRadius: "20px",
                 }}
@@ -319,7 +357,11 @@ export default function Signin({ isSignUp }) {
               InputProps={{
                 disableUnderline: true,
                 sx: {
-                  width: "25rem",
+                  width: {
+                    xs: "20rem", // For extra small screens
+                    sm: "22rem", // For small screens
+                    md: "25rem", // For medium screens and above
+                  },
                   borderRadius: "20px",
                   backgroundColor: "darkGray",
                 },
@@ -358,7 +400,11 @@ export default function Signin({ isSignUp }) {
                   InputProps={{
                     disableUnderline: true,
                     sx: {
-                      width: "25rem",
+                      width: {
+                        xs: "20rem", // For extra small screens
+                        sm: "22rem", // For small screens
+                        md: "25rem", // For medium screens and above
+                      },
                       borderRadius: "20px",
                       backgroundColor: "darkGray",
                     },

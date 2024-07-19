@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Container } from "@mui/material";
+import { Container, useMediaQuery } from "@mui/material";
 
 import Signin from "./Signin";
 import Signup from "./Signup";
@@ -8,6 +8,8 @@ import Transition from "./Transition";
 
 const LoginPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const isMobile = useMediaQuery("(max-width:480px)");
   console.log("issignup", isSignUp);
 
   return (
@@ -18,6 +20,7 @@ const LoginPage = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: isMobile ? "column" : "row",
         padding: "0 !important",
         marginTop: "1vh",
       }}

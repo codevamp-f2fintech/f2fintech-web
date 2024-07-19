@@ -15,6 +15,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  useMediaQuery,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
@@ -43,9 +44,10 @@ export default function Profile() {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const toastInfo = useSelector((state) => state.toastInfo);
-
   const { getLocalStorage, toastAndNavigate } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
+  const isMobile = useMediaQuery("(max-width:480px)");
+  const isTab = useMediaQuery("(max-width:820px)");
 
   useEffect(() => {
     setLoading(true);
@@ -124,7 +126,8 @@ export default function Profile() {
         justifyContent: "center",
         alignItems: "center",
         height: "90vh",
-        backgroundImage: "url('l111.jpg')",
+        background:
+          "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}
@@ -141,6 +144,7 @@ export default function Profile() {
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
           borderRadius: "40px",
+          backgroundColor: "#b3ffe0",
         }}
       >
         <Box
@@ -190,11 +194,11 @@ export default function Profile() {
                           display: "flex",
                           flexDirection: "column",
                           justifyContent: "center",
-                          alignItems: "center",
+                          // alignItems: "center",
                           textAlign: "center",
                           gap: 2,
-                          marginTop: "2vh",
-                          marginLeft: "90vh",
+                          marginLeft: "92vh",
+                          // border: "2px solid ",
                         }}
                       >
                         <Typography
@@ -224,6 +228,7 @@ export default function Profile() {
                             sx: {
                               width: "25rem",
                               borderRadius: "20px",
+                              fontSize: "1.2vw",
                               backgroundColor: "darkGray",
                             },
                           }}
@@ -250,6 +255,7 @@ export default function Profile() {
                             sx: {
                               width: "25rem",
                               borderRadius: "20px",
+                              fontSize: "1.2vw",
                               backgroundColor: "darkGray",
                             },
                           }}
@@ -279,6 +285,7 @@ export default function Profile() {
                             sx={{
                               width: "25rem",
                               borderRadius: "20px",
+                              fontSize: "1vw",
                             }}
                             error={touched.gender && !!errors.gender}
                             helperText={touched.gender && errors.gender}
@@ -306,6 +313,7 @@ export default function Profile() {
                             sx: {
                               width: "25rem",
                               borderRadius: "20px",
+                              fontSize: "1.2vw",
                               backgroundColor: "darkGray",
                             },
                           }}
@@ -322,11 +330,15 @@ export default function Profile() {
                             justifyContent: "space-between",
                             width: "25rem",
                             mt: 2,
+                            position: "absolute",
+                            top: "59vh",
                           }}
                         >
                           <Button
                             sx={{
                               width: "10rem",
+                              height: "5.5vh",
+                              fontSize: "1vw",
                               borderRadius: "20px",
                               boxShadow:
                                 "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
@@ -344,6 +356,8 @@ export default function Profile() {
                             sx={{
                               width: "10rem",
                               borderRadius: "20px",
+                              height: "5.5vh",
+                              fontSize: "1vw",
                               boxShadow:
                                 "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
                               ":hover": {
@@ -369,6 +383,7 @@ export default function Profile() {
                               height: "30vh",
                               fontSize: "5vw",
                               marginLeft: "54vh",
+                              position: "absolute",
                               marginTop: "-7vh",
                               boxShadow:
                                 "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
@@ -384,14 +399,15 @@ export default function Profile() {
                         <Box
                           sx={{
                             width: "80vh",
-                            height: "30vh",
+                            height: "40vh",
                             display: "flex",
                             flexDirection: "column",
+                            justifyContent: "center",
                             alignItems: "center",
-                            textAlign: "center",
+                            // textAlign: "center",
                             gap: 2,
-                            marginTop: "8vh",
-                            marginLeft: "79vh",
+                            marginTop: "20vh",
+                            marginLeft: "75vh",
                             // border: "2px solid",
                           }}
                         >
@@ -417,7 +433,7 @@ export default function Profile() {
                               variant="h6"
                               sx={{
                                 color: "black",
-                                fontSize: "1vw",
+                                fontSize: "1.2vw",
                                 borderRadius: "10%",
                                 ":hover": {
                                   transform: "scale(1.1)",
@@ -433,7 +449,7 @@ export default function Profile() {
                             variant="h6"
                             sx={{
                               color: "black",
-                              fontSize: "1vw",
+                              fontSize: "1.2vw",
                               borderRadius: "10%",
                               ":hover": {
                                 transform: "scale(1.1)",
@@ -448,7 +464,7 @@ export default function Profile() {
                             variant="h6"
                             sx={{
                               color: "black",
-                              fontSize: "1vw",
+                              fontSize: "1.2vw",
                               borderRadius: "10%",
                               ":hover": {
                                 transform: "scale(1.1)",
@@ -465,7 +481,11 @@ export default function Profile() {
                             sx={{
                               mt: 3,
                               width: "20vh",
+                              height: "5.5vh",
                               borderRadius: "20px",
+                              fontSize: "1vw",
+                              position: "absolute",
+                              top: "58vh",
                               boxShadow:
                                 "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
                               ":hover": {
