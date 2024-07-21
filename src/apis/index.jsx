@@ -7,9 +7,11 @@
  */
 
 import { CustomerAPI } from "./CustomerAPI";
+import { CustomerInfoAPI } from "./CustomerInfoAPI";
 import { LoanProviderAPI } from "./LoanProviderAPI";
 
 export default {
   CustomerAPI,
+  CustomerInfoAPI,
   LoanProviderAPI,
 };

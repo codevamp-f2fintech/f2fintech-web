@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -44,18 +44,8 @@ const steps_form = [
 
 const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"];
 
-const initialValues = [
-  { field1: "" },
-  { field2: "" },
-  { field3: "" },
-  { field4: "" },
-  { field5: "" },
-  // { field6: "" },
-];
-
 const MultiStepForm = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [formValues, setFormValues] = useState(initialValues);
   const [loanType, setLoanType] = useState("");
 
   const handleNext = () => {
@@ -66,25 +56,6 @@ const MultiStepForm = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setFormValues(initialValues);
-  };
-
-  const handleChange = (step) => (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevValues) => {
-      const newValues = [...prevValues];
-      newValues[step][name] = value;
-      return newValues;
-    });
-  };
-
-  const handleSubmit = (values, { setSubmitting }) => {
-    setSubmitting(false);
-    console.log(values);
-  };
-
   const getStepContent = (step) => {
     switch (step) {
       case 0:
@@ -92,25 +63,14 @@ const MultiStepForm = () => {
       case 1:
         return <Step2Form handleNext={handleNext} />;
       case 2:
-        return (
-          <Step3Form initialValues={formValues[step]} onSubmit={handleSubmit} />
-        );
+        return <Step3Form />;
       case 3:
-        return (
-          <Step4Form initialValues={formValues[step]} onSubmit={handleSubmit} />
-        );
+        return <Step4Form />;
       case 4:
-        return (
-          loanType === "business" && (
-            <Step5Form
-              initialValues={formValues[step]}
-              onSubmit={handleSubmit}
-            />
-          )
-        );
+        return loanType === "business" && <Step5Form />;
       // case 5:
       //   return (
-      //     <Step6Form initialValues={formValues[step]} onSubmit={handleSubmit} />
+      //     <Step6Form />
       //   );
       default:
         return "Unknown step";
@@ -133,36 +93,23 @@ const MultiStepForm = () => {
         >
           <Box sx={{ width: "100%" }}>
             <Box>
-              {activeStep === steps.length ? (
-                <Box>
-                  <Typography>All steps completed - you're finished</Typography>
-                  <Button onClick={handleReset}>Reset</Button>
-                </Box>
-              ) : (
-                <Box>
-                  {getStepContent(activeStep)}
-                  <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                    <Button
-                      color="inherit"
-                      disabled={activeStep === 0}
-                      onClick={handleBack}
-                      sx={{ ml: 10 }}
-                    >
-                      Back
-                    </Button>
-                    <Box sx={{ flex: "1 1 auto" }} />
-                    {activeStep < steps.length - 1 ? (
-                      <Button onClick={handleNext} sx={{ mr: 10 }}>
-                        Next
-                      </Button>
-                    ) : (
-                      <Button type="submit" variant="contained" color="primary">
-                        Submit
-                      </Button>
-                    )}
-                  </Box>
-                </Box>
-              )}
+              {getStepContent(activeStep)}
+              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                <Button
+                  color="inherit"
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  sx={{ ml: 10 }}
+                >
+                  Back
+                </Button>
+                <Box sx={{ flex: "1 1 auto" }} />
+                {activeStep < steps.length - 1 && (
+                  <Button onClick={handleNext} sx={{ mr: 10 }}>
+                    Next
+                  </Button>
+                )}
+              </Box>
             </Box>
             <Stepper activeStep={activeStep} sx={{ margin: "20px 20px" }}>
               {steps.map((label) => (
