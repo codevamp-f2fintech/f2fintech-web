@@ -1,20 +1,25 @@
-// redux/reducers/favoriteReducer.js
-// redux/reducers/favoriteReducer.js
+/**
+ * Copyright © 2024, F2FINTECH. ALL RIGHTS RESERVED.
+ *
+ * This software is the confidential information of F2FINTECH., and is licensed as
+ * restricted rights software. The use, reproduction, or disclosure of this software is subject to
+ * restrictions set forth in your license agreement with F2 FINTECH.
+ */
 
-import { ADD_FAVORITE, REMOVE_FAVORITE } from "../actions/favoriteActions";
+import { ActionTypes } from "../constants/action-types";
 
 const initialState = {
   favorites: [],
 };
 
-const favoriteReducer = (state = initialState, action) => {
+export const favoriteReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_FAVORITE:
+    case ActionTypes.ADD_FAVORITE:
       return {
         ...state,
         favorites: [...state.favorites, action.payload],
       };
-    case REMOVE_FAVORITE:
+    case ActionTypes.REMOVE_FAVORITE:
       return {
         ...state,
         favorites: state.favorites.filter((item) => item !== action.payload),
@@ -23,5 +28,3 @@ const favoriteReducer = (state = initialState, action) => {
       return state;
   }
 };
-
-export default favoriteReducer;

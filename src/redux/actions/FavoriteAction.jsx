@@ -6,10 +6,14 @@
  * restrictions set forth in your license agreement with F2 FINTECH.
  */
 
-export const ActionTypes = {
-  ADD_FAVORITE: "ADD_FAVORITE",
-  DISPLAY_TOAST: "DISPLAY_TOAST",
-  REMOVE_FAVORITE: "REMOVE_FAVORITE",
-  SET_LOAN_PROVIDERS: "SET_LOAN_PROVIDERS",
-  SET_LOAN_PRODUCTS: "SET_LOAN_PRODUCTS"
-};
+import { ActionTypes } from "../constants/action-types";
+
+export const addFavorite = (item) => ({
+  type: ActionTypes.ADD_FAVORITE,
+  payload: item,
+});
+
+export const removeFavorite = (item) => ({
+  type: ActionTypes.REMOVE_FAVORITE,
+  payload: item,
+});
