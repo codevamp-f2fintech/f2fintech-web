@@ -7,11 +7,13 @@
  */
 
 import { combineReducers } from "redux";
+import { favoriteReducer } from "./FavoriteReducer";
 import { setLoanProvidersReducer } from "./LoanProviderReducer";
 import { displayToastReducer } from "./ToastReducer";
 
 const rootReducers = combineReducers({
   allLoanProviders: setLoanProvidersReducer,
+  allFavorites: favoriteReducer,
   toastInfo: displayToastReducer,
 });
 
