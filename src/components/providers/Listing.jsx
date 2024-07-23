@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // Import useLocation and useNavigate
 import {
   Box,
@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  
+
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
@@ -159,12 +159,11 @@ const Listing = () => {
   const [filter, setFilter] = useState("interestRate");
   const [favorites, setFavorites] = useState([]);
   const [compares, setCompares] = useState([]);
-  const [showFavorites, setShowFavorites] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const loanProviders = useSelector((state) => state.allLoanProviders);
   const { getLocalStorage } = Utility();
-  const [openDialog, setOpenDialog] = useState(false); 
+  const [openDialog, setOpenDialog] = useState(false);
 
   const customer = getLocalStorage("customerInfo");
 
@@ -172,7 +171,6 @@ const Listing = () => {
 
   useEffect(() => {
     if (location.state?.showFavorites) {
-      setShowFavorites(true);
       setFavorites(location.state.favoriteItems || []);
     }
   }, [location.state]);
@@ -195,33 +193,27 @@ const Listing = () => {
       });
   }, [dispatch]);
 
- const isLoggedIn =()=> {
-  //  if(!token){
-    // navigate("/login");
-   
- }
-
   const handleFavoriteToggle = (item) => {
     if (!token) {
       // If the user is not logged in, open the login dialog
       setOpenDialog(true);
       return;
     }
-    
+
     // If the user is logged in, update the favorites
     setFavorites((prevFavorites) => {
       const updatedFavorites = prevFavorites.includes(item)
         ? prevFavorites.filter((fav) => fav !== item)
         : [...prevFavorites, item];
-      
+
       // Save the updated favorites to localStorage
       localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
       return updatedFavorites;
     });
   };
-  
-  
-  
+
+
+
   useEffect(() => {
     // Load favorites from localStorage on component mount
     const savedFavorites = JSON.parse(localStorage.getItem('favorites'));
@@ -248,10 +240,6 @@ const Listing = () => {
   const handleRemoveAll = () => {
     setCompares([]);
     handlePopoverClose();
-  };
-
-  const handleShowFavorites = () => {
-    navigate("/providers/FavouriteCard", { state: { favoriteItems: favorites } });
   };
 
   const handleProceedToCompare = () => {
@@ -301,37 +289,36 @@ const Listing = () => {
     <Container sx={{ marginTop: 4 }}>
       <Filter filter={filter} setFilter={setFilter} />
       <Button
-        // variant="contained"
-        // color="primary"
-        // onClick={handleShowFavorites}
-        // sx={{ marginBottom: 2 }}
+      // variant="contained"
+      // color="primary"
+      // onClick={handleShowFavorites}
+      // sx={{ marginBottom: 2 }}
       >
         {/* Show Favorites */}
       </Button>
       <Grid container spacing={4}>
-      <Dialog
-        open={openDialog}
-        onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Login Required"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            You must be logged in to add items to your favorites.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleLoginRedirect} color="primary" autoFocus>
-            Log In
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          open={openDialog}
+          onClose={handleDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Login Required"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              You must be logged in to add items to your favorites.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleLoginRedirect} color="primary" autoFocus>
+              Log In
+            </Button>
+          </DialogActions>
+        </Dialog>
         {getFilteredData().map((item, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
           <Grid item xs={12} sm={6} md={4} key={index}>
             <ProductCard
               title={item.title}
@@ -436,12 +423,12 @@ const Listing = () => {
             )}
           </Popover>
         </Box>
-        
+
       )}
-      
+
     </Container>
   );
-  
+
 };
 
 export default Listing;
