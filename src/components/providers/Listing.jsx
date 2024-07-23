@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // Import useLocation and useNavigate
 import {
   Box,
   Container,
@@ -13,6 +14,12 @@ import {
   MenuItem,
   IconButton,
   Popover,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
@@ -23,7 +30,7 @@ import styled from "@emotion/styled";
 import PropTypes from "prop-types";
 import API from "../../apis";
 import ButtonComp from "../common/button/Button";
-import { useNavigate } from "react-router-dom"; // Ensure this is imported for navigation
+import { Utility } from "../utility";
 
 const StyledCard = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -146,6 +153,8 @@ const Filter = ({ filter, setFilter }) => (
 );
 
 const Listing = () => {
+  const location = useLocation(); // Add this line
+  const navigate = useNavigate(); // Add this line
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("interestRate");
   const [favorites, setFavorites] = useState([]);
@@ -154,7 +163,19 @@ const Listing = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const loanProviders = useSelector((state) => state.allLoanProviders);
-  const navigate = useNavigate(); // Ensure this is used for navigation
+  const { getLocalStorage } = Utility();
+  const [openDialog, setOpenDialog] = useState(false); 
+
+  const customer = getLocalStorage("customerInfo");
+
+  const token = customer?.token;
+
+  useEffect(() => {
+    if (location.state?.showFavorites) {
+      setShowFavorites(true);
+      setFavorites(location.state.favoriteItems || []);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     API.LoanProviderAPI.getAll()
@@ -174,14 +195,40 @@ const Listing = () => {
       });
   }, [dispatch]);
 
-  const handleFavoriteToggle = (item) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(item)
-        ? prevFavorites.filter((fav) => fav !== item)
-        : [...prevFavorites, item]
-    );
-  };
+ const isLoggedIn =()=> {
+  //  if(!token){
+    // navigate("/login");
+   
+ }
 
+  const handleFavoriteToggle = (item) => {
+    if (!token) {
+      // If the user is not logged in, open the login dialog
+      setOpenDialog(true);
+      return;
+    }
+    
+    // If the user is logged in, update the favorites
+    setFavorites((prevFavorites) => {
+      const updatedFavorites = prevFavorites.includes(item)
+        ? prevFavorites.filter((fav) => fav !== item)
+        : [...prevFavorites, item];
+      
+      // Save the updated favorites to localStorage
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      return updatedFavorites;
+    });
+  };
+  
+  
+  
+  useEffect(() => {
+    // Load favorites from localStorage on component mount
+    const savedFavorites = JSON.parse(localStorage.getItem('favorites'));
+    if (savedFavorites) {
+      setFavorites(savedFavorites);
+    }
+  }, []);
   const handleCompareToggle = (item) => {
     setCompares((prevCompares) =>
       prevCompares.includes(item)
@@ -203,14 +250,15 @@ const Listing = () => {
     handlePopoverClose();
   };
 
-  const toggleShowFavorites = () => {
-    setShowFavorites(!showFavorites);
+  const handleShowFavorites = () => {
+    navigate("/providers/FavouriteCard", { state: { favoriteItems: favorites } });
   };
 
   const handleProceedToCompare = () => {
     navigate("/providers/Compare", { state: { compares } });
     handlePopoverClose();
   };
+
 
   const open = Boolean(anchorEl);
 
@@ -222,6 +270,16 @@ const Listing = () => {
       sortedData.sort((a, b) => b.rating - a.rating);
     }
     return sortedData;
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(true);
+    navigate("/FavouriteCard");
+  };
+
+  const handleLoginRedirect = () => {
+    setOpenDialog(false);
+    navigate("/login");
   };
 
   if (loading) {
@@ -242,23 +300,38 @@ const Listing = () => {
   return (
     <Container sx={{ marginTop: 4 }}>
       <Filter filter={filter} setFilter={setFilter} />
-      {/* <Button
-        variant="contained"
-        color="primary"
-        onClick={toggleShowFavorites}
-        sx={{ marginBottom: 2 }}
+      <Button
+        // variant="contained"
+        // color="primary"
+        // onClick={handleShowFavorites}
+        // sx={{ marginBottom: 2 }}
       >
-        {showFavorites ? "Hide Favorites" : "Show Favorites"}
-      </Button> */}
-      {showFavorites && (
-        <FavoriteList
-          favorites={favorites}
-          handleFavoriteToggle={handleFavoriteToggle}
-          onClick={handleFavoriteToggle}
-        />
-      )}
+        {/* Show Favorites */}
+      </Button>
       <Grid container spacing={4}>
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Login Required"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            You must be logged in to add items to your favorites.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleLoginRedirect} color="primary" autoFocus>
+            Log In
+          </Button>
+        </DialogActions>
+      </Dialog>
         {getFilteredData().map((item, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
           <Grid item xs={12} sm={6} md={4} key={index}>
             <ProductCard
               title={item.title}
@@ -297,7 +370,7 @@ const Listing = () => {
           <Popover
             open={open}
             anchorEl={anchorEl}
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            anchorOrigin={{ vertical: "top", horizontal: "left" }}
             transformOrigin={{ vertical: "bottom", horizontal: "right" }}
             onClose={handlePopoverClose}
             PaperProps={{
@@ -363,9 +436,12 @@ const Listing = () => {
             )}
           </Popover>
         </Box>
+        
       )}
+      
     </Container>
   );
+  
 };
 
 export default Listing;
