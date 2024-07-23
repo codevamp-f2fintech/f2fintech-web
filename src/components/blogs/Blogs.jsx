@@ -3,11 +3,7 @@
 
 
 const Blogs = () => {
-  return (
-    <>
-    </>
-    
-  );
+  return <></>;
 };
 
 export default Blogs;
