@@ -23,6 +23,7 @@ import styled from "@emotion/styled";
 import PropTypes from "prop-types";
 import API from "../../apis";
 import ButtonComp from "../common/button/Button";
+import { useNavigate } from "react-router-dom"; // Ensure this is imported for navigation
 
 const StyledCard = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -91,18 +92,8 @@ const ProductCard = ({
         </Typography>
         {home && (
           <>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              {text.short_description}
-            </Typography>
-            <Typography
-              variant="h6"
-              color="primary"
-              sx={{ fontWeight: "bold" }}
-            >
-              {interestRate}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              {text.long_description}
+            <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
+              Interest Rate: {interestRate}%
             </Typography>
           </>
         )}
@@ -154,35 +145,6 @@ const Filter = ({ filter, setFilter }) => (
   </Box>
 );
 
-// const FavoriteList = ({ favorites, handleFavoriteToggle }) => (
-//   <Box sx={{ marginTop: 4 }}>
-//     <Typography variant="h5" sx={{ marginBottom: 2 }}>
-//       Favorite Items
-//     </Typography>
-//     <Grid container spacing={4}>
-//       {favorites.map((item, index) => (
-//         <Grid item xs={12} sm={6} md={4} key={index}>
-//           <ProductCard
-//             title={item.title}
-//             home={item.home}
-//             homeimg={item.homeimage}
-//             interestRate={item.interest_rate}
-//             text={{
-//               description: item.description,
-//               short_description: item.short_description,
-//               long_description: item.long_description,
-//             }}
-//             isFavorite={true}
-//             handleFavoriteToggle={() => handleFavoriteToggle(item)}
-//             isCompared={false} // Assuming no comparison on favorite list
-//             handleCompareToggle={() => {}}
-//           />
-//         </Grid>
-//       ))}
-//     </Grid>
-//   </Box>
-// );
-
 const Listing = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("interestRate");
@@ -192,6 +154,7 @@ const Listing = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const loanProviders = useSelector((state) => state.allLoanProviders);
+  const navigate = useNavigate(); // Ensure this is used for navigation
 
   useEffect(() => {
     API.LoanProviderAPI.getAll()
@@ -244,12 +207,17 @@ const Listing = () => {
     setShowFavorites(!showFavorites);
   };
 
+  const handleProceedToCompare = () => {
+    navigate("/providers/Compare", { state: { compares } });
+    handlePopoverClose();
+  };
+
   const open = Boolean(anchorEl);
 
   const getFilteredData = () => {
     let sortedData = [...(loanProviders?.listData || [])];
     if (filter === "interestRate") {
-      sortedData.sort((a, b) => a.interestRate - b.interestRate);
+      sortedData.sort((a, b) => a.interest_rate - b.interest_rate);
     } else if (filter === "rating") {
       sortedData.sort((a, b) => b.rating - a.rating);
     }
@@ -291,7 +259,7 @@ const Listing = () => {
       )}
       <Grid container spacing={4}>
         {getFilteredData().map((item, index) => (
-          <Grid item xs={18} sm={6} md={4} key={index}>
+          <Grid item xs={12} sm={6} md={4} key={index}>
             <ProductCard
               title={item.title}
               home={item.home}
@@ -332,49 +300,67 @@ const Listing = () => {
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
             transformOrigin={{ vertical: "bottom", horizontal: "right" }}
             onClose={handlePopoverClose}
+            PaperProps={{
+              sx: {
+                p: 2,
+                width: 300,
+                maxWidth: "90%",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                borderRadius: "15px",
+              },
+            }}
           >
-            <Box sx={{ p: 2, maxHeight: 700, overflow: "auto" }}>
-              {compares.map((product, index) => (
-                <Box
-                  key={index}
-                  sx={{ display: "flex", alignItems: "center", mb: 2 }}
-                >
-                  <img
-                    src={product.homeimage}
-                    alt={product.title}
-                    style={{ height: 50, marginRight: 16 }}
-                  />
-                  <Typography variant="subtitle1">{product.title}</Typography>
-                  <IconButton
-                    aria-label="remove"
-                    size="small"
-                    onClick={() => handleCompareToggle(product)}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </Box>
-              ))}
-              <Box
-                sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1 }}
-              >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={handlePopoverClose}
-                >
-                  Proceed to Compare
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  onClick={handleRemoveAll}
-                >
-                  Remove All
-                </Button>
-              </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="h6">Compare Products</Typography>
+              <IconButton size="small" onClick={handlePopoverClose}>
+                <CloseIcon />
+              </IconButton>
             </Box>
+            {compares.length === 0 ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                No products selected for comparison.
+              </Typography>
+            ) : (
+              <>
+                {compares.map((item, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      mt: 2,
+                    }}
+                  >
+                    <Typography variant="body2">{item.title}</Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleCompareToggle(item)}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 2,
+                  }}
+                >
+                  <StyledButton onClick={handleRemoveAll}>
+                    Remove All
+                  </StyledButton>
+                  <StyledButton
+                    variant="contained"
+                    color="primary"
+                    onClick={handleProceedToCompare}
+                  >
+                    Compare
+                  </StyledButton>
+                </Box>
+              </>
+            )}
           </Popover>
         </Box>
       )}
