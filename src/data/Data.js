@@ -24,7 +24,7 @@ const pages = [
   
   {
     title: "Loan-Tracking",
-    href: "/loantrackingscreendesign",
+    href: "/loan-tracker",
   },
 
 ];

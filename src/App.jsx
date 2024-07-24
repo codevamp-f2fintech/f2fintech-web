@@ -21,7 +21,7 @@ import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan"
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 
 import { useMode } from "./theme";
-import LoanProviderComparisonPage from "./components/LoanProviderComparisonPage/LoanProviderComparisonPage";
+import Loan from "./components/loantrackingscreendesign/loantrackingscreendesign.jsx"; 
 
 function App() {
   const [theme] = useMode();
@@ -65,8 +65,8 @@ function App() {
             <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
-              path="/application-form"
-              element={<ApplicationForm />}
+              path="/loan-tracker" // Add the new route for Loan Tracker
+              element={<Loan />}
             />
           </Routes>
           <Footer />
