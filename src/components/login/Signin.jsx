@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 import {
   TextField,
   Button,
@@ -12,13 +12,13 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import * as Yup from "yup";
-import Toast from "../toast/Toast";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import PasswordIcon from "@mui/icons-material/Password";
-
+import * as Yup from "yup";
 import { Formik, Form } from "formik";
-import axiosClient from "../../api/apiClient";
+
+import Toast from "../toast/Toast";
+import { CustomerAPI } from "../../apis/CustomerAPI";
 import { Utility } from "../utility";
 
 const SignInSchema = Yup.object().shape({
@@ -49,25 +49,30 @@ export default function Signin({ isSignUp }) {
 
   const handleSubmit = (formData, resetForm) => {
     setLoading(true);
-    axiosClient.post("/login", JSON.stringify(formData)).then((response) => {
-      setLoading(false);
-      if (response.data.status === "Success") {
-        const customerInfo = {
-          id: response.data.data.id,
-          name: response.data.data.name,
-          token: response.data.data.token,
-        };
-        setLocalStorage("customerInfo", customerInfo);
-        toastAndNavigate(
-          dispatch,
-          true,
-          "success",
-          "Signin Successful",
-          navigateTo,
-          "/"
-        );
-      }
-    });
+    CustomerAPI.login(formData)
+      .then((response) => {
+        setLoading(false);
+        if (response.data.status === "Success") {
+          const customerInfo = {
+            id: response.data.data.id,
+            name: response.data.data.name,
+            token: response.data.data.token,
+          };
+          setLocalStorage("customerInfo", customerInfo);
+          toastAndNavigate(
+            dispatch,
+            true,
+            "success",
+            "Signin Successful",
+            navigateTo,
+            "/"
+          );
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        toastAndNavigate(dispatch, true, "error", error?.response?.data?.msg);
+      });
   };
 
   const handleForgotPassword = () => {
@@ -132,7 +137,6 @@ export default function Signin({ isSignUp }) {
         backgroundRepeat: isMobile ? "no-repeat" : isTab ? "no-repeat" : "",
 
         height: "100vh",
-        // backgroundPosition: "bottom",
         margin: "auto",
         display: "flex",
         justifyContent: "center",
