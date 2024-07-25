@@ -19,6 +19,7 @@ import ResponsiveAppBar from "./components/appBar/Appbar";
 import ResetPassword from "./components/login/Resetpassword";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
+import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
 import Loan from "./components/loantrackingscreendesign/loantrackingscreendesign.jsx"; 
@@ -57,11 +58,13 @@ function App() {
             <Route exact path="/profile" element={<Profile />} />
             <Route exact path="/providers" element={<Listing />} />
             <Route exact path="/providers/compare" element={<Compare />} />
+            
             <Route
               exact
               path="/applicationForm"
               element={<ApplicationForm />}
             />
+             <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />}/>
             <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact

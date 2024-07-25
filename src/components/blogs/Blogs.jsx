@@ -1,13 +1,9 @@
 
-import Intro from "../intro/Intro";
-// import FavoritePage from "../favourite/FavouritePage";
+
+
 
 const Blogs = () => {
-  return (
-    <>
-      <Intro />
-    {/* <FavoritePage /> */}</>
-  );
+  return <></>;
 };
 
 export default Blogs;
