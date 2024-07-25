@@ -21,10 +21,8 @@ const pages = [
     href: "/login",
   },
   {
-    
-    title: "♡" ,
-    href: "/providers/FavouriteCard",
-    
+    title: "Loan-Tracking",
+    href: "/loan-tracker",
   },
   
   
