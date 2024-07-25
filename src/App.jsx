@@ -22,7 +22,7 @@ import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
-import Loan from "./components/loantrackingscreendesign/loantrackingscreendesign.jsx"; 
+import Loan from "./components/loantracking/loantracking"; 
 
 function App() {
   const [theme] = useMode();
