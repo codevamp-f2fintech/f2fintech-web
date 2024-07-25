@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   Stepper, Step, StepLabel, Box, Typography, Paper, CssBaseline, Container,
   Grid, Divider, StepConnector
@@ -12,7 +11,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { darken } from '@mui/system';
-
+import { LoanTrackingAPI } from '../../apis/LoanTrackingAPI'; // Update the path as needed
 import stepsData from '../stepsData';
 
 const initialSteps = [
@@ -23,62 +22,6 @@ const initialSteps = [
   { label: 'approved', icon: <DoneIcon />, color: 'rgba(0, 235, 219, 0.5)' },
   { label: 'disbursed', icon: <AttachMoneyIcon />, color: 'rgba(0, 235, 219, 0.5)' },
 ];
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#278d86',
-    },
-    secondary: {
-      main: '#60b0c0',
-    },
-    background: {
-      default: '#ffffff',
-    }
-  },
-  typography: {
-    h1: {
-      fontWeight: 'bold',
-      fontSize: '2rem',
-      lineHeight: '2.5rem',
-    },
-    h2: {
-      fontWeight: 'bold',
-      fontSize: '1.75rem',
-      lineHeight: '2.25rem',
-    },
-    h3: {
-      fontWeight: 'bold',
-      fontSize: '1.5rem',
-      lineHeight: '2rem',
-    },
-    h4: {
-      fontWeight: 'bold',
-      fontSize: '1.25rem',
-      lineHeight: '1.75rem',
-    },
-    h5: {
-      fontWeight: 'bold',
-      fontSize: '1rem',
-      lineHeight: '1.5rem',
-    },
-    body1: {
-      fontSize: '1rem',
-      lineHeight: '1.5rem',
-    },
-    body2: {
-      fontSize: '0.875rem',
-      lineHeight: '1.25rem',
-    },
-    caption: {
-      fontSize: '0.75rem',
-      lineHeight: '1rem',
-    },
-    allVariants: {
-      fontFamily: 'Verdana, sans-serif',
-    },
-  },
-});
 
 const CustomConnector = styled(StepConnector)(({ theme }) => ({
   alternativeLabel: {
@@ -108,45 +51,38 @@ const Loan = () => {
   const [loanData, setLoanData] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/v1/get-loan-tracking')
-      .then(response => {
+    const fetchLoanTracking = async () => {
+      try {
+        const response = await LoanTrackingAPI.getLoanTracking();
         const { data } = response;
         console.log('Fetched loan tracking data:', data);
 
-        if (data && data.data && data.data.rows && data.data.rows.length > 0) {
-          const loanStatus = data.data.rows[0].status;
-          if (loanStatus) {
-            const statusIndex = initialSteps.findIndex(step => step.label === loanStatus);
-            if (statusIndex !== -1) {
-              setActiveStep(statusIndex);
+        if (data?.data?.rows?.length > 0) {
+          const { status } = data.data.rows[0];
+          const statusIndex = initialSteps.findIndex(step => step.label === status);
 
-              const updatedSteps = initialSteps.map((step, index) => {
-                if (index === statusIndex) {
-                  return { ...step, color: 'rgba(189, 113, 236, 0.5)' };
-                }
-                return step;
-              });
-
-              setSteps(updatedSteps);
-            } else {
-              console.error('Invalid status:', loanStatus);
-            }
+          if (statusIndex !== -1) {
+            setActiveStep(statusIndex);
+            const updatedSteps = initialSteps.map((step, index) => 
+              index === statusIndex ? { ...step, color: 'rgba(189, 113, 236, 0.5)' } : step
+            );
+            setSteps(updatedSteps);
           } else {
-            console.error('Status not found in data:', data.data.rows[0]);
+            console.error('Invalid status:', status);
           }
+          setLoanData(data.data.rows[0]);
         } else {
           console.error('Invalid data format:', data);
         }
-        setLoanData(data);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching loan tracking data:', error);
-      });
+      }
+    };
+
+    fetchLoanTracking();
   }, []);
 
-  const getBackgroundColor = (color) => {
-    return darken(color, 0.6);
-  };
+  const getBackgroundColor = (color) => darken(color, 0.6);
 
   const currentStepData = stepsData[activeStep];
 
@@ -160,7 +96,7 @@ const Loan = () => {
         height: "100vh",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "100%",
+        width: "90%",
         padding: "0",
         margin: "0",
         background: 'white',
@@ -181,10 +117,10 @@ const Loan = () => {
           padding: 3, 
           borderRadius: '0px 0px', 
           boxShadow: '0px 0px 10px rgba(10, 212, 54, 0.1)',
-          height: '100vh',
+          height: '90vh',
         }}>
-          <Typography variant="h2" sx={{ mb: 2, color: 'blue', textAlign: 'center', fontWeight: 'bold', }}>Welcome to Loan Tracker</Typography>
-          <Divider sx={{ borderColor: '', mt: 2, mb: 2 }} />
+          <Typography variant="h2" sx={{ mb: 2, color: 'blue', textAlign: 'center', fontWeight: 'bold' }}>Welcome to Loan Tracker</Typography>
+          <Divider sx={{ mt: 2, mb: 2 }} />
           <Box sx={{ marginTop: 3 }}>
             <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#4553c2', mb: 2, textAlign: 'center' }}>All Steps</Typography>
             {steps.map((step, index) => (
@@ -199,7 +135,7 @@ const Loan = () => {
                     borderRadius: '100%',
                     border: '1px solid #9999ff',
                     backgroundColor: activeStep === index ? getBackgroundColor(step.color) : step.color,
-                    color: '#e3e3ec',
+                    color: '#1b1bb6',
                     marginRight: 2,
                     transition: "background-color 0.3s ease, color 0.3s ease",
                     '&:hover': {
@@ -211,9 +147,6 @@ const Loan = () => {
                   </Box>
                   <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(100% - 48px)' }}>
                     <Typography variant="body1" color="black">{step.label}</Typography>
-                    <Typography variant="caption" sx={{ display: 'inline', fontFamily: 'cheesy', fontWeight: 'bold', fontSize: '1.2rem' }} color={step.status === 'Completed' ? 'black' : step.status === 'In Progress' ? 'black' : 'black'}>
-                      {step.status}
-                    </Typography>
                   </Box>
                 </Box>
                 {index < steps.length - 1 && <Divider sx={{ marginLeft: 7, marginTop: -1, marginBottom: 1 }} />}
@@ -230,7 +163,6 @@ const Loan = () => {
         width: '90%',
         height: '100vh',
         background: "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
-        borderRadius: "",
         padding: "30px",
         boxSizing: 'border-box',
       }}>
@@ -249,7 +181,7 @@ const Loan = () => {
                       justifyContent: 'center',
                       width: 50,
                       height: 50,
-                      marginTop: -1, // Adjust this value to move the circle upward
+                      marginTop: -1,
                       borderRadius: '100%',
                       border: '1px solid #60b0c0',
                       backgroundColor: activeStep === index ? getBackgroundColor(step.color) : step.color,
@@ -267,9 +199,6 @@ const Loan = () => {
                 >
                   <Typography variant="caption" sx={{ fontFamily: 'Verdana, sans-serif', fontWeight: 'bold', fontSize: '1.2rem' }} color="#278d86">{`STEP ${index + 1}`}</Typography>
                   <Typography variant="body2" sx={{ fontFamily: 'Verdana, sans-serif', fontWeight: 'normal', fontSize: '1rem' }} color="#278d86">{step.label}</Typography>
-                  <Typography variant="caption" sx={{ display: 'inline', fontFamily: 'cheesy', fontWeight: 'bold', fontSize: '1.2rem' }} color={step.status === 'Completed' ? 'black' : step.status === 'In Progress' ? '#006400' : 'black'}>
-                    {step.status}
-                  </Typography>
                 </StepLabel>
               </Step>
             ))}
@@ -321,15 +250,4 @@ const Loan = () => {
   );
 };
 
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Container maxWidth={false} sx={{ padding: '0px', margin: '0px' }}>
-        <Loan />
-      </Container>
-    </ThemeProvider>
-  );
-}
-
-export default App;
+export default Loan;
