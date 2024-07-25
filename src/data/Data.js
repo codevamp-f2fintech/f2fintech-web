@@ -11,22 +11,21 @@ const pages = [
     title: "Providers",
     href: "/providers",
   },
-  // {
-  //   title: "Compare",
-  //   href: "/providers/compare",
-  // },
+  {
+    title: "Compare",
+    href: "/providers/compare",
+  },
 
   {
     title: "Login",
     href: "/login",
   },
-
-  
   {
     title: "Loan-Tracking",
-    href: "/loantrackingscreendesign",
+    href: "/loan-tracker",
   },
-
+  
+  
 ];
 
 const products = [

@@ -24,6 +24,19 @@ export const CustomerAPI = {
   },
   /** Login customer
    */
+
+  /** Register customer */
+  register: async (registerInfo, cancel = false) => {
+    return await axiosInstance.request({
+      url: `/create-customer`,
+      method: "POST",
+      data: registerInfo,
+      signal: cancel
+        ? cancelApiObject[this.register.name].handleRequestCancellation().signal
+        : undefined,
+    });
+  },
+
   getCustomerProfile: async (customerId, cancel = false) => {
     return await axiosInstance.request({
       url: `/get-customer-profile/${customerId}`,

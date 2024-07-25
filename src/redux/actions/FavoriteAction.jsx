@@ -6,12 +6,14 @@
  * restrictions set forth in your license agreement with F2 FINTECH.
  */
 
-import { CustomerAPI } from "./CustomerAPI";
-import { CustomerInfoAPI } from "./CustomerInfoAPI";
-import { LoanProviderAPI } from "./LoanProviderAPI";
+import { ActionTypes } from "../constants/action-types";
 
-export default {
-  CustomerAPI,
-  CustomerInfoAPI,
-  LoanProviderAPI,
-};
+export const addFavorite = (item) => ({
+  type: ActionTypes.ADD_FAVORITE,
+  payload: item,
+});
+
+export const removeFavorite = (item) => ({
+  type: ActionTypes.REMOVE_FAVORITE,
+  payload: item,
+});

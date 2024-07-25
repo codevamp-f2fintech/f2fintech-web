@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 import { Formik, Form } from "formik";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -21,6 +20,7 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import applicationValidation from "./applicationValidation";
+import API from "../../apis";
 
 const StyledFormControlLabel = styled((props) => (
   <FormControlLabel {...props} />
@@ -48,40 +48,19 @@ MyFormControlLabel.propTypes = {
 
 const initialValues = {
   name: "",
-  number: "",
   email: "",
-  pincode: "",
+  contact: "",
+  status: "active",
   pan: "",
-  gst: "",
+  gst_number: "",
+  bank_ac_type: "",
+  zipcode: "",
+
   company_name: "",
   entity_type: "",
-  bank_account_type: "",
   industry_type: "",
   sub_industry_type: "",
   refrrel_id: "",
-};
-
-const sendFormDataToAPI = async (formData) => {
-  try {
-    const response = await fetch(
-      "http://localhost:8080/api/v1/create-customer-info",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    console.log("Data stored in the database:", data);
-    return data;
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
 };
 
 const Step1Form = ({ handleNext, loanType, setLoanType }) => {
@@ -97,6 +76,40 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
   const handleCompanyNameOptionChange = (event) => {
     setCompanyNameOption(event.target.value);
   };
+
+  const create = useCallback((values) => {
+    //object and array destructing , spread and rest operator , object assignment
+    const { contact, email, name, status, ...restValues } = values;
+    const customer = {
+      contact,
+      email,
+      name,
+      status,
+    };
+    console.log("these are form values=>", customer, restValues);
+    API.CustomerAPI.register(customer)
+      .then(({ data: res }) => {
+        if (res.status === "Success") {
+          const customerInfo = {
+            customer_id: res.data.id,
+            ...restValues,
+          };
+          // console.log("here it is", customerInfo);
+          API.CustomerInfoAPI.create(customerInfo)
+            .then((res) => {
+              // console.log("final boss", res);
+            })
+            .catch((err) => {
+              console.log("Error in Customer Info API", err);
+            });
+        } else {
+          console.error("Registration failed");
+        }
+      })
+      .catch((err) => {
+        console.error("Error during registration:", err);
+      });
+  }, []);
 
   const MyFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
     margin: theme.spacing(1),
@@ -121,15 +134,17 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
     <>
       <Formik
         initialValues={initialValues}
-        validationSchema={applicationValidation}
+        onSubmit={(values) => create(values)}
       >
         {({
+          dirty,
+          errors,
+          touched,
           values,
+          isSubmitting,
           handleChange,
           handleBlur,
           handleSubmit,
-          errors,
-          touched,
         }) => (
           <Form onSubmit={handleSubmit}>
             <Container
@@ -199,13 +214,13 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                 <TextField
                   type="number"
                   variant="filled"
-                  name="number"
-                  label="Number"
-                  value={values.number}
+                  name="contact"
+                  label="contact"
+                  value={values.contact}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.number && Boolean(errors.number)}
-                  helperText={touched.number && errors.number}
+                  error={touched.contact && Boolean(errors.contact)}
+                  helperText={touched.contact && errors.contact}
                   sx={{
                     width: "75%",
                     height: "50px",
@@ -237,13 +252,13 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                 />
                 <TextField
                   variant="filled"
-                  name="pincode"
-                  label="Pincode"
-                  value={values.pincode}
+                  name="zipcode"
+                  label="zipcode"
+                  value={values.zipcode}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.pincode && Boolean(errors.pincode)}
-                  helperText={touched.pincode && errors.pincode}
+                  error={touched.zipcode && Boolean(errors.zipcode)}
+                  helperText={touched.zipcode && errors.zipcode}
                   sx={{
                     width: "75%",
                     height: "50px",
@@ -394,8 +409,8 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                   <InputLabel>Bank Account Type</InputLabel>
                   <Select
                     variant="filled"
-                    name="bank_account_type"
-                    value={values.bank_account_type}
+                    name="bank_ac_type"
+                    value={values.bank_ac_type}
                     onChange={handleChange}
                     onBlur={handleBlur}
                   >
@@ -426,13 +441,13 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                 {doYouHaveGSTRegistration && (
                   <TextField
                     variant="filled"
-                    name="gst"
-                    label="GST"
-                    value={values.gst}
+                    name="gst_number"
+                    label="GST Number"
+                    value={values.gst_number}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.gst && Boolean(errors.gst)}
-                    helperText={touched.gst && errors.gst}
+                    error={touched.gst_number && Boolean(errors.gst_number)}
+                    helperText={touched.gst_number && errors.gst_number}
                     sx={{
                       width: "75%",
                       height: "50px",
@@ -534,10 +549,10 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                 </FormGroup>
 
                 <Button
-                  variant="contained"
                   color="primary"
-                  type="button"
-                  onClick={() => sendFormDataToAPI(values)}
+                  disabled={!dirty}
+                  type="submit"
+                  variant="contained"
                   sx={{
                     color: "white",
                     fontWeight: "500",

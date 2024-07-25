@@ -2,6 +2,7 @@ import { Button, Box, Typography, useMediaQuery } from "@mui/material";
 
 export default function Transition({ isSignUp, setIsSignUp }) {
   const isMobile = useMediaQuery("(max-width:480px)");
+  const isTab = useMediaQuery("(max-width:820px)");
 
   return (
     <Box
@@ -14,6 +15,7 @@ export default function Transition({ isSignUp, setIsSignUp }) {
         background: isMobile
           ? "transparent"
           : "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
+        backgroundSize: isMobile ? "cover" : "",
         color: "white",
         zIndex: 2,
         position: "absolute",
