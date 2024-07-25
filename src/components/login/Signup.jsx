@@ -118,6 +118,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           md: "30% 0% 0% 30%", // For medium screens and above
         },
         height: "100vh",
+
         backgroundPosition: isMobile ? "right" : "top",
         margin: "auto",
         display: "flex",

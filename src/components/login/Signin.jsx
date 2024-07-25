@@ -49,25 +49,48 @@ export default function Signin({ isSignUp }) {
 
   const handleSubmit = (formData, resetForm) => {
     setLoading(true);
-    axiosClient.post("/login", JSON.stringify(formData)).then((response) => {
-      setLoading(false);
-      if (response.data.status === "Success") {
-        const customerInfo = {
-          id: response.data.data.id,
-          name: response.data.data.name,
-          token: response.data.data.token,
-        };
-        setLocalStorage("customerInfo", customerInfo);
-        toastAndNavigate(
-          dispatch,
-          true,
-          "success",
-          "Signin Successful",
-          navigateTo,
-          "/"
-        );
-      }
-    });
+    axiosClient
+      .post("/login", JSON.stringify(formData))
+      .then((response) => {
+        setLoading(false);
+        if (response.data.status === "Success") {
+          const customerInfo = {
+            id: response.data.data.id,
+            name: response.data.data.name,
+            token: response.data.data.token,
+          };
+          setLocalStorage("customerInfo", customerInfo);
+          toastAndNavigate(
+            dispatch,
+            true,
+            "success",
+            "Signin Successful",
+            navigateTo,
+            "/"
+          );
+        } else {
+          dispatch({
+            type: "SHOW_TOAST",
+            payload: {
+              toastAlert: true,
+              toastMessage: "Invalid contact number or password",
+              toastSeverity: "error",
+            },
+          });
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        dispatch({
+          type: "SHOW_TOAST",
+          payload: {
+            toastAlert: true,
+            toastMessage: "An error occurred. Please try again.",
+            toastSeverity: "error",
+          },
+        });
+        console.error("Signin error", error);
+      });
   };
 
   const handleForgotPassword = () => {
