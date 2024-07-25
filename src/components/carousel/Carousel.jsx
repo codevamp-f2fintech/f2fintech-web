@@ -1,7 +1,9 @@
 import { Box } from "@mui/material";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import Marquee from "react-fast-marquee";
+
 import "./Carousel.css";
+
 function Carousel() {
   return (
     <Box

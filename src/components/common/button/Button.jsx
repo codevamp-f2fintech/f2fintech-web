@@ -1,4 +1,6 @@
 import { Box, Button } from "@mui/material";
+import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 
 export default function ButtonComp(props) {
   return (
@@ -21,8 +23,18 @@ export default function ButtonComp(props) {
           lineHeight: "1.5rem",
         }}
       >
-        {props.title}
+        <Link
+          to="/application-form"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          Apply Now
+        </Link>
       </Button>
     </Box>
   );
 }
+
+ButtonComp.propTypes = {
+  title: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
+};
