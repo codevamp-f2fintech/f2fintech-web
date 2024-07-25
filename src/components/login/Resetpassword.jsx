@@ -8,6 +8,7 @@ import {
   Alert,
   InputAdornment,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
@@ -35,8 +36,11 @@ export default function ResetPassword() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [open, setOpen] = useState(false); //
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width:480px)");
+  const isTab = useMediaQuery("(max-width:1200px)");
+  const isIpad = useMediaQuery("(max-width: 1400)");
 
   const formik = useFormik({
     initialValues: {
@@ -50,10 +54,8 @@ export default function ResetPassword() {
       setSuccess(null);
 
       const customerInfo = localStorage.getItem("customerInfo");
-
       const customerId = JSON.parse(customerInfo).id;
 
-      // console.log("customerId", JSON.parse(customerInfo), customerId);
       try {
         const response = await fetch(
           "http://localhost:8080/api/v1/reset-password",
@@ -71,8 +73,6 @@ export default function ResetPassword() {
         );
 
         const result = await response.json();
-        console.log("result", result, "res>>", response);
-
         if (response.ok) {
           setSuccess(result.message);
           setOpen(true);
@@ -87,7 +87,6 @@ export default function ResetPassword() {
       }
     },
   });
-  //
 
   const handleClickShowPassword = (field) => {
     switch (field) {
@@ -104,16 +103,22 @@ export default function ResetPassword() {
         break;
     }
   };
+
   const handleClose = () => {
-    setOpen(false); // Function to close the toast
-    resetForm();
+    setOpen(false);
+    formik.resetForm();
   };
 
   return (
     <Container
       maxWidth={false}
       sx={{
-        height: "90vh",
+        height: {
+          xs: "70vh", // For extra small screens
+          sm: "60vh", // For small screens
+          md: "70vh", // For medium screens
+          lg: "90vh", // For large screens and above
+        },
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -130,15 +135,29 @@ export default function ResetPassword() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          marginLeft: "100vh",
-          height: "70vh",
-          width: "100vh",
+          // border: "2px solid",
+          width: {
+            xs: "90%", // For extra small screens
+            sm: "75%", // For small screens
+            md: "60%", // For medium screens
+            lg: "50%", // For large screens and above
+          },
+          height: {
+            xs: "auto",
+            md: "70vh",
+          },
+          marginTop: isMobile ? "10vh" : "",
+          marginLeft: isMobile ? "" : isTab ? "" : "100vh",
         }}
       >
         <Typography
           variant="h4"
           sx={{
-            fontSize: "3vw",
+            fontSize: {
+              xs: "7vw", // For extra small screens
+              sm: "4vw", // For small screens
+              md: "3vw", // For medium screens and above
+            },
             fontWeight: "700",
             fontFamily: "verdana",
             textAlign: "center",
@@ -155,7 +174,8 @@ export default function ResetPassword() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 3,
+            justifyContent: "center",
+            gap: isMobile ? 2 : 3,
             width: "100%",
             maxWidth: 400,
           }}
@@ -173,10 +193,13 @@ export default function ResetPassword() {
             InputProps={{
               disableUnderline: true,
               sx: {
-                width: "25rem",
+                width: "100%",
                 borderRadius: "20px",
                 backgroundColor: "darkGray",
-                fontSize: "1vw",
+                fontSize: {
+                  xs: "3vw", // For extra small screens
+                  md: "1vw", // For medium screens and above
+                },
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -212,10 +235,13 @@ export default function ResetPassword() {
             InputProps={{
               disableUnderline: true,
               sx: {
-                width: "25rem",
+                width: "100%",
                 borderRadius: "20px",
                 backgroundColor: "darkGray",
-                fontSize: "1vw",
+                fontSize: {
+                  xs: "3vw", // For extra small screens
+                  md: "1vw", // For medium screens and above
+                },
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -248,10 +274,13 @@ export default function ResetPassword() {
             InputProps={{
               disableUnderline: true,
               sx: {
-                width: "25rem",
+                width: "100%",
                 borderRadius: "20px",
                 backgroundColor: "darkGray",
-                fontSize: "1vw",
+                fontSize: {
+                  xs: "3vw", // For extra small screens
+                  md: "1vw", // For medium screens and above
+                },
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -286,10 +315,25 @@ export default function ResetPassword() {
               alignItems: "center",
               color: "white",
               fontWeight: "500",
-              fontSize: "1rem",
+              fontSize: {
+                xs: "4vw", // For extra small screens
+                sm: "2vw", // For small screens
+                md: "1rem", // For medium screens
+                lg: "1rem", //For large screens
+              },
               lineHeight: "1.5rem",
-              width: "30vh",
-              height: "5.5vh",
+              width: {
+                xs: "15vh", // For extra small screens
+                sm: "10vh", // For small screens
+                md: " 10vh", // For medium screens
+                lg: "15vh", // For Large screens
+              },
+              height: {
+                xs: "4vh", // For extra small screens
+                sm: "4vh", // For small screen
+                md: "3vh", // For medium screens
+                lg: "5.5vh", // For Large screens
+              },
               borderRadius: "20px",
             }}
           >

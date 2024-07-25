@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   Box,
   Card,
@@ -46,8 +45,8 @@ export default function Profile() {
   const toastInfo = useSelector((state) => state.toastInfo);
   const { getLocalStorage, toastAndNavigate } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
-  const isMobile = useMediaQuery("(max-width:480px)");
-  const isTab = useMediaQuery("(max-width:820px)");
+  const isMobile = useMediaQuery("(max-width:900px)");
+  const isTab = useMediaQuery("(max-width:1200px)");
 
   useEffect(() => {
     setLoading(true);
@@ -149,10 +148,11 @@ export default function Profile() {
       >
         <Box
           sx={{
-            display: "flex",
-            position: "absolute",
-            // top: "25.5vh",
-            // left: "50vh",
+            display: isMobile ? "block" : isTab ? "block" : "flex",
+            justifyContent: isMobile ? "normal" : isTab ? "normal" : "flex-end",
+            marginRight: isMobile ? "0vh" : "7vh",
+            // position: isMobile ? "false" : "absolute",
+            // border: "2px solid",
           }}
         >
           <Box
@@ -161,7 +161,8 @@ export default function Profile() {
               textAlign: "center",
               justifyContent: "center",
               alignItems: "center",
-              marginLeft: "12vh",
+              marginLeft: isMobile ? "0vh" : "0vh",
+              // border: "2px solid",
             }}
           >
             <Formik
@@ -179,13 +180,11 @@ export default function Profile() {
             >
               {({ values, handleChange, errors, touched }) => (
                 <Form
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
-                    // gap: 10,
-                  }}
+                // style={{
+                //   display: "flex",
+                //   justifyContent: "center",
+                //   alignItems: "center",
+                // }}
                 >
                   {editMode ? (
                     <>
@@ -193,20 +192,31 @@ export default function Profile() {
                         sx={{
                           display: "flex",
                           flexDirection: "column",
-                          justifyContent: "center",
-                          // alignItems: "center",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                           textAlign: "center",
+                          width: isMobile ? "36vh" : isTab ? "36vh" : "100%",
                           gap: 2,
-                          marginLeft: "92vh",
-                          // border: "2px solid ",
+                          marginTop: isMobile ? "14vh" : isTab ? "33vh" : "3vh",
+                          marginLeft: isMobile ? "" : isTab ? "7vh" : "",
+
+                          // border: "2px solid",
                         }}
                       >
                         <Typography
                           sx={{
                             fontFamily: "monospace",
-                            fontSize: "3vw",
-                            fontWeight: "500",
-                            marginRight: "50vh",
+                            fontSize: isMobile
+                              ? "8vw"
+                              : isTab
+                              ? "5vw"
+                              : "2.5vw",
+                            fontWeight: "300",
+                            marginRight: isMobile
+                              ? "23vh"
+                              : isTab
+                              ? "27vh"
+                              : "50vh",
                           }}
                         >
                           Edit
@@ -216,7 +226,7 @@ export default function Profile() {
                           name="name"
                           label="Name"
                           autoComplete="off"
-                          fullWidth
+                          // fullWidth
                           onChange={handleChange}
                           value={values.name}
                           InputProps={{
@@ -226,14 +236,18 @@ export default function Profile() {
                               </InputAdornment>
                             ),
                             sx: {
-                              width: "25rem",
+                              width: isMobile
+                                ? "15rem"
+                                : isTab
+                                ? "35rem"
+                                : "25rem",
                               borderRadius: "20px",
-                              fontSize: "1.2vw",
+                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               backgroundColor: "darkGray",
                             },
                           }}
                           InputLabelProps={{
-                            style: { color: "black" }, // Change the color to your desired color
+                            style: { color: "black", fontSize: "1rem" }, // Change the color to your desired color
                           }}
                           error={touched.name && !!errors.name}
                           helperText={touched.name && errors.name}
@@ -243,7 +257,7 @@ export default function Profile() {
                           name="email"
                           label="Email"
                           autoComplete="off"
-                          fullWidth
+                          // fullWidth
                           onChange={handleChange}
                           value={values.email}
                           InputProps={{
@@ -253,46 +267,62 @@ export default function Profile() {
                               </InputAdornment>
                             ),
                             sx: {
-                              width: "25rem",
+                              width: isMobile
+                                ? "15rem"
+                                : isTab
+                                ? "35rem"
+                                : "25rem",
                               borderRadius: "20px",
-                              fontSize: "1.2vw",
+                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               backgroundColor: "darkGray",
                             },
                           }}
                           InputLabelProps={{
-                            style: { color: "black" }, // Change the color to your desired color
+                            style: { color: "black", fontSize: "1rem" }, // Change the color to your desired color
                           }}
                           error={touched.email && !!errors.email}
                           helperText={touched.email && errors.email}
                         />
                         <FormControl
                           sx={{
-                            width: "25rem",
+                            width: isMobile
+                              ? "15rem"
+                              : isTab
+                              ? "35rem"
+                              : "25rem",
                             borderRadius: "20px",
                             backgroundColor: "darkGray",
+                            fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                           }}
                         >
-                          <InputLabel sx={{ color: "black" }}>
+                          <InputLabel
+                            sx={{
+                              color: "black",
+                              fontSize: "1rem",
+                            }}
+                          >
                             Gender
                           </InputLabel>
                           <Field
                             as={Select}
                             name="gender"
-                            fullWidth
+                            fullWidth={isMobile ? false : true}
                             onChange={handleChange}
                             value={values.gender}
                             disableUnderline
                             sx={{
-                              width: "25rem",
+                              width: isMobile
+                                ? "15rem"
+                                : isTab
+                                ? "35rem"
+                                : "25rem",
                               borderRadius: "20px",
-                              fontSize: "1vw",
+                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                             }}
                             error={touched.gender && !!errors.gender}
                             helperText={touched.gender && errors.gender}
                           >
-                            <MenuItem sx={{}} value="male">
-                              Male
-                            </MenuItem>
+                            <MenuItem value="male">Male</MenuItem>
                             <MenuItem value="female">Female</MenuItem>
                             <MenuItem value="other">Other</MenuItem>
                           </Field>
@@ -301,7 +331,8 @@ export default function Profile() {
                           as={TextField}
                           name="contact"
                           label="Contact"
-                          fullWidth
+                          autoComplete="off"
+                          // fullWidth
                           onChange={handleChange}
                           value={values.contact}
                           InputProps={{
@@ -311,61 +342,67 @@ export default function Profile() {
                               </InputAdornment>
                             ),
                             sx: {
-                              width: "25rem",
+                              width: isMobile
+                                ? "15rem"
+                                : isTab
+                                ? "35rem"
+                                : "25rem",
                               borderRadius: "20px",
-                              fontSize: "1.2vw",
+                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               backgroundColor: "darkGray",
                             },
                           }}
                           InputLabelProps={{
-                            style: { color: "black" }, // Change the color to your desired color
+                            style: { color: "black", fontSize: "1rem" }, // Change the color to your desired color
                           }}
                           error={touched.contact && !!errors.contact}
                           helperText={touched.contact && errors.contact}
                         />
-
                         <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            width: "25rem",
-                            mt: 2,
-                            position: "absolute",
-                            top: "59vh",
-                          }}
+                          display="flex"
+                          gap={5}
+                          alignItems="center"
+                          // justifyContent="center"
                         >
                           <Button
+                            variant="contained"
                             sx={{
-                              width: "10rem",
-                              height: "5.5vh",
-                              fontSize: "1vw",
-                              borderRadius: "20px",
-                              boxShadow:
-                                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-                              ":hover": {
-                                transform: "scale(1.1)",
-                                transition: "all 300ms ease-in-out",
+                              width: isMobile
+                                ? "5rem"
+                                : isTab
+                                ? "7rem"
+                                : "8rem",
+
+                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
+                              borderRadius: "30px",
+                              color: "black",
+                              backgroundColor: "white",
+                              "&:hover": {
+                                backgroundColor: "green",
+                                color: "white",
                               },
                             }}
-                            variant="contained"
                             type="submit"
                           >
                             Save
                           </Button>
                           <Button
+                            variant="contained"
                             sx={{
-                              width: "10rem",
-                              borderRadius: "20px",
-                              height: "5.5vh",
-                              fontSize: "1vw",
-                              boxShadow:
-                                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-                              ":hover": {
-                                transform: "scale(1.1)",
-                                transition: "all 300ms ease-in-out",
+                              width: isMobile
+                                ? "5rem"
+                                : isTab
+                                ? "7rem"
+                                : "8rem",
+                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
+                              borderRadius: "30px",
+                              color: "black",
+                              backgroundColor: "white",
+                              "&:hover": {
+                                backgroundColor: "red",
+                                color: "white",
                               },
                             }}
-                            variant="contained"
                             onClick={() => setEditMode(false)}
                           >
                             Cancel
@@ -375,127 +412,140 @@ export default function Profile() {
                     </>
                   ) : (
                     <>
-                      <Container>
-                        <Box>
-                          <Avatar
-                            sx={{
-                              width: "30vh",
-                              height: "30vh",
-                              fontSize: "5vw",
-                              marginLeft: "54vh",
-                              position: "absolute",
-                              marginTop: "-7vh",
-                              boxShadow:
-                                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-                              ":hover": {
-                                transform: "scale(1.1)",
-                                transition: "all 300ms ease-in-out",
-                              },
-                            }}
-                            alt={values.name}
-                            src="/"
-                          />
-                        </Box>
+                      <Box>
+                        <Avatar
+                          sx={{
+                            width: isMobile ? "15vh" : isTab ? "20vh" : "30vh",
+                            height: isMobile ? "15vh" : isTab ? "20vh" : "30vh",
+                            fontSize: isMobile ? "10vw" : isTab ? "7vw" : "5vw",
+                            marginLeft: isMobile
+                              ? "-7vh"
+                              : isTab
+                              ? "24vh"
+                              : "-6vh",
+                            position: "absolute",
+                            marginTop: "-7vh",
+                            boxShadow:
+                              "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
+                            ":hover": {
+                              transform: "scale(1.1)",
+                              transition: "all 300ms ease-in-out",
+                            },
+                          }}
+                          alt={values.name}
+                          src="/"
+                        />
+                      </Box>
+                      <Container
+                        sx={{
+                          width: isMobile ? "27vh" : isTab ? "60vh" : "100vh",
+                          height: isMobile ? "45vh" : isTab ? "50vh" : "40vh",
+                        }}
+                      >
                         <Box
                           sx={{
-                            width: "80vh",
-                            height: "40vh",
+                            width: isMobile
+                              ? "40vh"
+                              : isTab
+                              ? "100vh"
+                              : "100vh",
+                            height: isMobile ? "30vh" : isTab ? "40vh" : "40vh",
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             alignItems: "center",
-                            // textAlign: "center",
                             gap: 2,
-                            marginTop: "20vh",
-                            marginLeft: "75vh",
+                            marginTop: isMobile
+                              ? "32vh"
+                              : isTab
+                              ? "30vh"
+                              : "18vh",
+                            marginLeft: isMobile
+                              ? "-9vh"
+                              : isTab
+                              ? "7vh"
+                              : "30vh",
                             // border: "2px solid",
                           }}
                         >
                           <Typography
-                            variant="h4"
                             sx={{
                               fontFamily: "monospace",
-                              fontSize: "2vw",
-                              borderRadius: "10%",
-                              ":hover": {
-                                transform: "scale(1.1)",
-                                background: "white",
-                                transition: "all 300ms ease-in-out",
+                              fontSize: isMobile
+                                ? "5vw"
+                                : isTab
+                                ? "4vw"
+                                : "2vw",
+                              fontWeight: "500",
+                              marginRight: {
+                                xs: "0vh", // Adjust margin for extra small screens
+                                md: "50vh", // Adjust margin for medium screens and above
                               },
                             }}
                           >
                             {userData?.name}
                           </Typography>
-                          {!userData?.email ? (
-                            <Box color="transparent">------</Box>
-                          ) : (
-                            <Typography
-                              variant="h6"
-                              sx={{
-                                color: "black",
-                                fontSize: "1.2vw",
-                                borderRadius: "10%",
-                                ":hover": {
-                                  transform: "scale(1.1)",
-                                  background: "white",
-                                  transition: "all 300ms ease-in-out",
-                                },
-                              }}
-                            >
-                              {userData?.email}
-                            </Typography>
-                          )}
                           <Typography
-                            variant="h6"
                             sx={{
-                              color: "black",
-                              fontSize: "1.2vw",
-                              borderRadius: "10%",
-                              ":hover": {
-                                transform: "scale(1.1)",
-                                background: "white",
-                                transition: "all 300ms ease-in-out",
+                              fontFamily: "monospace",
+                              fontSize: isMobile
+                                ? "4vw"
+                                : isTab
+                                ? "4vw"
+                                : "1.5vw",
+                              fontWeight: "400",
+                              marginRight: {
+                                xs: "0vh", // Adjust margin for extra small screens
+                                md: "50vh", // Adjust margin for medium screens and above
+                              },
+                            }}
+                          >
+                            {userData?.email}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontFamily: "monospace",
+                              fontSize: isMobile
+                                ? "4vw"
+                                : isTab
+                                ? "4vw"
+                                : "1.5vw",
+                              fontWeight: "400",
+                              marginRight: {
+                                xs: "0vh", // Adjust margin for extra small screens
+                                md: "50vh", // Adjust margin for medium screens and above
                               },
                             }}
                           >
                             {userData?.contact}
                           </Typography>
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              color: "black",
-                              fontSize: "1.2vw",
-                              borderRadius: "10%",
-                              ":hover": {
-                                transform: "scale(1.1)",
-                                background: "white",
-                                transition: "all 300ms ease-in-out",
-                              },
-                            }}
-                          >
-                            {userData?.gender}
-                          </Typography>
                           <Button
-                            type="button"
                             variant="contained"
                             sx={{
-                              mt: 3,
-                              width: "20vh",
-                              height: "5.5vh",
-                              borderRadius: "20px",
-                              fontSize: "1vw",
-                              position: "absolute",
-                              top: "58vh",
-                              boxShadow:
-                                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-                              ":hover": {
-                                transform: "scale(1.1)",
-                                transition: "all 300ms ease-in-out",
+                              width: isMobile
+                                ? "5rem"
+                                : isTab
+                                ? "7rem"
+                                : "8rem",
+                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
+
+                              borderRadius: "30px",
+                              color: "black",
+                              backgroundColor: "white",
+                              marginRight: isMobile
+                                ? "0vh"
+                                : isTab
+                                ? "50vh"
+                                : "",
+                              "&:hover": {
+                                backgroundColor: "blue",
+                                color: "white",
                               },
+                              mt: 2,
                             }}
                             onClick={() => setEditMode(true)}
                           >
-                            Edit Profile
+                            Edit
                           </Button>
                         </Box>
                       </Container>
@@ -508,10 +558,9 @@ export default function Profile() {
         </Box>
       </Card>
       <Toast
-        alerting={toastInfo.toastAlert}
-        message={toastInfo.toastMessage}
-        severity={toastInfo.toastSeverity}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        message="Profile updated successfully!"
+        severity="success"
       />
     </Container>
   );
