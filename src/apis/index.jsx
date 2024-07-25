@@ -9,9 +9,11 @@
 import { CustomerAPI } from "./CustomerAPI";
 import { CustomerInfoAPI } from "./CustomerInfoAPI";
 import { LoanProviderAPI } from "./LoanProviderAPI";
+import { LoanTrackingAPI } from "./LoanTrackingAPI";
 
 export default {
   CustomerAPI,
   CustomerInfoAPI,
   LoanProviderAPI,
+  LoanTrackingAPI
 };
