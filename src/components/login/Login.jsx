@@ -23,6 +23,7 @@ const LoginPage = () => {
         flexDirection: isMobile ? "column" : "row",
         padding: "0 !important",
         marginTop: "1vh",
+        backgroundColor: "#f2f2f2",
       }}
     >
       <Signin isSignUp={isSignUp} />
