@@ -126,15 +126,21 @@ export default function Signin({ isSignUp }) {
   return (
     <Box
       sx={{
-        backgroundImage: "url('l111.jpg')",
+        // backgroundImage: "url('l111.jpg')",
+        backgroundImage: "url('nawaz11111.jpg')",
+
         width: {
           xs: "100%", // For extra small screens
           sm: "75%", // For small screens
           md: "60%", // For medium screens
           lg: "49.5%", // For large screens and above
         },
-        backgroundSize: isMobile ? "cover" : isTab ? "cover" : "contain",
-        backgroundRepeat: isMobile ? "no-repeat" : isTab ? "no-repeat" : "",
+        backgroundSize: isMobile ? "cover" : isTab ? "cover" : "cover",
+        backgroundRepeat: isMobile
+          ? "no-repeat"
+          : isTab
+          ? "no-repeat"
+          : "no-repeat",
 
         height: "100vh",
         margin: "auto",

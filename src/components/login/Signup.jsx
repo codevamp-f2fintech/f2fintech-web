@@ -104,9 +104,9 @@ export default function Signup({ isSignUp, setIsSignUp }) {
   return (
     <Box
       sx={{
-        backgroundImage: "url('signup.1.jpg')",
-        backgroundSize: isMobile ? "cover" : "contain",
-        backgroundRepeat: isMobile ? "no-repeat" : "",
+        backgroundImage: "url('nawaz11111.jpg')",
+        backgroundSize: isMobile ? "cover" : "cover",
+        backgroundRepeat: isMobile ? "no-repeat" : "no-repeat",
         width: {
           xs: "100%", // For extra small screens
           sm: "75%", // For small screens
@@ -149,7 +149,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           }),
           ...(isSignUp && {
             visibility: "visible",
-            opacity: 1,
+            opacity: 0,
             transition: "visibility 0s linear 0s,opacity 500ms",
           }),
         }}
