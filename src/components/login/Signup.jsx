@@ -113,10 +113,11 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           md: "60%", // For medium screens
           lg: "49.4%", // For large screens and above
         },
-        borderRadius: {
-          xs: "0%", // For extra small screens
-          md: "30% 0% 0% 30%", // For medium screens and above
-        },
+        borderRadius: isMobile
+          ? "0%"
+          : isTab
+          ? "30% 0% 0% 30%"
+          : "30% 0% 0% 30%",
         height: "100vh",
 
         backgroundPosition: isMobile ? "right" : "top",
@@ -161,7 +162,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
             fontFamily: "verdana",
             textAlign: "center",
             lineHeight: "1.75rem",
-            marginTop: isMobile ? "13vh" : "",
+            marginTop: isMobile ? "13vh" : isTab ? "10vh" : "",
           }}
         >
           Create Account
