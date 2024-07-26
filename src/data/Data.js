@@ -29,19 +29,19 @@ const products = [
     href: "/msme-loan",
   },
   {
-    title: "SmallBusinessLoan",
+    title: "Small Business Loan",
     href: "/small-business-loan",
   },
   {
-    title: "UnsecuredLoan",
+    title: "Unsecured Loan",
     href: "/unsecured-loan",
   },
   {
-    title: "BusinessLoanForWomen",
+    title: "Business Loan For Women",
     href: "/business-loan-for-women",
   },
   {
-    title: "ECommerceBusinessLoan",
+    title: "ECommerce Business Loan",
     href: "/eCommerce-business-loan",
   },
 ];
