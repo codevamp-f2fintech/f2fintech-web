@@ -1,21 +1,12 @@
 const pages = [
-  {
-    title: "Home",
-    href: "/",
-  },
-  {
-    title: "Blog",
-    href: "/blogs",
-  },
+  // {
+  //   title: "Blog",
+  //   href: "/blogs",
+  // },
   {
     title: "Providers",
     href: "/providers",
   },
-  {
-    title: "Compare",
-    href: "/providers/compare",
-  },
-
   {
     title: "Login",
     href: "/login",
@@ -31,27 +22,27 @@ const pages = [
 const products = [
   {
     title: "Business Loan",
-    href: "/businessloan",
+    href: "/business-loan",
   },
   {
     title: "Msme Loan",
-    href: "/msmeLoan",
+    href: "/msme-loan",
   },
   {
     title: "SmallBusinessLoan",
-    href: "/smallBusinessLoan",
+    href: "/small-business-loan",
   },
   {
     title: "UnsecuredLoan",
-    href: "/unsecuredLoan",
+    href: "/unsecured-loan",
   },
   {
     title: "BusinessLoanForWomen",
-    href: "/businessLoanForWomen",
+    href: "/business-loan-for-women",
   },
   {
     title: "ECommerceBusinessLoan",
-    href: "/eCommerceBusinessLoan",
+    href: "/eCommerce-business-loan",
   },
 ];
 export { pages, products };

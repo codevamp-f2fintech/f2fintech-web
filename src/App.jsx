@@ -36,15 +36,15 @@ function App() {
           <ResponsiveAppBar />
           <Routes>
             <Route exact path="/" element={<Home />} />
-            <Route exact path="/businessLoan" element={<Businessloan />} />
-            <Route exact path="/MsmeLoan" element={<MsmeLoan />} />
+            <Route exact path="/business-loan" element={<Businessloan />} />
+            <Route exact path="/Msme-loan" element={<MsmeLoan />} />
             <Route
               exact
-              path="/SmallBusinessLoan"
+              path="/small-business-loan"
               element={<SmallBusinessLoan />}
             />
             <Route exact path="/UnsecuredLoan" element={<UnsecuredLoan />} />
-            <Route
+            {/* <Route
               exact
               path="/BusinessLoanForWomen"
               element={<BusinessLoanForWomen />}
@@ -53,7 +53,7 @@ function App() {
               exact
               path="/ECommerceBusinessLoan"
               element={<ECommerceBusinessLoan />}
-            />
+            /> */}
             <Route exact path="/blogs" element={<Blogs />} />
             <Route exact path="/profile" element={<Profile />} />
             <Route exact path="/providers" element={<Listing />} />
