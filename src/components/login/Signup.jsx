@@ -106,17 +106,18 @@ export default function Signup({ isSignUp, setIsSignUp }) {
       sx={{
         backgroundImage: "url('nawaz11111.jpg')",
         backgroundSize: isMobile ? "cover" : "cover",
-        backgroundRepeat: isMobile ? "no-repeat" : "no-repeat",
+        backgroundRepeat: isMobile ? "no-repeat" : "",
         width: {
           xs: "100%", // For extra small screens
           sm: "75%", // For small screens
           md: "60%", // For medium screens
           lg: "49.4%", // For large screens and above
         },
-        borderRadius: {
-          xs: "0%", // For extra small screens
-          md: "30% 0% 0% 30%", // For medium screens and above
-        },
+        borderRadius: isMobile
+          ? "0%"
+          : isTab
+          ? "30% 0% 0% 30%"
+          : "30% 0% 0% 30%",
         height: "100vh",
 
         backgroundPosition: isMobile ? "right" : "top",
@@ -145,11 +146,11 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           ...(!isSignUp && {
             visibility: "hidden",
             opacity: 0,
-            transition: "visibility 0s linear 500ms,opacity 500ms",
+            // transition: "visibility 0s linear 500ms,opacity 500ms",
           }),
           ...(isSignUp && {
             visibility: "visible",
-            opacity: 0,
+            opacity: 1,
             transition: "visibility 0s linear 0s,opacity 500ms",
           }),
         }}
@@ -161,7 +162,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
             fontFamily: "verdana",
             textAlign: "center",
             lineHeight: "1.75rem",
-            marginTop: isMobile ? "13vh" : "",
+            marginTop: isMobile ? "13vh" : isTab ? "10vh" : "",
           }}
         >
           Create Account

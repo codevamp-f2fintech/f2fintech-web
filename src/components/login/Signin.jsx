@@ -189,6 +189,7 @@ export default function Signin({ isSignUp }) {
             fontFamily: "verdana",
             textAlign: "center",
             lineHeight: "1.75rem",
+            marginTop: isMobile ? "" : isTab ? "-10vh" : "",
           }}
         >
           Sign In
@@ -325,6 +326,7 @@ export default function Signin({ isSignUp }) {
                   fontSize: isMobile ? "5vw" : "1vw",
                   lineHeight: "1.5rem",
                   borderRadius: "20px",
+                  marginTop: isMobile ? "" : isTab ? "" : "",
                 }}
               >
                 Sign In
