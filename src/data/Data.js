@@ -10,13 +10,7 @@ const pages = [
   {
     title: "Login",
     href: "/login",
-  },
-  {
-    title: "Loan-Tracking",
-    href: "/loan-tracker",
-  },
-  
-  
+  }
 ];
 
 const products = [

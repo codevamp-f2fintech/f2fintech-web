@@ -58,7 +58,7 @@ export default function ResponsiveAppBar() {
       <Box sx={{ display: "flex", alignItems: "center", width: "100%", backgroundColor: "white" }}>
         <Box sx={{ display: "flex", justifyContent: "flex-start", marginLeft: "2%", width: "50%" }}>
           <Toolbar sx={{ display: "flex" }}>
-            <Link to={pages[0].href}>
+            <Link to='/'>
               <img src="f2Fintechlogo.png" alt="Logo" style={{ height: "100px", width: "100px" }} />
             </Link>
           </Toolbar>
@@ -160,13 +160,16 @@ export default function ResponsiveAppBar() {
                     }}
                     getContentAnchorEl={null}
                   >
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     <MenuItem component="a" href="/profile">
                       Profile
+                    </MenuItem>
+                    <MenuItem component="a" href="/loan-tracker">
+                      Loan Tracking
                     </MenuItem>
                     <MenuItem onClick={handleResetPassword}>
                       Reset password
                     </MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </div>
               );

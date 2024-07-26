@@ -22,7 +22,7 @@ import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
-import Loan from "./components/loantracking/loantracking"; 
+import Loan from "./components/loantracking/loantracking";
 
 function App() {
   const [theme] = useMode();
@@ -58,13 +58,13 @@ function App() {
             <Route exact path="/profile" element={<Profile />} />
             <Route exact path="/providers" element={<Listing />} />
             <Route exact path="/providers/compare" element={<Compare />} />
-            
+
             <Route
               exact
-              path="/applicationForm"
+              path="/application-form"
               element={<ApplicationForm />}
             />
-             <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />}/>
+            <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />} />
             <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
