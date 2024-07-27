@@ -133,7 +133,7 @@ export default function Signin({ isSignUp }) {
           xs: "100%", // For extra small screens
           sm: "75%", // For small screens
           md: "60%", // For medium screens
-          lg: "49.5%", // For large screens and above
+          lg: "50%", // For large screens and above
         },
         backgroundSize: isMobile ? "cover" : isTab ? "cover" : "cover",
         backgroundRepeat: isMobile
