@@ -106,9 +106,6 @@ export default function ResponsiveAppBar() {
             sx={{
               height: "40px",
               textTransform: "none",
-              fontSize: "1.3rem",
-              borderRadius: "22px",
-              marginRight: "10px",
         
               // color: " rgba(6,55,158,1)",
               color: "white",
@@ -261,7 +258,6 @@ export default function ResponsiveAppBar() {
                   fontSize: "1.3rem",
                   borderRadius: "22px",
                   marginLeft: "10px",
-                  marginRight: "10px",
                   color: "white",
                   ":hover": {
                     transform: "scale(1.1)",
