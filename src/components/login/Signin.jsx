@@ -126,15 +126,21 @@ export default function Signin({ isSignUp }) {
   return (
     <Box
       sx={{
-        backgroundImage: "url('l111.jpg')",
+        // backgroundImage: "url('l111.jpg')",
+        backgroundImage: "url('nawaz11111.jpg')",
+
         width: {
           xs: "100%", // For extra small screens
           sm: "75%", // For small screens
           md: "60%", // For medium screens
-          lg: "49.5%", // For large screens and above
+          lg: "50%", // For large screens and above
         },
-        backgroundSize: isMobile ? "cover" : isTab ? "cover" : "contain",
-        backgroundRepeat: isMobile ? "no-repeat" : isTab ? "no-repeat" : "",
+        backgroundSize: isMobile ? "cover" : isTab ? "cover" : "cover",
+        backgroundRepeat: isMobile
+          ? "no-repeat"
+          : isTab
+          ? "no-repeat"
+          : "no-repeat",
 
         height: "100vh",
         margin: "auto",
@@ -183,6 +189,7 @@ export default function Signin({ isSignUp }) {
             fontFamily: "verdana",
             textAlign: "center",
             lineHeight: "1.75rem",
+            marginTop: isMobile ? "" : isTab ? "-10vh" : "",
           }}
         >
           Sign In
@@ -319,6 +326,7 @@ export default function Signin({ isSignUp }) {
                   fontSize: isMobile ? "5vw" : "1vw",
                   lineHeight: "1.5rem",
                   borderRadius: "20px",
+                  marginTop: isMobile ? "" : isTab ? "" : "",
                 }}
               >
                 Sign In
