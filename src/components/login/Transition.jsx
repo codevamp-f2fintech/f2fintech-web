@@ -69,8 +69,12 @@ export default function Transition({ isSignUp, setIsSignUp }) {
           variant="contained"
           onClick={() => setIsSignUp(!isSignUp)}
           sx={{
-            marginTop: isMobile ? "300px" : "0px",
-            width: { xs: "60%", sm: "10vw" }, // Adjust width for smaller screens
+            marginTop: isMobile ? "30vh" : isTab ? "" : "0px",
+            width: {
+              xs: "50%", // For extra small screens
+              sm: "30%", // For small screens
+              md: "10vw", // For medium screens and above
+            },
             color: "white",
             fontWeight: "500",
             fontSize: { xs: "1.2rem", sm: "1rem" }, // Adjust font size for smaller screens
