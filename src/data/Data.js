@@ -1,8 +1,4 @@
 const pages = [
-  // {
-  //   title: "Blog",
-  //   href: "/blogs",
-  // },
   {
     title: "Providers",
     href: "/providers",
@@ -15,34 +11,33 @@ const pages = [
     title: "Loan-Tracking",
     href: "/loan-tracker",
   },
-  
-  
 ];
 
 const products = [
   {
     title: "Business Loan",
-    href: "/business-loan",
+    href: "/business-loan#about-business-loans",
   },
   {
     title: "Msme Loan",
-    href: "/msme-loan",
+    href: "/msme-loan#about-msme-loans",
   },
   {
     title: "Small Business Loan",
-    href: "/small-business-loan",
+    href: "/small-business-loan#about-small-business-loans",
   },
   {
     title: "Unsecured Loan",
-    href: "/unsecured-loan",
+    href: "/unsecured-loan#about-unsecured-loans",
   },
   {
     title: "Business Loan For Women",
-    href: "/business-loan-for-women",
+    href: "/business-loan-for-women#about-business-loans-for-women",
   },
   {
     title: "ECommerce Business Loan",
-    href: "/eCommerce-business-loan",
+    href: "/ecommerce-business-loan#about-ecommerce-business-loans",
   },
 ];
+
 export { pages, products };

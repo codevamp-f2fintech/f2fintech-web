@@ -85,7 +85,6 @@ export default function ResponsiveAppBar() {
               borderRadius: "22px",
               marginRight: "10px",
               color: " rgba(6,55,158,1)",
-              // backgroundColor: "#EEEEEE",
             }}
           >
             Products
@@ -137,7 +136,6 @@ export default function ResponsiveAppBar() {
                       borderRadius: "22px",
                       marginLeft: "10px",
                       marginRight: "10px",
-                      // backgroundColor: "#EEEEEE",
                     }}
                   >
                     {username
@@ -184,7 +182,6 @@ export default function ResponsiveAppBar() {
                   borderRadius: "22px",
                   marginLeft: "10px",
                   marginRight: "10px",
-                  // backgroundColor: "#EEEEEE",
                 }}
               >
                 {page.title}
