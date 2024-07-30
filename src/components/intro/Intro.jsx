@@ -11,15 +11,13 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
         padding: "0px !important",
         maxWidth: "100% !important",
         height: "140vh !important",
-        // backgroundColor: "#f8f8f8",
-        // boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
         overflow: "hidden",
         // border: "2px solid red",
       }}
     >
       <Box
         sx={{
-          paddingLeft: "10vh",
+          paddingLeft: "8vh",
           height: "125vh",
           maxWidth: "50%",
           display: "flex",
@@ -52,8 +50,6 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
             sx={{
               fontSize: "1.5vw",
               textShadow: "1px 1px 2px gray",
-              // background: "#fff",
-              padding: "10px",
               borderRadius: "5px",
             }}
           >
@@ -90,8 +86,9 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
             </Typography>
             <Typography
               sx={{
-                fontWeight: "800",
-                fontSize: "1.4vw",
+                fontSize: "1.5vw",
+                textShadow: "1px 1px 2px gray",
+                borderRadius: "5px",
               }}
             >
               {text.long_description}

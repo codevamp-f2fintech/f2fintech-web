@@ -21,8 +21,8 @@ const Home = () => {
         homeimg={"/header.png"}
         home={true}
       />
-      <Carousel />
       <Calculator />
+      <Carousel />
       <Apply />
       <Advantages advantagesData={advantagesData} />
       <Eligibility />
