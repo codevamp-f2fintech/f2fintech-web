@@ -22,7 +22,7 @@ const LoginPage = () => {
         alignItems: "center",
         flexDirection: isMobile ? "column" : "row",
         padding: "0 !important",
-        marginTop: "1vh",
+        marginTop: ".1vh",
         backgroundColor: "#f2f2f2",
       }}
     >

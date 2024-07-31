@@ -111,7 +111,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           xs: "100%", // For extra small screens
           sm: "75%", // For small screens
           md: "60%", // For medium screens
-          lg: "49.4%", // For large screens and above
+          lg: "50%", // For large screens and above
         },
         borderRadius: isMobile
           ? "0%"
@@ -121,7 +121,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
         height: "100vh",
 
         backgroundPosition: isMobile ? "right" : "top",
-        margin: "auto",
+        margin: 0,
         display: "flex",
         justifyContent: "space-evenly",
         alignItems: isMobile ? "flex-start" : "center",

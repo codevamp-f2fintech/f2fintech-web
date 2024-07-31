@@ -2,7 +2,7 @@ import React from "react";
 import Calculator from "../calculator/Calculator";
 import { customersdata } from "../../components/data/data";
 import Customers from "../customers/Customers";
-import Intro from "../../components/intro/Intro";
+import Intro from "../intro/IntroCarousel.jsx";
 import Carousel from "../../components/carousel/Carousel";
 import Apply from "../../components/apply/Apply";
 import Advantages from "../../components/advantages/Advantages";
@@ -21,8 +21,8 @@ const Home = () => {
         homeimg={"/header.png"}
         home={true}
       />
-      <Carousel />
       <Calculator />
+      <Carousel />
       <Apply />
       <Advantages advantagesData={advantagesData} />
       <Eligibility />
