@@ -61,7 +61,7 @@ const MultiStepForm = () => {
       case 0:
         return <Step1Form setLoanType={setLoanType} handleNext={handleNext} />;
       case 1:
-        return <Step2 Form handleNext={handleNext} />;
+        return <Step2Form handleNext={handleNext} />;
       case 2:
         return <Step3Form />;
       case 3:
