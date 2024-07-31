@@ -10,9 +10,8 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
         display: "flex",
         padding: "0px !important",
         maxWidth: "100% !important",
-        height: "140vh !important",
+        height: "150vh !important",
         overflow: "hidden",
-        // border: "2px solid red",
       }}
     >
       <Box
