@@ -52,7 +52,7 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
               borderRadius: "5px",
             }}
           >
-            {text.description}
+            {text?.description}
           </Typography>
         </Box>
 
@@ -70,7 +70,7 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
                 textShadow: "1px 1px 2px gray",
               }}
             >
-              {text.short_description}
+              {text?.short_description}
             </Typography>
             <Typography
               sx={{
@@ -90,7 +90,7 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
                 borderRadius: "5px",
               }}
             >
-              {text.long_description}
+              {text?.long_description}
             </Typography>
           </Box>
         )}
