@@ -37,28 +37,27 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route exact path="/business-loan" element={<Businessloan />} />
-            <Route exact path="/Msme-loan" element={<MsmeLoan />} />
+            <Route exact path="/msme-loan" element={<MsmeLoan />} />
             <Route
               exact
               path="/small-business-loan"
               element={<SmallBusinessLoan />}
             />
-            <Route exact path="/UnsecuredLoan" element={<UnsecuredLoan />} />
-            {/* <Route
+            <Route exact path="/unsecured-loan" element={<UnsecuredLoan />} />
+            <Route
               exact
-              path="/BusinessLoanForWomen"
+              path="/business-loan-for-women"
               element={<BusinessLoanForWomen />}
             />
             <Route
               exact
-              path="/ECommerceBusinessLoan"
+              path="/ecommerce-business-loan"
               element={<ECommerceBusinessLoan />}
-            /> */}
+            /> 
             <Route exact path="/blogs" element={<Blogs />} />
             <Route exact path="/profile" element={<Profile />} />
             <Route exact path="/providers" element={<Listing />} />
             <Route exact path="/providers/compare" element={<Compare />} />
-
             <Route
               exact
               path="/application-form"
@@ -68,7 +67,7 @@ function App() {
             <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
-              path="/loan-tracker" // Add the new route for Loan Tracker
+              path="/loan-tracker" 
               element={<Loan />}
             />
           </Routes>
