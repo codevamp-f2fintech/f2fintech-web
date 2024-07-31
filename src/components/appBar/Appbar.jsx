@@ -163,6 +163,9 @@ export default function ResponsiveAppBar() {
                     <MenuItem component="a" href="/profile">
                       Profile
                     </MenuItem>
+                    <MenuItem component="a" href="/providers/FavouriteCard">
+                      Favourite
+                      </MenuItem>
                     <MenuItem component="a" href="/loan-tracker">
                       Loan Tracking
                     </MenuItem>
