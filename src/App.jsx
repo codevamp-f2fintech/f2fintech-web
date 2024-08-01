@@ -23,6 +23,7 @@ import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
 import Loan from "./components/loantracking/loantracking";
+import NotFoundPage from "./components/notfoundpage/notfoundpage";
 
 function App() {
   const [theme] = useMode();
@@ -65,6 +66,7 @@ function App() {
             />
             <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />} />
             <Route exact path="/reset-password" element={<ResetPassword />} />
+            <Route path="*" element={<NotFoundPage />} />
             <Route
               exact
               path="/loan-tracker" 
