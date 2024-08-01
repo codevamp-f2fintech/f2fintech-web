@@ -73,16 +73,21 @@ export default function ResponsiveAppBar() {
             width: "50%",
           }}
         >
-          <Toolbar sx={{ display: "flex" }}>
+          <Toolbar
+            sx={{
+              display: "flex",
+            }}
+          >
             <Link to="/">
               <img
                 src="f2Fintechlogo.png"
                 alt="Logo"
                 style={{
-                  height: "16vh",
-                  width: "16vh",
+                  height: "15vh",
+                  width: "15vh",
                   backgroundColor: "white",
                   borderRadius: "20px",
+                  marginTop: ".5vh",
                 }}
               />
             </Link>
@@ -106,12 +111,14 @@ export default function ResponsiveAppBar() {
             sx={{
               height: "40px",
               textTransform: "none",
-              fontSize: "1.3rem",
-              borderRadius: "22px",
-              marginRight: "10px",
+              // fontSize: "1.3rem",
+              // borderRadius: "22px",
+              // marginRight: "10px",
         
               // color: " rgba(6,55,158,1)",
               color: "white",
+              fontSize: "1.2vw",
+              lineHeight: "2vw",
               ":hover": {
                 transform: "scale(1.1)",
                 background: "#000066",
@@ -265,7 +272,7 @@ export default function ResponsiveAppBar() {
                   ":hover": {
                     transform: "scale(1.1)",
                     background: "#000066",
- 
+
                     transition: "all 300ms ease-in-out",
                   },
                 }}
