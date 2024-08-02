@@ -1,8 +1,7 @@
 import React from "react";
 import { Avatar, Container, Typography, Box, Paper } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types";
 
 const Customers = ({ customersdata }) => {
   return (
