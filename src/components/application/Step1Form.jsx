@@ -288,7 +288,7 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                   fullWidth
                 />
 
-                <Typography sx={{ marginRight: "130px", font: "18px bold" }}>
+                <Typography sx={{ marginRight: "20px", font: "18px bold" }}>
                   Is your Company Registered?
                 </Typography>
                 <RadioGroup
@@ -306,6 +306,7 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                     control={<Radio />}
                     label="Yes"
                     sx={{
+                      marginLeft: "8vw",
                       padding: "1px 30px",
                       height: "40px",
                       borderRadius: "15px",
@@ -426,7 +427,7 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
                 </FormControl>
 
                 <FormControlLabel
-                  sx={{ marginRight: "110px" }}
+                  sx={{ marginRight: "20px" }}
                   label="Do you have GST Registration?"
                   control={
                     <Checkbox

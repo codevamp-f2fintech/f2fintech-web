@@ -22,7 +22,7 @@ import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
-import Loan from "./components/loantracking/loantracking"; 
+import Loan from "./components/loantracking/loantracking";
 
 function App() {
   const [theme] = useMode();
@@ -36,39 +36,38 @@ function App() {
           <ResponsiveAppBar />
           <Routes>
             <Route exact path="/" element={<Home />} />
-            <Route exact path="/businessLoan" element={<Businessloan />} />
-            <Route exact path="/MsmeLoan" element={<MsmeLoan />} />
+            <Route exact path="/business-loan" element={<Businessloan />} />
+            <Route exact path="/msme-loan" element={<MsmeLoan />} />
             <Route
               exact
-              path="/SmallBusinessLoan"
+              path="/small-business-loan"
               element={<SmallBusinessLoan />}
             />
-            <Route exact path="/UnsecuredLoan" element={<UnsecuredLoan />} />
+            <Route exact path="/unsecured-loan" element={<UnsecuredLoan />} />
             <Route
               exact
-              path="/BusinessLoanForWomen"
+              path="/business-loan-for-women"
               element={<BusinessLoanForWomen />}
             />
             <Route
               exact
-              path="/ECommerceBusinessLoan"
+              path="/ecommerce-business-loan"
               element={<ECommerceBusinessLoan />}
-            />
+            /> 
             <Route exact path="/blogs" element={<Blogs />} />
             <Route exact path="/profile" element={<Profile />} />
             <Route exact path="/providers" element={<Listing />} />
             <Route exact path="/providers/compare" element={<Compare />} />
-            
             <Route
               exact
-              path="/applicationForm"
+              path="/application-form"
               element={<ApplicationForm />}
             />
-             <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />}/>
+            <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />} />
             <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
-              path="/loan-tracker" // Add the new route for Loan Tracker
+              path="/loan-tracker" 
               element={<Loan />}
             />
           </Routes>
