@@ -8,7 +8,7 @@ const Customers = ({ customersdata }) => {
     <Container
       maxWidth="false"
       sx={{
-        height: "90vh",
+        height: "105vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -20,7 +20,7 @@ const Customers = ({ customersdata }) => {
         sx={{
           display: "flex",
           justifyContent: "center",
-          marginTop: "120px",
+          marginTop: "80px",
           lineHeight: "3rem",
           fontSize: "2.5rem",
           fontWeight: "400",
@@ -30,7 +30,7 @@ const Customers = ({ customersdata }) => {
       </Typography>
       <Carousel
         height={"70vh"}
-        sx={{ marginTop: "40px" }}
+        sx={{ marginTop: "20px" }}
       >
         {customersdata.map((customer, i) => (
           <Paper
