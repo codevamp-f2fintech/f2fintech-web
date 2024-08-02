@@ -308,6 +308,7 @@ const Footer = () => {
           >
             <Link
               variant="h6"
+              to="/query"
               style={{
                 color: "white",
                 marginBottom: "1rem",
@@ -324,6 +325,7 @@ const Footer = () => {
           >
             <Link
               variant="h6"
+              to="/chatbot"
               style={{
                 color: "white",
                 marginBottom: "1rem",

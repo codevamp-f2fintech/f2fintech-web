@@ -19,6 +19,8 @@ import ResponsiveAppBar from "./components/appBar/Appbar";
 import ResetPassword from "./components/login/Resetpassword";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
+import Query from "./components/query/Query";
+import Chatbot from "./components/chatbot/chatbot";
 import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
@@ -53,7 +55,9 @@ function App() {
               exact
               path="/ecommerce-business-loan"
               element={<ECommerceBusinessLoan />}
-            /> 
+            />
+            <Route exact path="/query" element={<Query />} />
+            <Route exact path="/chatbot" element={<Chatbot />} />
             <Route exact path="/blogs" element={<Blogs />} />
             <Route exact path="/profile" element={<Profile />} />
             <Route exact path="/providers" element={<Listing />} />
@@ -63,13 +67,13 @@ function App() {
               path="/application-form"
               element={<ApplicationForm />}
             />
-            <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />} />
-            <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
-              path="/loan-tracker" 
-              element={<Loan />}
+              path="/providers/FavouriteCard"
+              element={<FavouriteCard />}
             />
+            <Route exact path="/reset-password" element={<ResetPassword />} />
+            <Route exact path="/loan-tracker" element={<Loan />} />
           </Routes>
           <Footer />
         </>
