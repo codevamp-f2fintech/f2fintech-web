@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
@@ -91,16 +90,28 @@ const ProductCard = ({
         />
       </Box>
       <Box p={2}>
-        <Typography gutterBottom variant="h6" sx={{ fontWeight: "bold" }}>
+        <Typography
+          gutterBottom
+          variant="h6"
+          sx={{ fontWeight: "bold", fontSize: "15px" }}
+        >
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+        <Typography
+          variant="body2"
+          color="blue"
+          sx={{ mb: 1, fontWeight: "bold" }}
+        >
           {text.description}
         </Typography>
         {home && (
           <>
-            <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
-              Interest Rate: {interestRate}%
+            <Typography
+              variant="body2"
+              color="text.primary"
+              sx={{ mb: 1, fontWeight: "bold" }}
+            >
+              Interest Rate: {interestRate}
             </Typography>
           </>
         )}
@@ -207,16 +218,14 @@ const Listing = () => {
         : [...prevFavorites, item];
 
       // Save the updated favorites to localStorage
-      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
       return updatedFavorites;
     });
   };
 
-
-
   useEffect(() => {
     // Load favorites from localStorage on component mount
-    const savedFavorites = JSON.parse(localStorage.getItem('favorites'));
+    const savedFavorites = JSON.parse(localStorage.getItem("favorites"));
     if (savedFavorites) {
       setFavorites(savedFavorites);
     }
@@ -248,7 +257,6 @@ const Listing = () => {
     navigate("/providers/Compare", { state: { compares } });
     handlePopoverClose();
   };
-
 
   const open = Boolean(anchorEl);
 
@@ -288,7 +296,7 @@ const Listing = () => {
   }
 
   return (
-    <Container sx={{ marginTop: 4 }}>
+    <Container sx={{ marginTop: 4, fontFamily: "'Verdana', sans-serif" }}>
       <Filter filter={filter} setFilter={setFilter} />
       <Button
       // variant="contained"
@@ -425,12 +433,9 @@ const Listing = () => {
             )}
           </Popover>
         </Box>
-
       )}
-
     </Container>
   );
-
 };
 
 export default Listing;
