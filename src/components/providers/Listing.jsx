@@ -164,6 +164,7 @@ const Listing = () => {
   const loanProviders = useSelector((state) => state.allLoanProviders);
   const { getLocalStorage } = Utility();
   const [openDialog, setOpenDialog] = useState(false);
+  const [previousLocation, setPreviousLocation] = useState(null); 
 
   const customer = getLocalStorage("customerInfo");
 
@@ -193,13 +194,21 @@ const Listing = () => {
       });
   }, [dispatch]);
 
+  // const handleFavoriteToggle = (item) => {
+  //   if (!token) {
+     
+  //     setOpenDialog(true);
+  //     return;
+  //   }
+
+
   const handleFavoriteToggle = (item) => {
     if (!token) {
       // If the user is not logged in, open the login dialog
+      setPreviousLocation(location); // Store the current location
       setOpenDialog(true);
       return;
     }
-
     // If the user is logged in, update the favorites
     setFavorites((prevFavorites) => {
       const updatedFavorites = prevFavorites.includes(item)

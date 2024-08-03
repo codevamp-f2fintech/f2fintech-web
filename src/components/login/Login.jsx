@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-
 import { Container, useMediaQuery } from "@mui/material";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import Transition from "./Transition";
 
 const LoginPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-
   const isMobile = useMediaQuery("(max-width:480px)");
-  console.log("issignup", isSignUp);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/providers";
+
+  const handleLoginSuccess = () => {
+    navigate(from, { replace: true });
+  };
 
   return (
     <Container
@@ -26,7 +30,7 @@ const LoginPage = () => {
         backgroundColor: "#f2f2f2",
       }}
     >
-      <Signin isSignUp={isSignUp} />
+      <Signin isSignUp={isSignUp} onLoginSuccess={handleLoginSuccess} />
       <Signup isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
       <Transition isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
     </Container>

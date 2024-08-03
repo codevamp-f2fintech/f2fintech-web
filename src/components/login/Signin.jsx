@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -16,7 +14,6 @@ import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import PasswordIcon from "@mui/icons-material/Password";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
-
 import Toast from "../toast/Toast";
 import { CustomerAPI } from "../../apis/CustomerAPI";
 import { Utility } from "../utility";
@@ -31,7 +28,7 @@ const SignInSchema = Yup.object().shape({
     .required("Password is required"),
 });
 
-export default function Signin({ isSignUp }) {
+export default function Signin({ isSignUp, onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
@@ -42,7 +39,6 @@ export default function Signin({ isSignUp }) {
 
   const dispatch = useDispatch();
   const toastInfo = useSelector((state) => state.toastInfo);
-  const navigateTo = useNavigate();
   const { setLocalStorage, toastAndNavigate } = Utility();
   const isMobile = useMediaQuery("(max-width:480px)");
   const isTab = useMediaQuery("(max-width:820px)");
@@ -59,19 +55,28 @@ export default function Signin({ isSignUp }) {
             token: response.data.data.token,
           };
           setLocalStorage("customerInfo", customerInfo);
-          toastAndNavigate(
-            dispatch,
-            true,
-            "success",
-            "Signin Successful",
-            navigateTo,
-            "/"
-          );
+          // Show toast
+          dispatch({
+            type: "SET_TOAST",
+            payload: {
+              toastAlert: true,
+              toastMessage: "Signin Successful",
+              toastSeverity: "success",
+            },
+          });
+          onLoginSuccess(); // Navigate to the previous page
         }
       })
       .catch((error) => {
         setLoading(false);
-        toastAndNavigate(dispatch, true, "error", error?.response?.data?.msg);
+        dispatch({
+          type: "SET_TOAST",
+          payload: {
+            toastAlert: true,
+            toastMessage: error?.response?.data?.msg || "Signin Failed",
+            toastSeverity: "error",
+          },
+        });
       });
   };
 
@@ -126,9 +131,7 @@ export default function Signin({ isSignUp }) {
   return (
     <Box
       sx={{
-        // backgroundImage: "url('l111.jpg')",
         backgroundImage: "url('nawaz11111.jpg')",
-
         width: {
           xs: "100%", // For extra small screens
           sm: "75%", // For small screens
@@ -141,7 +144,6 @@ export default function Signin({ isSignUp }) {
           : isTab
           ? "no-repeat"
           : "no-repeat",
-
         height: "100vh",
         margin: "auto",
         display: "flex",
@@ -455,3 +457,5 @@ export default function Signin({ isSignUp }) {
     </Box>
   );
 }
+
+
