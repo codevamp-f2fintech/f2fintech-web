@@ -78,7 +78,14 @@ const MultiStepForm = () => {
   };
 
   return (
-    <Container sx={{ display: "flex", width: "100%", marginBottom: "15px" }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        display: "flex",
+        marginBottom: "15px",
+        // border: "2px solid green",
+      }}
+    >
       <Box sx={{ display: "flex", width: "100%", marginBottom: "15px" }}>
         <Box
           sx={{
@@ -87,8 +94,10 @@ const MultiStepForm = () => {
             alignItems: "center",
             flexDirection: "column",
             width: "50%",
+            marginTop: "5vh",
             overflowY: "auto", // Enable vertical scrolling
             maxHeight: "260vh", // Adjust height as needed
+            // border: "2px solid",
           }}
         >
           <Box sx={{ width: "100%" }}>

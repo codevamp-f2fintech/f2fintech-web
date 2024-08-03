@@ -62,12 +62,22 @@ export default function ResponsiveAppBar() {
             width: "50%",
           }}
         >
-          <Toolbar sx={{ display: "flex" }}>
+          <Toolbar
+            sx={{
+              display: "flex",
+            }}
+          >
             <Link to="/">
               <img
                 src="f2Fintechlogo.png"
                 alt="Logo"
-                style={{ height: "100px", width: "100px" }}
+                style={{
+                  height: "15vh",
+                  width: "15vh",
+                  backgroundColor: "white",
+                  borderRadius: "20px",
+                  marginTop: ".5vh",
+                }}
               />
             </Link>
           </Toolbar>
@@ -90,11 +100,15 @@ export default function ResponsiveAppBar() {
             sx={{
               height: "40px",
               textTransform: "none",
-              fontSize: "1rem",
-              borderRadius: "22px",
-              marginRight: "10px",
-              color: " rgba(6,55,158,1)",
-              // backgroundColor: "#EEEEEE",
+              color: "white",
+              fontSize: "1.2vw",
+              lineHeight: "2vw",
+              ":hover": {
+                transform: "scale(1.1)",
+                background: "#000066",
+                color: "white",
+                transition: "all 300ms ease-in-out",
+              },
             }}
           >
             Products
@@ -174,7 +188,7 @@ export default function ResponsiveAppBar() {
                     </MenuItem>
                     <MenuItem component="a" href="/providers/FavouriteCard">
                       Favourite
-                    </MenuItem>
+                      </MenuItem>
                     <MenuItem component="a" href="/loan-tracker">
                       Loan Tracking
                     </MenuItem>
@@ -197,8 +211,13 @@ export default function ResponsiveAppBar() {
                   fontSize: "1rem",
                   borderRadius: "22px",
                   marginLeft: "10px",
-                  marginRight: "10px",
-                  // backgroundColor: "#EEEEEE",
+                  color: "white",
+                  ":hover": {
+                    transform: "scale(1.1)",
+                    background: "#000066",
+
+                    transition: "all 300ms ease-in-out",
+                  },
                 }}
               >
                 {page.title}
