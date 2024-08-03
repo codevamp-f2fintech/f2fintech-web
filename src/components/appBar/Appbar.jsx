@@ -216,15 +216,10 @@ export default function ResponsiveAppBar() {
                     >
                       Profile
                     </MenuItem>
-                    <MenuItem
-                      sx={{
-                        color: "black",
-                        fontSize: "1vw",
-                        lineHeight: "2vw",
-                      }}
-                      component="a"
-                      href="/loan-tracker"
-                    >
+                    <MenuItem component="a" href="/providers/FavouriteCard">
+                      Favourite
+                      </MenuItem>
+                    <MenuItem component="a" href="/loan-tracker">
                       Loan Tracking
                     </MenuItem>
                     <MenuItem

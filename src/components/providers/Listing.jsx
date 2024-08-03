@@ -222,11 +222,13 @@ const Listing = () => {
     }
   }, []);
   const handleCompareToggle = (item) => {
-    setCompares((prevCompares) =>
+    // alert('hi')
+    setCompares((prevCompares) => 
       prevCompares.includes(item)
         ? prevCompares.filter((comp) => comp !== item)
         : [...prevCompares, item]
     );
+   
   };
 
   const handlePopoverClick = (event) => {
@@ -261,8 +263,8 @@ const Listing = () => {
   };
 
   const handleDialogClose = () => {
-    setOpenDialog(true);
-    navigate("/FavouriteCard");
+    setOpenDialog(false);
+    navigate("/providers");
   };
 
   const handleLoginRedirect = () => {
