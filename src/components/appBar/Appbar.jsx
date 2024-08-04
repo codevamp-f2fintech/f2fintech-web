@@ -45,13 +45,13 @@ export default function ResponsiveAppBar() {
     setAnchorEl(null);
   };
   return (
-    <Box sx={{ display: "flex", height: "13vh" }}>
+    <Box sx={{ display: "flex", height: "16vh" }}>
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           width: "100%",
-          backgroundColor: "white",
+          backgroundColor: "#000066",
         }}
       >
         <Box
@@ -118,6 +118,7 @@ export default function ResponsiveAppBar() {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
+            endIcon={<ArrowDropDownIcon />}
             MenuListProps={{ onMouseLeave: handleMenuClose }}
             anchorOrigin={{
               vertical: "bottom",
@@ -133,14 +134,18 @@ export default function ResponsiveAppBar() {
               <Link
                 key={product.title}
                 to={product.href}
-                style={{ textDecoration: "none", color: "inherit" }}
+                style={{ textDecoration: "none", color: "black" }}
                 onClick={() => {
                   handleMenuClose();
                   topFunction();
                 }}
               >
                 <MenuItem>
-                  <Typography>{product.title}</Typography>
+                  <Typography
+                    sx={{ color: "black", fontSize: "1vw", lineHeight: "2vw" }}
+                  >
+                    {product.title}
+                  </Typography>
                 </MenuItem>
               </Link>
             ))}
@@ -150,17 +155,21 @@ export default function ResponsiveAppBar() {
               return (
                 <div key={username}>
                   <Button
-                    color="inherit"
                     onClick={handleUserMenuOpen}
                     endIcon={<ArrowDropDownIcon />}
                     sx={{
                       height: "40px",
                       textTransform: "none",
-                      fontSize: "1rem",
+                      fontSize: "1.3rem",
                       borderRadius: "22px",
                       marginLeft: "10px",
                       marginRight: "10px",
-                      // backgroundColor: "#EEEEEE",
+                      color: "white",
+                      ":hover": {
+                        transform: "scale(1.1)",
+                        background: "#000066",
+                        transition: "all 300ms ease-in-out",
+                      },
                     }}
                   >
                     {username
@@ -183,19 +192,59 @@ export default function ResponsiveAppBar() {
                     }}
                     getContentAnchorEl={null}
                   >
-                    <MenuItem component="a" href="/profile">
+                    <MenuItem
+                      sx={{
+                        color: "black",
+                        fontSize: "1vw",
+                        lineHeight: "2vw",
+                      }}
+                      component="a"
+                      href="/profile"
+                    >
                       Profile
                     </MenuItem>
-                    <MenuItem component="a" href="/providers/FavouriteCard">
+                    <MenuItem
+                      sx={{
+                        color: "black",
+                        fontSize: "1vw",
+                        lineHeight: "2vw",
+                      }}
+                      component="a"
+                      href="/providers/favourite-card"
+                    >
                       Favourite
-                      </MenuItem>
-                    <MenuItem component="a" href="/loan-tracker">
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        color: "black",
+                        fontSize: "1vw",
+                        lineHeight: "2vw",
+                      }}
+                      component="a"
+                      href="/loan-tracker"
+                    >
                       Loan Tracking
                     </MenuItem>
-                    <MenuItem onClick={handleResetPassword}>
+                    <MenuItem
+                      sx={{
+                        color: "black",
+                        fontSize: "1vw",
+                        lineHeight: "2vw",
+                      }}
+                      onClick={handleResetPassword}
+                    >
                       Reset password
                     </MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    <MenuItem
+                      sx={{
+                        color: "black",
+                        fontSize: "1vw",
+                        lineHeight: "2vw",
+                      }}
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </MenuItem>
                   </Menu>
                 </div>
               );
@@ -208,14 +257,13 @@ export default function ResponsiveAppBar() {
                 sx={{
                   height: "40px",
                   textTransform: "none",
-                  fontSize: "1rem",
+                  fontSize: "1.3rem",
                   borderRadius: "22px",
                   marginLeft: "10px",
                   color: "white",
                   ":hover": {
                     transform: "scale(1.1)",
                     background: "#000066",
-
                     transition: "all 300ms ease-in-out",
                   },
                 }}

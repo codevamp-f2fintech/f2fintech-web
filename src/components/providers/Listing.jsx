@@ -232,12 +232,12 @@ const Listing = () => {
   }, []);
   const handleCompareToggle = (item) => {
     // alert('hi')
-    setCompares((prevCompares) => 
+    setCompares((prevCompares) =>
       prevCompares.includes(item)
         ? prevCompares.filter((comp) => comp !== item)
         : [...prevCompares, item]
     );
-   
+
   };
 
   const handlePopoverClick = (event) => {
@@ -268,11 +268,6 @@ const Listing = () => {
       sortedData.sort((a, b) => b.rating - a.rating);
     }
     return sortedData;
-  };
-
-  const handleDialogClose = () => {
-    setOpenDialog(false);
-    navigate("/providers");
   };
 
   const handleLoginRedirect = () => {
@@ -320,7 +315,7 @@ const Listing = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleDialogClose} color="primary">
+            <Button onClick={() => setOpenDialog(false)} color="primary">
               Cancel
             </Button>
             <Button onClick={handleLoginRedirect} color="primary" autoFocus>
