@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 
@@ -23,64 +24,78 @@ import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
 import Loan from "./components/loantracking/loantracking";
+import MaintenancePage from "./components/maintenancepage/maintenancepage";
 
 function App() {
   const [theme] = useMode();
   const location = useLocation();
   const { pathname } = location;
 
+  const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === "true";
+
   return (
     <ThemeProvider theme={theme}>
-      {pathname !== "/login" ? (
-        <>
-          <ResponsiveAppBar />
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route exact path="/business-loan" element={<Businessloan />} />
-            <Route exact path="/msme-loan" element={<MsmeLoan />} />
-            <Route
-              exact
-              path="/small-business-loan"
-              element={<SmallBusinessLoan />}
-            />
-            <Route exact path="/unsecured-loan" element={<UnsecuredLoan />} />
-            <Route
-              exact
-              path="/business-loan-for-women"
-              element={<BusinessLoanForWomen />}
-            />
-            <Route
-              exact
-              path="/ecommerce-business-loan"
-              element={<ECommerceBusinessLoan />}
-            /> 
-            <Route exact path="/blogs" element={<Blogs />} />
-            <Route exact path="/profile" element={<Profile />} />
-            <Route exact path="/providers" element={<Listing />} />
-            <Route exact path="/providers/compare" element={<Compare />} />
-            <Route
-              exact
-              path="/application-form"
-              element={<ApplicationForm />}
-            />
-            <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />} />
-            <Route exact path="/reset-password" element={<ResetPassword />} />
-            <Route
-              exact
-              path="/loan-tracker" 
-              element={<Loan />}
-            />
-          </Routes>
-          <Footer />
-        </>
-      ) : (
-        <>
-          <ResponsiveAppBar />
-          <Routes>
-            <Route exact path="/login" element={<Login />} />
-          </Routes>
-        </>
-      )}
+      <>
+        {isMaintenance ? (
+          <MaintenancePage />
+        ) : (
+          <>
+            <ResponsiveAppBar />
+            <Routes>
+              <Route exact path="/" element={<Home />} />
+              <Route exact path="/business-loan" element={<Businessloan />} />
+              <Route exact path="/msme-loan" element={<MsmeLoan />} />
+              <Route
+                exact
+                path="/small-business-loan"
+                element={<SmallBusinessLoan />}
+              />
+              <Route
+                exact
+                path="/unsecured-loan"
+                element={<UnsecuredLoan />}
+              />
+              <Route
+                exact
+                path="/business-loan-for-women"
+                element={<BusinessLoanForWomen />}
+              />
+              <Route
+                exact
+                path="/ecommerce-business-loan"
+                element={<ECommerceBusinessLoan />}
+              />
+              <Route exact path="/blogs" element={<Blogs />} />
+              <Route exact path="/profile" element={<Profile />} />
+              <Route exact path="/providers" element={<Listing />} />
+              <Route exact path="/providers/compare" element={<Compare />} />
+              <Route
+                exact
+                path="/application-form"
+                element={<ApplicationForm />}
+              />
+              <Route
+                exact
+                path="/providers/FavouriteCard"
+                element={<FavouriteCard />}
+              />
+              <Route
+                exact
+                path="/reset-password"
+                element={<ResetPassword />}
+              />
+              <Route
+                exact
+                path="/maintenance-page"
+                element={<MaintenancePage />}
+              />
+              <Route exact path="/loan-tracker" element={<Loan />} />
+              <Route exact path="/login" element={<Login />} />
+            </Routes>
+            <Footer />
+          </>
+        )}
+      </>
     </ThemeProvider>
   );
 }
