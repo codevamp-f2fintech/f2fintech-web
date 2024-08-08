@@ -1,9 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Container, Typography, Box, Paper } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
+import API from "../../apis";
 
 const Customers = ({ customersdata }) => {
+  const [customerRatings, setCustomerRatings] = useState([]);
+  useEffect(() => {
+    API.RatingRevAPI.getRating()
+      .then((res) => {
+        if (res) {
+          const ratingData = res.data.data.rows;
+
+          // Create an array of promises for fetching customer profiles
+          const profilePromises = ratingData.map((cust) =>
+            API.CustomerAPI.getCustomerProfile(cust.customer_id)
+              .then((profile) => ({
+                ...cust,
+                profile: profile.data.data.customer,
+              }))
+              .catch((profileErr) => {
+                console.log("Profile error", profileErr);
+                return { ...cust, profile: null }; // Handle the error case for profile
+              })
+          );
+
+          // Wait for all profile requests to complete
+          Promise.all(profilePromises)
+            .then((ratingsWithProfiles) => {
+              setCustomerRatings(ratingsWithProfiles);
+            })
+            .catch((err) => {
+              console.log("Error in processing profiles", err);
+            });
+        }
+        console.log("Ratings response:", res);
+      })
+      .catch((err) => {
+        console.log("Error fetching ratings:", err);
+      });
+  }, []);
+
+  console.log("customerRatings", customerRatings);
+
   return (
     <Container
       maxWidth="false"
@@ -29,7 +68,7 @@ const Customers = ({ customersdata }) => {
         What our Customers have to say.
       </Typography>
       <Carousel height={"70vh"}>
-        {customersdata.map((customers, i) => (
+        {customerRatings.map((customers, i) => (
           <Paper
             sx={{
               display: "flex",
@@ -53,10 +92,10 @@ const Customers = ({ customersdata }) => {
                 textAlign: "center",
               }}
             >
-              {customers.description}
+              {customers.review}
             </Typography>
             <Typography sx={{ color: "purple", fontSize: "20px" }}>
-              {customers.name}
+              {customers.profile.name}
             </Typography>
             <Typography sx={{ color: "blue" }}>{customers.address}</Typography>
           </Paper>
