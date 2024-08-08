@@ -16,7 +16,7 @@ const Customers = ({ customersdata }) => {
       }}
     >
       <Typography
-        variant="h3"
+        variant="h1"
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -26,39 +26,50 @@ const Customers = ({ customersdata }) => {
           fontWeight: "400",
         }}
       >
-        What our Customers have to say.
+        What Our Customers Say
       </Typography>
-      <Carousel height={"70vh"}>
-        {customersdata.map((customers, i) => (
+      <Carousel
+        height={"70vh"}
+        sx={{ marginTop: "20px" }}
+      >
+        {customersdata.map((customer, i) => (
           <Paper
+            key={i}
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
+              justifyContent: "center",
               alignItems: "center",
               boxShadow: 0,
+              padding: "20px",
+              margin: "20px",
+              cursor: "pointer",
+              "&:hover": {
+                boxShadow: 4,
+                transform: "scale(1.02)",
+              },
             }}
           >
             <Avatar
-              key={customers.name}
-              src={customers.img}
-              sx={{ height: "150px", width: "150px" }}
+              src={customer.img}
+              sx={{ height: "150px", width: "150px", marginBottom: "20px" }}
             />
             <Typography
               variant="h3"
               sx={{
-                wordWrap: "normal",
+                wordWrap: "break-word",
                 width: "70%",
                 lineHeight: "2rem",
                 textAlign: "center",
+                marginBottom: "20px",
               }}
             >
-              {customers.description}
+              {customer.description}
             </Typography>
-            <Typography sx={{ color: "purple", fontSize: "20px" }}>
-              {customers.name}
+            <Typography sx={{ color: "purple", fontSize: "20px", marginBottom: "10px" }}>
+              {customer.name}
             </Typography>
-            <Typography sx={{ color: "blue" }}>{customers.address}</Typography>
+            <Typography sx={{ color: "blue" }}>{customer.address}</Typography>
           </Paper>
         ))}
       </Carousel>

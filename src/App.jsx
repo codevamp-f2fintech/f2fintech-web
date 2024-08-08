@@ -63,7 +63,7 @@ function App() {
               path="/application-form"
               element={<ApplicationForm />}
             />
-            <Route exact path="/providers/FavouriteCard" element={<FavouriteCard />} />
+            <Route exact path="/providers/favourite-card" element={<FavouriteCard />} />
             <Route exact path="/reset-password" element={<ResetPassword />} />
             <Route
               exact
