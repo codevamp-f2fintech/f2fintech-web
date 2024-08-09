@@ -30,7 +30,6 @@ import PropTypes from "prop-types";
 import API from "../../apis";
 import ButtonComp from "../common/button/Button";
 import { Utility } from "../utility";
-
 const StyledCard = styled(Box)(({ theme }) => ({
   width: "100%",
   maxWidth: 300,
@@ -44,7 +43,6 @@ const StyledCard = styled(Box)(({ theme }) => ({
     boxShadow: "0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.15)",
   },
 }));
-
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
   position: "absolute",
   top: 8,
@@ -56,13 +54,11 @@ const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
     backgroundColor: "rgba(255, 255, 255, 1)",
   },
 }));
-
 const StyledButton = styled(Button)(({ theme }) => ({
   fontSize: "0.8rem",
   padding: "0.25rem 0.5rem",
   minWidth: "80px",
 }));
-
 const ProductCard = ({
   title,
   home,
@@ -90,27 +86,15 @@ const ProductCard = ({
         />
       </Box>
       <Box p={2}>
-        <Typography
-          gutterBottom
-          variant="h6"
-          sx={{ fontWeight: "bold", fontSize: "15px" }}
-        >
+        <Typography gutterBottom variant="h6" sx={{ fontWeight: "bold" }}>
           {title}
         </Typography>
-        <Typography
-          variant="body2"
-          color="blue"
-          sx={{ mb: 1, fontWeight: "bold" }}
-        >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
           {text.description}
         </Typography>
         {home && (
           <>
-            <Typography
-              variant="body2"
-              color="text.primary"
-              sx={{ mb: 1, fontWeight: "bold" }}
-            >
+            <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
               Interest Rate: {interestRate}
             </Typography>
           </>
@@ -132,7 +116,6 @@ const ProductCard = ({
     </StyledCard>
   );
 };
-
 ProductCard.propTypes = {
   title: PropTypes.string.isRequired,
   home: PropTypes.bool.isRequired,
@@ -144,7 +127,6 @@ ProductCard.propTypes = {
   isCompared: PropTypes.bool.isRequired,
   handleCompareToggle: PropTypes.func.isRequired,
 };
-
 const Filter = ({ filter, setFilter }) => (
   <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
     <FormControl fullWidth sx={{ width: "15%" }}>
@@ -162,7 +144,6 @@ const Filter = ({ filter, setFilter }) => (
     </FormControl>
   </Box>
 );
-
 const Listing = () => {
   const location = useLocation(); // Add this line
   const navigate = useNavigate(); // Add this line
@@ -175,17 +156,13 @@ const Listing = () => {
   const loanProviders = useSelector((state) => state.allLoanProviders);
   const { getLocalStorage } = Utility();
   const [openDialog, setOpenDialog] = useState(false);
-
   const customer = getLocalStorage("customerInfo");
-
   const token = customer?.token;
-
   useEffect(() => {
     if (location.state?.showFavorites) {
       setFavorites(location.state.favoriteItems || []);
     }
   }, [location.state]);
-
   useEffect(() => {
     API.LoanProviderAPI.getAll()
       .then((response) => {
@@ -203,26 +180,23 @@ const Listing = () => {
         setLoading(false);
       });
   }, [dispatch]);
-
   const handleFavoriteToggle = (item) => {
     if (!token) {
       // If the user is not logged in, open the login dialog
       setOpenDialog(true);
       return;
     }
-
     // If the user is logged in, update the favorites
+    if (!favorites.includes(item)) {
     setFavorites((prevFavorites) => {
-      const updatedFavorites = prevFavorites.includes(item)
-        ? prevFavorites.filter((fav) => fav !== item)
-        : [...prevFavorites, item];
-
+        const updatedFavorites = [...prevFavorites, item];
       // Save the updated favorites to localStorage
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
       return updatedFavorites;
+
     });
   };
-
+  };
   useEffect(() => {
     // Load favorites from localStorage on component mount
     const savedFavorites = JSON.parse(localStorage.getItem("favorites"));
@@ -231,35 +205,27 @@ const Listing = () => {
     }
   }, []);
   const handleCompareToggle = (item) => {
-    // alert('hi')
     setCompares((prevCompares) =>
       prevCompares.includes(item)
         ? prevCompares.filter((comp) => comp !== item)
         : [...prevCompares, item]
     );
-
   };
-
   const handlePopoverClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
-
   const handleRemoveAll = () => {
     setCompares([]);
     handlePopoverClose();
   };
-
   const handleProceedToCompare = () => {
     navigate("/providers/Compare", { state: { compares } });
     handlePopoverClose();
   };
-
   const open = Boolean(anchorEl);
-
   const getFilteredData = () => {
     let sortedData = [...(loanProviders?.listData || [])];
     if (filter === "interestRate") {
@@ -269,12 +235,14 @@ const Listing = () => {
     }
     return sortedData;
   };
-
+  const handleDialogClose = () => {
+    setOpenDialog(true);
+    navigate("/FavouriteCard");
+  };
   const handleLoginRedirect = () => {
     setOpenDialog(false);
     navigate("/login");
   };
-
   if (loading) {
     return (
       <Box
@@ -289,9 +257,8 @@ const Listing = () => {
       </Box>
     );
   }
-
   return (
-    <Container sx={{ marginTop: 4, fontFamily: "'Verdana', sans-serif" }}>
+    <Container sx={{ marginTop: 4 }}>
       <Filter filter={filter} setFilter={setFilter} />
       <Button
       // variant="contained"
@@ -315,7 +282,7 @@ const Listing = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenDialog(false)} color="primary">
+            <Button onClick={handleDialogClose} color="primary">
               Cancel
             </Button>
             <Button onClick={handleLoginRedirect} color="primary" autoFocus>
@@ -432,5 +399,4 @@ const Listing = () => {
     </Container>
   );
 };
-
 export default Listing;
