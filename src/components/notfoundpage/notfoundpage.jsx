@@ -109,7 +109,7 @@ const NotFoundPage = () => {
           zIndex: 2,
           background: 'linear-gradient(to right, rgba(0, 235, 219, 0), rgba(189, 113, 236, 0))',
           padding: '10px', 
-          borderRadius: '20px', // Adjusted border radius for better blending
+          borderRadius: '20px', 
         }}
       >
         <img src={image} alt="Not Found" style={{ width: '100%', height: 'auto', borderRadius: '50%' }} />
