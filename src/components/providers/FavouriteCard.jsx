@@ -220,8 +220,8 @@ const FavouriteCard = () => {
             <Grid item xs={12} key={index}>
               <ProductCard
                 title={item.title}
-                home={item.home}
-                homeimg={item.homeimage}
+                home={item.is_home}
+                homeimg={item.home_image}
                 interestRate={item.interest_rate}
                 text={{
                   description: item.description,
