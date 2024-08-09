@@ -24,7 +24,8 @@ import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
 import Loan from "./components/loantracking/loantracking";
-import MaintenancePage from "./components/maintenancepage/maintenancepage";
+import NotFoundPage from "./components/notfoundpage/notfoundpage";
+import MaintenancePage from "./components/maintenancepage/Maintenance"
 
 function App() {
   const [theme] = useMode();

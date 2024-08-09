@@ -1,39 +1,30 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { MenuItem, Menu, Typography, Box } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
 import { pages, products } from "../../data/Data";
 import { Utility } from "../utility";
-
 export default function ResponsiveAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
   const navigate = useNavigate();
   const { getLocalStorage, remLocalStorage } = Utility();
-
   const customer = getLocalStorage("customerInfo");
   const username = customer?.name;
-
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
   const handleUserMenuOpen = (event) => {
     setUserMenuAnchorEl(event.currentTarget);
   };
-
   const handleUserMenuClose = () => {
     setUserMenuAnchorEl(null);
   };
-
   const handleLogout = () => {
     remLocalStorage("customerInfo");
     handleUserMenuClose();
@@ -43,7 +34,6 @@ export default function ResponsiveAppBar() {
     handleUserMenuClose();
     navigate("/reset-password");
   };
-
   function topFunction() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
@@ -54,7 +44,6 @@ export default function ResponsiveAppBar() {
   const handleMouseOut = () => {
     setAnchorEl(null);
   };
-
   return (
     <Box sx={{ display: "flex", height: "16vh" }}>
       <Box
@@ -111,6 +100,11 @@ export default function ResponsiveAppBar() {
             sx={{
               height: "40px",
               textTransform: "none",
+              // fontSize: "1.3rem",
+              // borderRadius: "22px",
+              // marginRight: "10px",
+        
+              // color: " rgba(6,55,158,1)",
               color: "white",
               fontSize: "1.2vw",
               lineHeight: "2vw",
@@ -145,7 +139,7 @@ export default function ResponsiveAppBar() {
               <Link
                 key={product.title}
                 to={product.href}
-                style={{ textDecoration: "none", color: "black" }} ////
+                style={{ textDecoration: "none", color: "black" }}
                 onClick={() => {
                   handleMenuClose();
                   topFunction();
@@ -153,7 +147,7 @@ export default function ResponsiveAppBar() {
               >
                 <MenuItem>
                   <Typography
-                    sx={{ color: "black", fontSize: "1vw", lineHeight: "2vw" }} ////
+                    sx={{ color: "black", fontSize: "1vw", lineHeight: "2vw" }}
                   >
                     {product.title}
                   </Typography>
@@ -166,7 +160,6 @@ export default function ResponsiveAppBar() {
               return (
                 <div key={username}>
                   <Button
-                    color="inherit"
                     onClick={handleUserMenuOpen}
                     endIcon={<ArrowDropDownIcon />}
                     sx={{
@@ -180,7 +173,6 @@ export default function ResponsiveAppBar() {
                       ":hover": {
                         transform: "scale(1.1)",
                         background: "#000066",
-                        color: "white",
                         transition: "all 300ms ease-in-out",
                       },
                     }}
@@ -223,6 +215,17 @@ export default function ResponsiveAppBar() {
                         lineHeight: "2vw",
                       }}
                       component="a"
+                      href="/providers/favourite-card"
+                    >
+                      Favourite
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        color: "black",
+                        fontSize: "1vw",
+                        lineHeight: "2vw",
+                      }}
+                      component="a"
                       href="/loan-tracker"
                     >
                       Loan Tracking
@@ -251,7 +254,6 @@ export default function ResponsiveAppBar() {
                 </div>
               );
             }
-
             return (
               <Button
                 href={page.href}
@@ -267,7 +269,6 @@ export default function ResponsiveAppBar() {
                   ":hover": {
                     transform: "scale(1.1)",
                     background: "#000066",
-
                     transition: "all 300ms ease-in-out",
                   },
                 }}

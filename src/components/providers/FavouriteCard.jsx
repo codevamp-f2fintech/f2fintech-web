@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -13,12 +13,12 @@ import {
   IconButton,
   Popover,
   Checkbox,
-  FormControlLabel,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import ListItemIcon from '@mui/icons-material/CheckCircle';
 import styled from "@emotion/styled";
 import PropTypes from "prop-types";
+import ButtonComp from "../common/button/Button";
+import { Utility } from "../utility";
 
 const StyledCard = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -37,13 +37,11 @@ const StyledCard = styled(Box)(({ theme }) => ({
   cursor: "pointer",
 }));
 
-
-
 const StyledButton = styled(Button)(({ theme }) => ({
   fontSize: "0.875rem",
   padding: "0.5rem 1rem",
   minWidth: "100px",
-  background: "linear-gradient(135deg, #2c3ce3 0%, #000DFF 100%)",
+  background: "linear-gradient(135deg, #2C3CE3 0%, #000DFF 100%)",
   color: "#fff",
   transition: "background-color 0.3s, color 0.3s, transform 0.3s",
   borderRadius: "25px",
@@ -54,10 +52,9 @@ const StyledButton = styled(Button)(({ theme }) => ({
     transform: "scale(1.05)",
   },
 }));
+
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
-  position: "absolute",
-  top: 8,
-  right: 8,
+  position: "relative",
   backgroundColor: "rgba(255, 255, 255, 0.7)",
   borderRadius: "50%",
   padding: "4px",
@@ -66,19 +63,16 @@ const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
   },
 }));
 
-
 const ProductCard = ({
   title,
   home,
   homeimg,
   interestRate,
   text,
-  isCompared,
   handleCompareToggle,
-  onCardClick,
-  handleCheckboxChange,
   handleRemove,
 }) => {
+  const [checked, setChecked] = useState(false);
   return (
     <StyledCard>
       <Box sx={{ position: "relative", minWidth: 200, maxWidth: 200 }}>
@@ -109,27 +103,25 @@ const ProductCard = ({
           </>
         )}
         <Box mt={2} display="flex" justifyContent="space-between" alignItems="center">
-          <StyledButton onClick={() => console.log("Apply Now clicked!")}>
-            Apply Now
-          </StyledButton>
-          <Box mt={2} display="flex" justifyContent="space-between" alignItems="center" marginRight="500px" marginBottom="15px">
-            <StyledButton onClick={handleRemove} sx={{ backgroundColor: "red", "&:hover": { backgroundColor: "darkred" } }}>
-          Remove
-       </StyledButton>
-       </Box>
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isCompared}
-                onChange={handleCheckboxChange}
-                color="primary"
-              />
-            }
-            label="Add to Compare"
-          />     
+          <Box display="flex" alignItems="center">
+            <StyledButton onClick={() => console.log("Apply Now clicked!")}>
+              Apply Now
+            </StyledButton>
+            <StyledButton 
+              onClick={handleRemove} 
+              sx={{ backgroundColor: "red", "&:hover": { backgroundColor: "darkred" }, ml: 2 }}
+            >
+              Remove
+            </StyledButton>
+          </Box>
+          <StyledCheckbox
+            checked={checked}
+            onChange={(event) => {
+              setChecked(event.target.checked);
+              handleCompareToggle();
+            }}
+          />
         </Box>
-
       </Box>
     </StyledCard>
   );
@@ -141,10 +133,7 @@ ProductCard.propTypes = {
   homeimg: PropTypes.string.isRequired,
   interestRate: PropTypes.string.isRequired,
   text: PropTypes.object.isRequired,
-  isCompared: PropTypes.bool.isRequired,
   handleCompareToggle: PropTypes.func.isRequired,
-  onCardClick: PropTypes.func.isRequired,
-  handleCheckboxChange: PropTypes.func.isRequired,
   handleRemove: PropTypes.func.isRequired,
 };
 
@@ -168,27 +157,25 @@ const Filter = ({ filter, setFilter }) => (
 
 const FavouriteCard = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [compares, setCompares] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [filter, setFilter] = useState("");
+  const { getLocalStorage } = Utility();
+  const favoriteItems = getLocalStorage("favorites") || [];
+  console.log('locals', favoriteItems, typeof (favoriteItems))
 
-
-  const favoriteItems = JSON.parse(localStorage.getItem("favorites")) || [];
-
-  const handleCompareToggle = (product) => {
-    setCompares((prev) =>
-      prev.includes(product)
-        ? prev.filter((item) => item !== product)
-        : [...prev, product]
+  const handleCompareToggle = (item) => {
+    console.log('toggle', item, typeof (item), compares)
+    setCompares((prevCompares) =>
+      prevCompares.includes(item)
+        ? prevCompares.filter((comp) => comp !== item)
+        : [...prevCompares, item]
     );
   };
 
-  const handleCheckboxChange = (product) => (event) => {
-    if (event.target.checked) {
-      setCompares((prev) => [...prev, product]);
-    } else {
-      setCompares((prev) => prev.filter((item) => item !== product));
-    }
+  const handleProceedToCompare = () => {
+    navigate("/providers/Compare", { state: { compares } });
+    handlePopoverClose();
   };
 
   const handlePopoverClick = (event) => {
@@ -201,6 +188,7 @@ const FavouriteCard = () => {
 
   const handleRemoveAll = () => {
     setCompares([]);
+    handlePopoverClose();
   };
 
   const handleRemoveCard = (index) => {
@@ -215,15 +203,14 @@ const FavouriteCard = () => {
     <Container
       style={{
         backgroundSize: "cover",
-        backgroundPosition: "centre",
-        background:
-          "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
+        backgroundPosition: "center",
+        background: "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
         borderRadius: "0% 100% 0% 1% / 0% 100% 0% 100%",
         padding: "40px",
       }}
     >
-      <Typography variant="h4" gutterBottom sx={{ marginTop: "20px", animation: "bounce 1s infinite", marginLeft: "900px" }}>
-        Favourite ❤️ Items!
+      <Typography variant="h4" gutterBottom sx={{ marginTop: "20px", animation: "bounce 1s infinite", textAlign: "Right" }}>
+       Favourite ❤️ Items!
       </Typography>
       {favoriteItems.length === 0 ? (
         <Typography>No favorite items to display.</Typography>
@@ -241,10 +228,7 @@ const FavouriteCard = () => {
                   short_description: item.short_description,
                   long_description: item.long_description,
                 }}
-                isCompared={compares.includes(item)}
                 handleCompareToggle={() => handleCompareToggle(item)}
-                onCardClick={() => {}}
-                handleCheckboxChange={handleCheckboxChange(item)}
                 handleRemove={() => handleRemoveCard(index)}
               />
             </Grid>
@@ -257,7 +241,7 @@ const FavouriteCard = () => {
             onClick={handlePopoverClick}
             sx={{
               boxShadow: "0 4px 8px rgba(0, 0, 0, 10)",
-              background: "linear-gradient(135deg, #2c3ce3 0%, #000DFF 100%)",
+              background: "linear-gradient(135deg, #2C3CE3 0%, #000DFF 100%)",
               color: "#fff",
               fontSize: "1rem",
               fontWeight: "bold",
@@ -265,7 +249,7 @@ const FavouriteCard = () => {
               borderRadius: "25px",
             }}
           >
-            Compare {compares.length}
+            Compare
           </Button>
           <Popover
             open={open}
@@ -303,6 +287,15 @@ const FavouriteCard = () => {
                   size="small"
                 >
                   Remove All
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={handleProceedToCompare}
+                  sx={{ ml: 2 }}
+                >
+                  Proceed
                 </Button>
               </Box>
             </Box>
