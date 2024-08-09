@@ -7,6 +7,10 @@ const pages = [
     title: "Login",
     href: "/login",
   },
+  {
+    title: "maintenance",
+    href: "/maintenance-page",
+  },
 ];
 
 const products = [
