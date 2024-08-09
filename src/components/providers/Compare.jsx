@@ -63,12 +63,20 @@ function Compare() {
               onMouseLeave={handleMouseLeave}
             >
               <CardMedia
-                component="img"
-                height="200"
-                image={product.homeimage}
-                alt={product.title}
-                style={{ objectFit: "contain", padding: "16px" }}
-              />
+          component="img"
+          height="200"
+          image={product.homeimage}
+          alt={product.title}
+          style={{ 
+            objectFit: "contain", 
+            padding: "6px", 
+            display: "block", 
+            margin: "auto", 
+            maxWidth: "100%", 
+            maxHeight: "100%"
+          }}
+        />
+
               <CardContent>
                 <Typography
                   variant="h5"
