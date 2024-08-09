@@ -5,7 +5,7 @@ import { Box, Container, Typography } from "@mui/material";
 import Calculator from "../calculator/Calculator";
 import Apply from "../apply/Apply";
 import Advantages from "../../components/advantages/Advantages";
-import { bLadvantagesData } from "../data/Data";
+import { bLadvantagesData } from "../data/Data.jsx";
 
 const SmallBusinessLoan = () => {
   // Scroll to the section when the component mounts

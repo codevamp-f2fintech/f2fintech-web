@@ -188,14 +188,14 @@ const Listing = () => {
     }
     // If the user is logged in, update the favorites
     if (!favorites.includes(item)) {
-    setFavorites((prevFavorites) => {
+      setFavorites((prevFavorites) => {
         const updatedFavorites = [...prevFavorites, item];
-      // Save the updated favorites to localStorage
-      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-      return updatedFavorites;
+        // Save the updated favorites to localStorage
+        localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+        return updatedFavorites;
 
-    });
-  };
+      });
+    }
   };
   useEffect(() => {
     // Load favorites from localStorage on component mount
@@ -235,14 +235,12 @@ const Listing = () => {
     }
     return sortedData;
   };
-  const handleDialogClose = () => {
-    setOpenDialog(true);
-    navigate("/FavouriteCard");
-  };
+
   const handleLoginRedirect = () => {
     setOpenDialog(false);
     navigate("/login");
   };
+
   if (loading) {
     return (
       <Box
@@ -271,7 +269,7 @@ const Listing = () => {
       <Grid container spacing={4}>
         <Dialog
           open={openDialog}
-          onClose={handleDialogClose}
+          onClose={() => setOpenDialog(false)}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
@@ -282,7 +280,7 @@ const Listing = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleDialogClose} color="primary">
+            <Button onClick={() => setOpenDialog(false)} color="primary">
               Cancel
             </Button>
             <Button onClick={handleLoginRedirect} color="primary" autoFocus>
@@ -294,8 +292,8 @@ const Listing = () => {
           <Grid item xs={12} sm={6} md={4} key={index}>
             <ProductCard
               title={item.title}
-              home={item.home}
-              homeimg={item.homeimage}
+              home={item.is_home}
+              homeimg={item.home_image}
               interestRate={item.interest_rate}
               text={{
                 description: item.description,

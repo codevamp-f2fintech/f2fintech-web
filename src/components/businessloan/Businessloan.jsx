@@ -3,7 +3,7 @@ import React from "react";
 import { Box, Container, Typography } from "@mui/material";
 import Calculator from "../calculator/Calculator";
 import Advantages from "../../components/advantages/Advantages";
-import { bLadvantagesData } from "../data/Data";
+import { bLadvantagesData } from "../data/Data.jsx";
 
 const Businessloan = () => {
   // Scroll to the section when the component mounts

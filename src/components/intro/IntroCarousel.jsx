@@ -36,8 +36,8 @@ export default function IntroCarousel() {
         <Intro
           key={index}
           title={item.title}
-          home={item.home}
-          homeimg={item.homeimage}
+          home={item.is_home}
+          homeimg={item.home_image}
           interestRate={item.interest_rate}
           text={{
             description: item.description,

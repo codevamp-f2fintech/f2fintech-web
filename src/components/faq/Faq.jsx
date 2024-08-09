@@ -6,7 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Container, Typography, Box } from "@mui/material";
 
-import { faqData } from "../data/Data";
+import { faqData } from "../data/Data.jsx";
 import "../../App.css";
 
 const Faq = () => {

@@ -4,7 +4,7 @@ import { Box, Container, Typography } from "@mui/material";
 
 import Calculator from "../calculator/Calculator";
 import Advantages from "../../components/advantages/Advantages";
-import { bLadvantagesData } from "../data/Data";
+import { bLadvantagesData } from "../data/Data.jsx";
 import Apply from "../apply/Apply";
 import LendingPartners from "../lendingpartners/Lendingpartners";
 

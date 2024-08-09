@@ -26,8 +26,7 @@ import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import Data from "../data/Data.json";
 import Advantages from "../../components/advantages/Advantages";
-import { advantagesData } from "../data/Data.jsx";
-import { customersdata } from "../../components/data/data";
+import { advantagesData, customersdata } from "../data/Data.jsx";
 import Customers from "../customers/Customers";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -93,7 +92,7 @@ const ProductCard = ({ result, cardRef, label, handleCheckboxChange, isChecked }
           <CardMedia
             component="img"
             height="200"
-            image={`/${result.img}`} 
+            image={`/${result.img}`}
             alt={result.title}
             sx={{
               borderTopLeftRadius: "20px",

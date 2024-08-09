@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 
@@ -43,6 +42,7 @@ function App() {
           <>
             <ResponsiveAppBar />
             <Routes>
+              <Route path="*" element={<NotFoundPage />} />
               <Route exact path="/" element={<Home />} />
               <Route exact path="/business-loan" element={<Businessloan />} />
               <Route exact path="/msme-loan" element={<MsmeLoan />} />
@@ -77,7 +77,7 @@ function App() {
               />
               <Route
                 exact
-                path="/providers/FavouriteCard"
+                path="/providers/favourite-card"
                 element={<FavouriteCard />}
               />
               <Route
