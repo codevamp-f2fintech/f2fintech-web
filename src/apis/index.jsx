@@ -10,10 +10,12 @@ import { CustomerAPI } from "./CustomerAPI";
 import { CustomerInfoAPI } from "./CustomerInfoAPI";
 import { LoanProviderAPI } from "./LoanProviderAPI";
 import { LoanTrackingAPI } from "./LoanTrackingAPI";
+import { RatingRevAPI } from "./RatingRevAPI";
 
 export default {
   CustomerAPI,
   CustomerInfoAPI,
   LoanProviderAPI,
-  LoanTrackingAPI
+  LoanTrackingAPI,
+  RatingRevAPI,
 };

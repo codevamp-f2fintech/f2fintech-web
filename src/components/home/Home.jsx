@@ -7,6 +7,7 @@ import Carousel from "../../components/carousel/Carousel";
 import Apply from "../../components/apply/Apply";
 import Advantages from "../../components/advantages/Advantages";
 import Eligibility from "../../components/eligibility/Eligibility";
+import Rating from "../../components/ratingAndReview/Rating";
 import LendingPartners from "../../components/lendingpartners/Lendingpartners";
 import Faq from "../faq/Faq";
 
@@ -24,6 +25,7 @@ const Home = () => {
       <LendingPartners />
       <Customers customersdata={customersdata} />
       <Faq />
+      <Rating />
     </>
   );
 };
