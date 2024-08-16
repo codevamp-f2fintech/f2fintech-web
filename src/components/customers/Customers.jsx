@@ -3,36 +3,16 @@ import { Avatar, Container, Typography, Box, Paper } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
 import API from "../../apis";
-
 const Customers = ({ customersdata }) => {
   const [customerRatings, setCustomerRatings] = useState([]);
   useEffect(() => {
     API.RatingRevAPI.getRating()
       .then((res) => {
-        if (res) {
-          const ratingData = res.data.data.rows;
-
-          // Create an array of promises for fetching customer profiles
-          const profilePromises = ratingData.map((cust) =>
-            API.CustomerAPI.getCustomerProfile(cust.customer_id)
-              .then((profile) => ({
-                ...cust,
-                profile: profile.data.data.customer,
-              }))
-              .catch((profileErr) => {
-                console.log("Profile error", profileErr);
-                return { ...cust, profile: null }; // Handle the error case for profile
-              })
-          );
-
-          // Wait for all profile requests to complete
-          Promise.all(profilePromises)
-            .then((ratingsWithProfiles) => {
-              setCustomerRatings(ratingsWithProfiles);
-            })
-            .catch((err) => {
-              console.log("Error in processing profiles", err);
-            });
+        if (res && res.data && res.data.data && res.data.data.reviews) {
+          const ratingData = res.data.data.reviews; // Adjusted to correctly access reviews array
+          setCustomerRatings(ratingData);
+        } else {
+          console.log("Unexpected data structure:", res.data);
         }
         console.log("Ratings response:", res);
       })
@@ -40,9 +20,7 @@ const Customers = ({ customersdata }) => {
         console.log("Error fetching ratings:", err);
       });
   }, []);
-
   console.log("customerRatings", customerRatings);
-
   return (
     <Container
       maxWidth="false"
@@ -87,7 +65,7 @@ const Customers = ({ customersdata }) => {
             }}
           >
             <Avatar
-              src={customer.img}
+              src={customers.image_url} // Assuming image_url would be provided
               sx={{ height: "150px", width: "150px", marginBottom: "20px" }}
             />
             <Typography
@@ -103,16 +81,18 @@ const Customers = ({ customersdata }) => {
               {customers.review}
             </Typography>
             <Typography sx={{ color: "purple", fontSize: "20px" }}>
-              {customers.profile.name}
+              {customers.name}
             </Typography>
-            <Typography sx={{ color: "blue" }}>{customer.address}</Typography>
+            <Typography sx={{ color: "blue" }}>
+              {customers.city || "City not available"},{" "}
+              {customers.state || "State not available"}
+            </Typography>
           </Paper>
         ))}
       </Carousel>
     </Container>
   );
 };
-
 Customers.propTypes = {
   customersdata: PropTypes.arrayOf(
     PropTypes.shape({
@@ -123,5 +103,4 @@ Customers.propTypes = {
     })
   ).isRequired,
 };
-
 export default Customers;
