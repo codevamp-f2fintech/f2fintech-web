@@ -10,6 +10,19 @@
 import { displayToast } from "../../redux/actions/ToastAction";
 
 export const Utility = () => {
+  /** Formats an image name by appending a random number and removing special characters.
+   * @param {string} name - The original image name.
+   * @returns {string} - The formatted image name.
+   */
+  const formatName = (name) => {
+    const formattedName = name
+      .toLowerCase()
+      .trim()
+      .replace(/[!@#$%^&*();:'"`~`'$]/g, "")
+      .replace(/\s+/g, "_");
+    return formattedName;
+  };
+
   /** Gets the value associated with a key from local storage.
    * @param {string} key - The key for which to retrieve the value from local storage.
    * @returns {any|null} - The value associated with the key, or null if the key is not found.
@@ -99,6 +112,7 @@ export const Utility = () => {
   };
 
   return {
+    formatName,
     getLocalStorage,
     remLocalStorage,
     setLocalStorage,
