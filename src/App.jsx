@@ -24,7 +24,8 @@ import FavouriteCard from "./components/providers/FavouriteCard";
 import { useMode } from "./theme";
 import Loan from "./components/loantracking/loantracking";
 import NotFoundPage from "./components/notfoundpage/notfoundpage";
-import MaintenancePage from "./components/maintenancepage/Maintenance"
+import MaintenancePage from "./components/maintenancepage/Maintenance";
+import ImportLoanProvider from "./components/importExcelData/ImportLoanProvider";
 
 function App() {
   const [theme] = useMode();
@@ -92,6 +93,10 @@ function App() {
               />
               <Route exact path="/loan-tracker" element={<Loan />} />
               <Route exact path="/login" element={<Login />} />
+
+              <Route path="/importExcelData" element={<ImportLoanProvider />} />
+ 
+
             </Routes>
             <Footer />
           </>

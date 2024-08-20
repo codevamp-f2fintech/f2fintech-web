@@ -2,13 +2,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import { MenuItem, Menu, Typography, Box } from "@mui/material";
+import { MenuItem, Menu, Typography, Box, IconButton, Badge } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import NotificationsIcon from "@mui/icons-material/Notifications"; // Import the icon
 import { pages, products } from "../../data/Data";
 import { Utility } from "../utility";
 export default function ResponsiveAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null); // State for notifications menu
   const navigate = useNavigate();
   const { getLocalStorage, remLocalStorage } = Utility();
   const customer = getLocalStorage("customerInfo");
@@ -34,16 +36,16 @@ export default function ResponsiveAppBar() {
     handleUserMenuClose();
     navigate("/reset-password");
   };
+  const handleNotificationClick = (event) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+  const handleNotificationClose = () => {
+    setNotificationAnchorEl(null);
+  };
   function topFunction() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
   }
-  const handleMouseEnter = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMouseOut = () => {
-    setAnchorEl(null);
-  };
   return (
     <Box sx={{ display: "flex", height: "16vh" }}>
       <Box
@@ -91,6 +93,44 @@ export default function ResponsiveAppBar() {
             marginRight: "2%",
           }}
         >
+          <IconButton
+            color="inherit"
+            aria-controls={notificationAnchorEl ? "menu-notifications" : undefined}
+            aria-haspopup="true"
+            onClick={handleNotificationClick}
+            sx={{
+              marginRight: "20px",
+              ":hover": {
+                transform: "scale(1.1)",
+                background: "#000066",
+                transition: "all 300ms ease-in-out",
+              },
+            }}
+          >
+            <Badge badgeContent={4} color="error"> {/* Example with 4 notifications */}
+              <NotificationsIcon sx={{ color: "white", fontSize: "1.5rem" }} />
+            </Badge>
+          </IconButton>
+          <Menu
+            id="menu-notifications"
+            anchorEl={notificationAnchorEl}
+            open={Boolean(notificationAnchorEl)}
+            onClose={handleNotificationClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            getContentAnchorEl={null}
+          >
+            <MenuItem onClick={handleNotificationClose}>Notification 1</MenuItem>
+            <MenuItem onClick={handleNotificationClose}>Notification 2</MenuItem>
+            <MenuItem onClick={handleNotificationClose}>Notification 3</MenuItem>
+            <MenuItem onClick={handleNotificationClose}>Notification 4</MenuItem>
+          </Menu>
           <Button
             color="inherit"
             aria-controls={anchorEl ? "menu-appbar" : undefined}
