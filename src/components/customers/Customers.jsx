@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Avatar, Container, Typography, Box, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Avatar, Container, Typography, Paper } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
+
 import API from "../../apis";
 
 const Customers = ({ customersdata }) => {
   const [customerRatings, setCustomerRatings] = useState([]);
+
   useEffect(() => {
     API.RatingRevAPI.getRating()
       .then((res) => {
         if (res) {
-          const ratingData = res.data.data.rows;
+          const ratingData = res.data.data.reviews;
+          console.log('ratingdata', ratingData)
 
           // Create an array of promises for fetching customer profiles
           const profilePromises = ratingData.map((cust) =>
-            API.CustomerAPI.getCustomerProfile(cust.customer_id)
+            API.CustomerAPI.getCustomerProfile(cust.id)
               .then((profile) => ({
                 ...cust,
                 profile: profile.data.data.customer,
@@ -34,14 +37,13 @@ const Customers = ({ customersdata }) => {
               console.log("Error in processing profiles", err);
             });
         }
-        console.log("Ratings response:", res);
       })
       .catch((err) => {
         console.log("Error fetching ratings:", err);
       });
   }, []);
 
-  console.log("customerRatings", customerRatings);
+  console.log("customerRatings", customerRatings, customersdata);
 
   return (
     <Container
@@ -68,7 +70,7 @@ const Customers = ({ customersdata }) => {
         What Our Customers Say
       </Typography>
       <Carousel height={"70vh"}>
-        {customerRatings.map((customers, i) => (
+        {customersdata.length && customersdata.map((customer, i) => (
           <Paper
             key={i}
             sx={{
@@ -100,10 +102,10 @@ const Customers = ({ customersdata }) => {
                 marginBottom: "20px",
               }}
             >
-              {customers.review}
+              {customer.description}
             </Typography>
             <Typography sx={{ color: "purple", fontSize: "20px" }}>
-              {customers.profile.name}
+              {customer.name}
             </Typography>
             <Typography sx={{ color: "blue" }}>{customer.address}</Typography>
           </Paper>
@@ -121,7 +123,7 @@ Customers.propTypes = {
       description: PropTypes.string.isRequired,
       address: PropTypes.string.isRequired,
     })
-  ).isRequired,
+  )
 };
 
 export default Customers;
