@@ -10,10 +10,8 @@ import { axiosInstance } from "./config/axiosConfig";
 import { defineCancelApiObject } from "./config/axiosUtils";
 
 export const DocumentAPI = {
- 
   // create the document in db
   createDocument: async (document, cancel = false) => {
-    console.log("createDocument called with:", document);
     return await axiosInstance.request({
       url: `/create-document`,
       method: "POST",
@@ -21,15 +19,9 @@ export const DocumentAPI = {
       signal: cancel
         ? cancelApiObject[this.createDocument.name].handleRequestCancellation().signal
         : undefined,
-      }).then(response => {
-        console.log("createDocument response:", response);
-        return response;
-      }).catch(error => {
-        console.error("createDocument error:", error);
-        throw error;
-      });
+    });
   },
- 
+
   // upload the image to nodejs
   uploadDocument: async (document, cancel = false) => {
     return await axiosInstance.request({
@@ -42,12 +34,6 @@ export const DocumentAPI = {
       signal: cancel
         ? cancelApiObject[this.uploadDocument.name].handleRequestCancellation().signal
         : undefined,
-      }).then(response => {
-        console.log("uploadDocument response:", response);
-        return response;
-      }).catch(error => {
-        console.error("uploadDocument error:", error);
-        throw error;
     });
   }
 };

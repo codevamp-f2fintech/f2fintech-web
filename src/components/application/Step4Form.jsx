@@ -1,10 +1,15 @@
-import React, { useCallback, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
-import { TextField, Box, Typography, Button, IconButton ,Tooltip} from "@mui/material";
-import * as Yup from "yup";
-import API from "../../apis";
+import { Box, TextField, Typography, Button, IconButton, Tooltip } from "@mui/material";
+
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PropTypes from "prop-types";
+import * as Yup from "yup";
+
+import API from "../../apis";
+
 import { Utility } from "../utility";
 
 const validationSchema = Yup.object({
@@ -14,73 +19,134 @@ const validationSchema = Yup.object({
 });
 
 const initialValues = {
-  aadharFront: "",
-  aadharBack: "",
-  passportSizePhoto: "",
+  aadharFront: null,
+  aadharBack: null,
+  passportSizePhoto: null,
 };
 
-const Step4Form = ({ handleNext }) => {
-  const [previewAadharFront, setPreviewAadharFront] = useState("");
-  const [previewAadharBack, setPreviewAadharBack] = useState("");
-  const [previewPassportSizePhoto, setPreviewPassportSizePhoto] = useState("");
+const FileInput = ({ name, label, preview, onFileChange, onDelete }) => (
+  <>
+    <Typography sx={{ fontFamily: "-moz-initial", fontSize: "2.5vh", color: "black" }}>
+      {label}
+    </Typography>
+    <TextField
+      accept="image/*, application/pdf"
+      name="file"
+      label="Upload"
+      size="small"
+      InputProps={{
+        startAdornment: (
+          <IconButton component="label" sx={{ width: "92%" }}>
+            <AddPhotoAlternateIcon />
+            <input
+              hidden
+              type="file"
+              accept="image/*"
+              onChange={(event) => onFileChange(event, name)}
+            />
+          </IconButton>
+        ),
+      }}
+      sx={{ m: 1, outline: "none", width: "35%" }}
+    />
+    {preview && (
+      <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
+        <img src={preview} alt={label} style={{ maxWidth: "100%", height: "auto" }} />
+        <IconButton
+          onClick={() => onDelete(name)}
+          sx={{
+            position: "absolute",
+            top: 20,
+            right: 20,
+            transform: "translate(50%, -50%)",
+            borderRadius: "50%",
+            padding: "5px"
+          }}
+        >
+          <Tooltip title="DELETE">
+            <DeleteIcon
+              sx={{
+                color: "#002147",
+                "&:hover": {
+                  color: "red",
+                  fontSize: "1.5rem",
+                  transition: "all 0.3s ease-in-out",
+                },
+              }}
+            />
+          </Tooltip>
+        </IconButton>
+      </Box>
+    )}
+    <ErrorMessage name={name} component="div" style={{ color: "red" }} />
+  </>
+);
+
+const Step4Form = () => {
+  const [previews, setPreviews] = useState({
+    aadharFront: "",
+    aadharBack: "",
+    passportSizePhoto: "",
+  });
 
   const { formatName, getLocalStorage } = Utility();
-
   const customerId = getLocalStorage("customerInfo")?.id;
 
-  const handleFormSubmit = useCallback((values) => {
-    const uploadFileToS3 = (file, folderName) => {
-      const formattedName = formatName(file.name);
-      API.DocumentAPI.uploadDocument({
-        document: file,
-        folder: `profile/${formattedName}`,
+  const uploadFileToS3 = (file, type) => {
+    const formattedName = formatName(file.name);
+    API.DocumentAPI.uploadDocument({
+      document: file,
+      folder: `document/${formattedName}`,
+    })
+      .then((res) => {
+        if (res.data.status === "Success") {
+          API.DocumentAPI.createDocument({
+            document_url: res.data.data,
+            customer_id: customerId,
+            type: type
+          });
+          console.log(`Document of ${type} uploaded successfully`);
+        } else {
+          console.error("Upload failed");
+        }
       })
-        .then((res) => {
-          if (res.data.status === "Success") {
-            API.DocumentAPI.createDocument({
-              document_url: res.data.data,
-              customer_id: customerId,
-            })
-              .then(() => {
-                console.log("Document created successfully");
-              })
-              .catch((err) => {
-                console.error("Error in creating document in DB", err);
-              });
-          } else {
-            console.error("Upload failed");
-          }
-        })
-        .catch((err) => {
-          console.error("Error in upload:", err);
-        });
-    };
+      .catch((err) => {
+        console.error("Error in document creation:", err);
+      });
+  };
+
+  const handleFormSubmit = useCallback(async (values) => {
+    const uploadPromises = [];
 
     if (values.aadharFront) {
-      uploadFileToS3(values.aadharFront, "aadhar_front");
+      uploadPromises.push(uploadFileToS3(values.aadharFront, "aadhaar front"));
     }
-
     if (values.aadharBack) {
-      uploadFileToS3(values.aadharBack, "aadhar_back");
+      uploadPromises.push(uploadFileToS3(values.aadharBack, "aadhaar back"));
+    }
+    if (values.passportSizePhoto) {
+      uploadPromises.push(uploadFileToS3(values.passportSizePhoto, "photo"));
     }
 
-    if (values.passportSizePhoto) {
-      uploadFileToS3(values.passportSizePhoto, "passport_photo");
+    try {
+      await Promise.all(uploadPromises);
+      console.log("All documents uploaded successfully");
+    } catch (err) {
+      console.log("Error in uploading one or more documents:", err);
     }
   }, [customerId]);
 
-  const handleFileChange = (event, setFieldValue, setPreview) => {
+  const handleFileChange = (event, name) => {
     const file = event.target.files[0];
     if (file) {
-      setFieldValue(file);
-      setPreview(URL.createObjectURL(file));
+      setPreviews((prev) => ({ ...prev, [name]: URL.createObjectURL(file) }));
     }
   };
 
-  const handleDelete = (setFieldValue, setPreview) => {
-    setFieldValue("");
-    setPreview("");
+  const handleDelete = (name) => {
+    setPreviews((prev) => ({ ...prev, [name]: "" }));
   };
+
 
   return (
     <Formik
@@ -91,7 +157,6 @@ const Step4Form = ({ handleNext }) => {
       {({
         dirty,
         isSubmitting,
-        handleBlur,
         handleSubmit,
         setFieldValue,
       }) => (
@@ -128,166 +193,49 @@ const Step4Form = ({ handleNext }) => {
             </Typography>
 
             {/* Aadhar Card Front */}
-            <Typography
-              sx={{
-                fontFamily: "-moz-initial",
-                fontSize: "2.5vh",
-                color: "black",
+            <FileInput
+              name="aadharFront"
+              label="Aadhar Card Front"
+              preview={previews.aadharFront}
+              onFileChange={(event) => {
+                handleFileChange(event, "aadharFront");
+                setFieldValue("aadharFront", event.target.files[0]);
               }}
-            >
-              Aadhar Card Front
-            </Typography>
-            <Box sx={{ width: "40%", textAlign: "center", border: "1px solid gray" }}>
-              <IconButton component="label">
-                <AddPhotoAlternateIcon />
-                <input
-                  hidden
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) =>
-                    handleFileChange(event, (file) => setFieldValue("aadharFront", file), setPreviewAadharFront)
-                  }
-                />
-              </IconButton>
-            </Box>
-            {previewAadharFront && (
-              <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
-                <img src={previewAadharFront} alt="Aadhar Front Preview" style={{ maxWidth: "100%", height: "auto" }} />
-                <IconButton
-                  onClick={() => handleDelete(() => setFieldValue("aadharFront", ""), setPreviewAadharFront)}
-                  sx={{
-                    position: "absolute",
-                    top: 20,
-                    right: 20,
-                    transform: "translate(50%, -50%)",
-                    // backgroundColor: "white",
-                    borderRadius: "50%",
-                    padding: "5px",
-                    // "&:hover": {
-                    //   backgroundColor: "#f5f5f5",
-                    // },
-                  }}
-                >
-                  <Tooltip title="DELETE">
-                    <DeleteIcon
-                      sx={{
-                        color: "#002147",
-                        "&:hover": {
-                          color: "red",
-                          fontSize: "1.5rem",
-                          transition: "all 0.3s ease-in-out",
-                        },
-                      }}
-                    />
-                  </Tooltip>
-                </IconButton>
-              </Box>
-            )}
-            <ErrorMessage name="aadharFront" component="div" style={{ color: "red" }} />
+              onDelete={() => {
+                handleDelete("aadharFront");
+                setFieldValue("aadharFront", null);
+              }}
+            />
 
             {/* Aadhar Card Back */}
-            <Typography sx={{ fontFamily: "-moz-initial", fontSize: "2.5vh", color: "black" }}>
-              Aadhar Card Back
-            </Typography>
-            <Box sx={{ width: "40%", textAlign: "center", border: "1px solid gray" }}>
-              <IconButton component="label">
-                <AddPhotoAlternateIcon />
-                <input
-                  hidden
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) =>
-                    handleFileChange(event, (file) => setFieldValue("aadharBack", file), setPreviewAadharBack)
-                  }
-                />
-              </IconButton>
-            </Box>
-            {previewAadharBack && (
-              <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
-                <img src={previewAadharBack} alt="Aadhar Back Preview" style={{ maxWidth: "100%", height: "auto" }} />
-                <IconButton
-                  onClick={() => handleDelete(() => setFieldValue("aadharBack", ""), setPreviewAadharBack)}
-                  sx={{
-                    position: "absolute",
-                    top: 20,
-                    right: 20,
-                    transform: "translate(50%, -50%)",
-                    // backgroundColor: "white",
-                    borderRadius: "50%",
-                    padding: "5px",
-                    // "&:hover": {
-                    //   backgroundColor: "#f5f5f5",
-                    // },
-                  }}
-                >
-                  <Tooltip title="DELETE">
-                    <DeleteIcon
-                      sx={{
-                        color: "#002147",
-                        "&:hover": {
-                          color: "red",
-                          fontSize: "1.5rem",
-                          transition: "all 0.3s ease-in-out",
-                        },
-                      }}
-                    />
-                  </Tooltip>
-                </IconButton>
-              </Box>
-            )}
-            <ErrorMessage name="aadharBack" component="div" style={{ color: "red" }} />
+            <FileInput
+              name="aadharBack"
+              label="Aadhar Card Back"
+              preview={previews.aadharBack}
+              onFileChange={(event) => {
+                handleFileChange(event, "aadharBack");
+                setFieldValue("aadharBack", event.target.files[0]);
+              }}
+              onDelete={() => {
+                handleDelete("aadharBack");
+                setFieldValue("aadharBack", null);
+              }}
+            />
 
             {/* Passport Size Photo */}
-            <Typography sx={{ fontFamily: "-moz-initial", fontSize: "2.5vh", color: "black" }}>
-              Passport Size Photo
-            </Typography>
-            <Box sx={{ width: "40%", textAlign: "center", border: "1px solid gray" }}>
-              <IconButton component="label">
-                <AddPhotoAlternateIcon />
-                <input
-                  hidden
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) =>
-                    handleFileChange(event, (file) => setFieldValue("passportSizePhoto", file), setPreviewPassportSizePhoto)
-                  }
-                />
-              </IconButton>
-            </Box>
-            {previewPassportSizePhoto && (
-              <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
-                <img src={previewPassportSizePhoto} alt="Passport Photo Preview" style={{ maxWidth: "100%", height: "auto" }} />
-                <IconButton
-                  onClick={() => handleDelete(() => setFieldValue("passportSizePhoto", ""), setPreviewPassportSizePhoto)}
-                  sx={{
-                    position: "absolute",
-                    top: 20,
-                    right: 20,
-                    transform: "translate(50%, -50%)",
-                    // backgroundColor: "white",
-                    borderRadius: "50%",
-                    padding: "5px",
-                    // "&:hover": {
-                    //   backgroundColor: "#f5f5f5",
-                    // },
-                  }}
-                >
-                  <Tooltip title="DELETE">
-                    <DeleteIcon
-                      sx={{
-                        color: "#002147",
-                        "&:hover": {
-                          color: "red",
-                          fontSize: "1.5rem",
-                          transition: "all 0.3s ease-in-out",
-                        },
-                      }}
-                    />
-                  </Tooltip>
-                </IconButton>
-              </Box>
-            )}
-            <ErrorMessage name="passportSizePhoto" component="div" style={{ color: "red" }} />
+            <FileInput
+              name="passportSizePhoto"
+              label="Passport Size Photo"
+              preview={previews.passportSizePhoto}
+              onFileChange={(event) => {
+                handleFileChange(event, "passportSizePhoto");
+                setFieldValue("passportSizePhoto", event.target.files[0]);
+              }}
+              onDelete={() => {
+                handleDelete("passportSizePhoto");
+                setFieldValue("passportSizePhoto", null);
+              }}
+            />
 
             <Button
               color="primary"
@@ -303,6 +251,14 @@ const Step4Form = ({ handleNext }) => {
       )}
     </Formik>
   );
+};
+
+FileInput.propTypes = {
+  name: PropTypes.string,
+  label: PropTypes.string,
+  preview: PropTypes.string,
+  onFileChange: PropTypes.func,
+  onDelete: PropTypes.func
 };
 
 export default Step4Form;
