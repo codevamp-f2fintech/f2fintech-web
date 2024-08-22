@@ -1,27 +1,101 @@
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { TextField, Box, Typography } from "@mui/material";
+import React, { useCallback, useState } from "react";
+import { Formik, Form, ErrorMessage } from "formik";
+import { TextField, Box, Typography, Button, IconButton } from "@mui/material";
 import * as Yup from "yup";
-
-import ImagePicker from "../image/ImagePicker";
+import API from "../../apis";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Utility } from "../utility";
 
 const validationSchema = Yup.object({
-  field1: Yup.string().required("Required"),
+  aadharFront: Yup.mixed().required("Required"),
+  aadharBack: Yup.mixed().required("Required"),
+  passportSizePhoto: Yup.mixed().required("Required"),
 });
 
-const Step4Form = ({ initialValues, onSubmit }) => {
-  const [aadharFront, setAadharFront] = useState([]);
-  const [aadharBack, setAadharBack] = useState([]);
-  const [passportSizePhoto, setPassportSizePhoto] = useState([]);
+const initialValues = {
+  aadharFront: "",
+  aadharBack: "",
+  passportSizePhoto: "",
+};
+
+const Step4Form = ({ handleNext }) => {
+  const [previewAadharFront, setPreviewAadharFront] = useState("");
+  const [previewAadharBack, setPreviewAadharBack] = useState("");
+  const [previewPassportSizePhoto, setPreviewPassportSizePhoto] = useState("");
+
+  const { formatName, getLocalStorage } = Utility();
+
+  const customerId = getLocalStorage("customerInfo")?.id;
+
+  const handleFormSubmit = useCallback((values) => {
+    const uploadFileToS3 = (file, folderName) => {
+      const formattedName = formatName(file.name);
+      API.DocumentAPI.uploadDocument({
+        document: file,
+        folder: `profile/${formattedName}`,
+      })
+        .then((res) => {
+          if (res.data.status === "Success") {
+            API.DocumentAPI.createDocument({
+              document_url: res.data.data,
+              customer_id: customerId,
+            })
+              .then(() => {
+                console.log("Document created successfully");
+              })
+              .catch((err) => {
+                console.error("Error in creating document in DB", err);
+              });
+          } else {
+            console.error("Upload failed");
+          }
+        })
+        .catch((err) => {
+          console.error("Error in upload:", err);
+        });
+    };
+
+    if (values.aadharFront) {
+      uploadFileToS3(values.aadharFront, "aadhar_front");
+    }
+
+    if (values.aadharBack) {
+      uploadFileToS3(values.aadharBack, "aadhar_back");
+    }
+
+    if (values.passportSizePhoto) {
+      uploadFileToS3(values.passportSizePhoto, "passport_photo");
+    }
+  }, [customerId]);
+
+  const handleFileChange = (event, setFieldValue, setPreview) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFieldValue(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDelete = (setFieldValue, setPreview) => {
+    setFieldValue("");
+    setPreview("");
+  };
 
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      onSubmit={handleFormSubmit}
     >
-      {({ isSubmitting }) => (
-        <Form>
+      {({
+        dirty,
+        isSubmitting,
+        handleBlur,
+        handleSubmit,
+        setFieldValue,
+      }) => (
+        <Form onSubmit={handleSubmit} encType="multipart/form-data">
           <Box
             sx={{
               display: "flex",
@@ -52,60 +126,112 @@ const Step4Form = ({ initialValues, onSubmit }) => {
             >
               Step 4/5
             </Typography>
-            <TextField
-              disableUnderline={true}
-              type="number"
-              variant="filled"
-              name="aadhar_number"
-              label="Aadhar Number"
-              sx={{
-                width: "75%",
-                height: "50px",
-                fontSize: "16px",
-                borderRadius: "10px",
-                overflow: "hidden",
-              }}
-              fullWidth
-            />
-            <ErrorMessage
-              name="field1"
-              component="div"
-              style={{ color: "red" }}
-            />
+
+            {/* Aadhar Card Front */}
             <Typography
               sx={{
                 fontFamily: "-moz-initial",
-                fontSize: "3vh",
+                fontSize: "2.5vh",
                 color: "black",
               }}
             >
-              Aadhar Card
+              Aadhar Card Front
             </Typography>
-            <ImagePicker
-              preview={aadharFront}
-              tttttttttttttttttt
-              setPreview={setAadharFront}
-              label="Aadhar Front"
-            />
-            <ImagePicker
-              preview={aadharBack}
-              setPreview={setAadharBack}
-              label="Aadhar Back"
-            />
-            <Typography
-              sx={{
-                fontFamily: "-moz-initial",
-                fontSize: "3vh",
-                color: "black",
-              }}
-            >
+            <Box sx={{ width: "40%", textAlign: "center", border: "1px solid gray" }}>
+              <IconButton component="label">
+                <AddPhotoAlternateIcon />
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    handleFileChange(event, (file) => setFieldValue("aadharFront", file), setPreviewAadharFront)
+                  }
+                />
+              </IconButton>
+            </Box>
+            {previewAadharFront && (
+              <Box sx={{ mt: 2, width: "40%", textAlign: "center" }}>
+                <img src={previewAadharFront} alt="Aadhar Front Preview" style={{ maxWidth: "100%", height: "auto" }} />
+                <IconButton
+                  onClick={() => handleDelete(() => setFieldValue("aadharFront", ""), setPreviewAadharFront)}
+                  sx={{ mt: -8}}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            )}
+            <ErrorMessage name="aadharFront" component="div" style={{ color: "red" }} />
+
+            {/* Aadhar Card Back */}
+            <Typography sx={{ fontFamily: "-moz-initial", fontSize: "2.5vh", color: "black" }}>
+              Aadhar Card Back
+            </Typography>
+            <Box sx={{ width: "40%", textAlign: "center", border: "1px solid gray" }}>
+              <IconButton component="label">
+                <AddPhotoAlternateIcon />
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    handleFileChange(event, (file) => setFieldValue("aadharBack", file), setPreviewAadharBack)
+                  }
+                />
+              </IconButton>
+            </Box>
+            {previewAadharBack && (
+              <Box sx={{ mt: 2, width: "40%", textAlign: "center" }}>
+                <img src={previewAadharBack} alt="Aadhar Back Preview" style={{ maxWidth: "100%", height: "auto" }} />
+                <IconButton
+                  onClick={() => handleDelete(() => setFieldValue("aadharBack", ""), setPreviewAadharBack)}
+                  sx={{ mt: -8 }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            )}
+            <ErrorMessage name="aadharBack" component="div" style={{ color: "red" }} />
+
+            {/* Passport Size Photo */}
+            <Typography sx={{ fontFamily: "-moz-initial", fontSize: "2.5vh", color: "black" }}>
               Passport Size Photo
             </Typography>
-            <ImagePicker
-              preview={passportSizePhoto}
-              setPreview={setPassportSizePhoto}
-              ttttttttlabel="Passport Size Photo"
-            />
+            <Box sx={{ width: "40%", textAlign: "center", border: "1px solid gray" }}>
+              <IconButton component="label">
+                <AddPhotoAlternateIcon />
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    handleFileChange(event, (file) => setFieldValue("passportSizePhoto", file), setPreviewPassportSizePhoto)
+                  }
+                />
+              </IconButton>
+            </Box>
+            {previewPassportSizePhoto && (
+              <Box sx={{ mt: 2, width: "40%", textAlign: "center" }}>
+                <img src={previewPassportSizePhoto} alt="Passport Photo Preview" style={{ maxWidth: "100%", height: "auto" }} />
+                <IconButton
+                  onClick={() => handleDelete(() => setFieldValue("passportSizePhoto", ""), setPreviewPassportSizePhoto)}
+                  sx={{ mt: -8 }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            )}
+            <ErrorMessage name="passportSizePhoto" component="div" style={{ color: "red" }} />
+
+            <Button
+              color="primary"
+              disabled={!dirty || isSubmitting}
+              type="submit"
+              variant="contained"
+              sx={{ color: "white", fontWeight: "500", fontSize: "1rem", lineHeight: "1.5rem", mt: 2, ml: 1 }}
+            >
+              Upload
+            </Button>
           </Box>
         </Form>
       )}

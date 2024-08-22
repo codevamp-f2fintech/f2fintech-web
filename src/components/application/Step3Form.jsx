@@ -55,60 +55,7 @@ const Step3Form = ({ handleNext }) => {
         console.error("Error in upload:", err);
       });
   }, []);
-  // const handleSubmit = async (values, { setSubmitting }) => {
-  //   setSubmitting(true);
-  //   // console.log("handleSubmit triggered");
-  //   try {
-  //     if (file) {
-  //       // console.log("File selected:", file);
-
-  //       const documentData = {
-  //         name: file.name,
-  //         size: file.size,
-  //         type: file.type,
-  //         ...values,
-  //       };
-
-  //       // console.log("Sending document data to createDocument API:", documentData);
-  //       const createDocumentResponse = await API.DocumentAPI.createDocument(documentData);
-  //       // console.log("Response from createDocument API:", createDocumentResponse);
-
-  //       if (createDocumentResponse.status === "Success") {
-  //         const documentId = createDocumentResponse.data.id;
-  //         console.log("Document created with ID:", documentId);
-
-  //         const formData = new FormData();
-  //         formData.append("file", file);
-  //         formData.append("document_id", documentId);
-
-  //         console.log("Uploading file to S3 with formData:", formData);
-  //         const uploadResponse = await API.DocumentAPI.uploadDocument(formData);
-  //         console.log("Response from uploadDocument API:", uploadResponse);
-
-  //         if (uploadResponse.status === 200) {
-  //           alert("File uploaded successfully!");
-  //           handleNext();
-  //         } else {
-  //           console.error("Failed to upload file to S3:", uploadResponse);
-  //           throw new Error("Failed to upload file to S3");
-  //         }
-  //       } else {
-  //         console.error("Failed to create document in the database:", createDocumentResponse);
-  //         throw new Error("Failed to create document in the database");
-  //       }
-  //     } else {
-  //       console.warn("No file selected for upload");
-  //       alert("Please select a file to upload.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during file upload process:", error);
-  //     alert("Failed to upload file. Please try again.");
-  //   } finally {
-  //     setSubmitting(false);
-  //     console.log("handleSubmit finished");
-  //   }
-  // };
-
+  
   return (
     <Formik initialValues={initialValues} onSubmit={handleFormSubmit}>
       {({
