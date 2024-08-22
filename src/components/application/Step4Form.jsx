@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
-import { TextField, Box, Typography, Button, IconButton } from "@mui/material";
+import { TextField, Box, Typography, Button, IconButton ,Tooltip} from "@mui/material";
 import * as Yup from "yup";
 import API from "../../apis";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -151,13 +151,35 @@ const Step4Form = ({ handleNext }) => {
               </IconButton>
             </Box>
             {previewAadharFront && (
-              <Box sx={{ mt: 2, width: "40%", textAlign: "center" }}>
+              <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
                 <img src={previewAadharFront} alt="Aadhar Front Preview" style={{ maxWidth: "100%", height: "auto" }} />
                 <IconButton
                   onClick={() => handleDelete(() => setFieldValue("aadharFront", ""), setPreviewAadharFront)}
-                  sx={{ mt: -8}}
+                  sx={{
+                    position: "absolute",
+                    top: 20,
+                    right: 20,
+                    transform: "translate(50%, -50%)",
+                    // backgroundColor: "white",
+                    borderRadius: "50%",
+                    padding: "5px",
+                    // "&:hover": {
+                    //   backgroundColor: "#f5f5f5",
+                    // },
+                  }}
                 >
-                  <DeleteIcon />
+                  <Tooltip title="DELETE">
+                    <DeleteIcon
+                      sx={{
+                        color: "#002147",
+                        "&:hover": {
+                          color: "red",
+                          fontSize: "1.5rem",
+                          transition: "all 0.3s ease-in-out",
+                        },
+                      }}
+                    />
+                  </Tooltip>
                 </IconButton>
               </Box>
             )}
@@ -181,13 +203,35 @@ const Step4Form = ({ handleNext }) => {
               </IconButton>
             </Box>
             {previewAadharBack && (
-              <Box sx={{ mt: 2, width: "40%", textAlign: "center" }}>
+              <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
                 <img src={previewAadharBack} alt="Aadhar Back Preview" style={{ maxWidth: "100%", height: "auto" }} />
                 <IconButton
                   onClick={() => handleDelete(() => setFieldValue("aadharBack", ""), setPreviewAadharBack)}
-                  sx={{ mt: -8 }}
+                  sx={{
+                    position: "absolute",
+                    top: 20,
+                    right: 20,
+                    transform: "translate(50%, -50%)",
+                    // backgroundColor: "white",
+                    borderRadius: "50%",
+                    padding: "5px",
+                    // "&:hover": {
+                    //   backgroundColor: "#f5f5f5",
+                    // },
+                  }}
                 >
-                  <DeleteIcon />
+                  <Tooltip title="DELETE">
+                    <DeleteIcon
+                      sx={{
+                        color: "#002147",
+                        "&:hover": {
+                          color: "red",
+                          fontSize: "1.5rem",
+                          transition: "all 0.3s ease-in-out",
+                        },
+                      }}
+                    />
+                  </Tooltip>
                 </IconButton>
               </Box>
             )}
@@ -211,13 +255,35 @@ const Step4Form = ({ handleNext }) => {
               </IconButton>
             </Box>
             {previewPassportSizePhoto && (
-              <Box sx={{ mt: 2, width: "40%", textAlign: "center" }}>
+              <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
                 <img src={previewPassportSizePhoto} alt="Passport Photo Preview" style={{ maxWidth: "100%", height: "auto" }} />
                 <IconButton
                   onClick={() => handleDelete(() => setFieldValue("passportSizePhoto", ""), setPreviewPassportSizePhoto)}
-                  sx={{ mt: -8 }}
+                  sx={{
+                    position: "absolute",
+                    top: 20,
+                    right: 20,
+                    transform: "translate(50%, -50%)",
+                    // backgroundColor: "white",
+                    borderRadius: "50%",
+                    padding: "5px",
+                    // "&:hover": {
+                    //   backgroundColor: "#f5f5f5",
+                    // },
+                  }}
                 >
-                  <DeleteIcon />
+                  <Tooltip title="DELETE">
+                    <DeleteIcon
+                      sx={{
+                        color: "#002147",
+                        "&:hover": {
+                          color: "red",
+                          fontSize: "1.5rem",
+                          transition: "all 0.3s ease-in-out",
+                        },
+                      }}
+                    />
+                  </Tooltip>
                 </IconButton>
               </Box>
             )}
