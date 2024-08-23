@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { Formik, Form } from "formik";
 import {
   Box,
@@ -9,18 +9,15 @@ import {
   IconButton,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-// import * as Yup from "yup";
+
 import API from "../../apis";
 import { Utility } from "../utility";
-// const validationSchema = Yup.object({
-//   field1: Yup.string().required("Required"),
-// });
 
 const initialValues = {
   data: "",
 };
 
-const Step3Form = ({ handleNext }) => {
+const Step3Form = () => {
   const [filename, setFilename] = useState("");
 
   const { formatName, getLocalStorage } = Utility();
@@ -31,7 +28,6 @@ const Step3Form = ({ handleNext }) => {
   const handleFormSubmit = useCallback((values) => {
     console.log("these are form values=>", values.data);
     const formattedName = formatName(values.data.name);
-    // console.log("these formatted name=>",formattedName);
 
     API.DocumentAPI.uploadDocument({
       document: values.data,
@@ -54,13 +50,13 @@ const Step3Form = ({ handleNext }) => {
       .catch((err) => {
         console.error("Error in upload:", err);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   return (
     <Formik initialValues={initialValues} onSubmit={handleFormSubmit}>
       {({
         dirty,
-        values,
         isSubmitting,
         handleBlur,
         handleSubmit,
@@ -118,7 +114,6 @@ const Step3Form = ({ handleNext }) => {
                 name="file"
                 label="Upload Document"
                 size="small"
-                // value={values.data || ""}
                 onBlur={handleBlur}
                 InputProps={{
                   startAdornment: (
