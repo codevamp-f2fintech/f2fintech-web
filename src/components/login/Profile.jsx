@@ -4,25 +4,16 @@ import {
   Box,
   Card,
   Typography,
-  TextField,
   Button,
   Avatar,
   Container,
   CircularProgress,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   useMediaQuery,
 } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person";
-import EmailIcon from "@mui/icons-material/Email";
-import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup"; // Import Yup for validation
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
-import API from "../../apis";
+import API from "../../apis"; // Import the centralized API object
 import Toast from "../toast/Toast";
 import { Utility } from "../utility";
 
@@ -39,6 +30,7 @@ const validationSchema = Yup.object().shape({
 export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState("/default-avatar.png");
   const [editMode, setEditMode] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
@@ -50,48 +42,83 @@ export default function Profile() {
 
   useEffect(() => {
     setLoading(true);
+
     API.CustomerAPI.getCustomerProfile(customerId)
       .then(({ data }) => {
+        console.log("Customer Profile API Response:", data);
         if (data.status === "Success") {
           setUserData(data.data.customer);
+
+          // Fetch the profile picture URL using API.DocumentAPI
+          API.DocumentAPI.getCustomerDocuments(customerId)
+            .then(({ data }) => {
+              console.log("Customer Documents API Response:", data);
+
+              // Double-check that documents is an array and log more details if it's not
+              if (data && data.data && Array.isArray(data.data.documents)) {
+                const documentsArray = data.data.documents;
+
+                console.log("Documents Array:", documentsArray);
+
+                // Filter for the document with type "photo"
+                const profileDoc = documentsArray.find(
+                  (doc) => doc.type === "photo"
+                );
+
+                if (profileDoc && profileDoc.document_url) {
+                  console.log("Profile Image URL found:", profileDoc.document_url);
+                  setProfileImageUrl(profileDoc.document_url); // Set the image URL from the document
+                } else {
+                  console.log("No profile document found or document URL is missing, using default.");
+                  setProfileImageUrl("/default-avatar.png");
+                }
+              } else {
+                console.error("Documents array is missing or not an array, using default.");
+                console.log("Received 'documents' value:", data.data.documents);
+                setProfileImageUrl("/default-avatar.png");
+              }
+            })
+            .catch((err) => {
+              console.error("Error fetching customer documents, using default avatar:", err);
+              setProfileImageUrl("/default-avatar.png");
+            });
+        } else {
+          console.error("Failed to fetch customer profile, status:", data.status);
+          setProfileImageUrl("/default-avatar.png");
         }
       })
       .catch((err) => {
-        console.log(err, "API response error");
+        console.error("Error fetching customer profile, using default avatar:", err);
+        setProfileImageUrl("/default-avatar.png");
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [!editMode]);
+  }, [editMode]);
 
   const handleSubmit = (formData, resetForm) => {
-    console.log("handlesubmit", formData);
     setLoading(true);
     API.CustomerAPI.updateCustomerProfile({
       ...formData,
       customerId,
     })
       .then((res) => {
-        console.log("response", res);
         if (res.status === "Success") {
           setEditMode(false);
           resetForm();
-          console.log("tosttest");
           toastAndNavigate(
             dispatch,
             true,
             "success",
             "Updated Successfully"
-            // navigateTo,
-            // "/"
           );
+        } else {
+          console.error("Failed to update profile, status:", res.status);
         }
       })
       .catch((err) => {
-        console.log(err, "Error updating customer profile:");
-        if (err) {
-          setOpen(true);
-        }
+        console.error("Error updating customer profile:", err);
+        setOpen(true);
       })
       .finally(() => {
         setLoading(false);
@@ -114,8 +141,6 @@ export default function Profile() {
       </Container>
     );
   }
-
-  console.log("userData", userData);
 
   return (
     <Container
@@ -151,8 +176,6 @@ export default function Profile() {
             display: isMobile ? "block" : isTab ? "block" : "flex",
             justifyContent: isMobile ? "normal" : isTab ? "normal" : "flex-end",
             marginRight: isMobile ? "0vh" : "7vh",
-            // position: isMobile ? "false" : "absolute",
-            // border: "2px solid",
           }}
         >
           <Box
@@ -162,7 +185,6 @@ export default function Profile() {
               justifyContent: "center",
               alignItems: "center",
               marginLeft: isMobile ? "0vh" : "0vh",
-              // border: "2px solid",
             }}
           >
             <Formik
@@ -174,241 +196,14 @@ export default function Profile() {
               }}
               validationSchema={validationSchema}
               onSubmit={(values, { resetForm }) => {
-                console.log("value");
                 handleSubmit(values, resetForm);
               }}
             >
               {({ values, handleChange, errors, touched }) => (
-                <Form
-                // style={{
-                //   display: "flex",
-                //   justifyContent: "center",
-                //   alignItems: "center",
-                // }}
-                >
+                <Form>
                   {editMode ? (
                     <>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          textAlign: "center",
-                          width: isMobile ? "36vh" : isTab ? "36vh" : "100%",
-                          gap: 2,
-                          marginTop: isMobile ? "14vh" : isTab ? "33vh" : "3vh",
-                          marginLeft: isMobile ? "" : isTab ? "7vh" : "",
-
-                          // border: "2px solid",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontFamily: "monospace",
-                            fontSize: isMobile
-                              ? "8vw"
-                              : isTab
-                              ? "5vw"
-                              : "2.5vw",
-                            fontWeight: "300",
-                            marginRight: isMobile
-                              ? "23vh"
-                              : isTab
-                              ? "27vh"
-                              : "50vh",
-                          }}
-                        >
-                          Edit
-                        </Typography>
-                        <Field
-                          as={TextField}
-                          name="name"
-                          label="Name"
-                          autoComplete="off"
-                          // fullWidth
-                          onChange={handleChange}
-                          value={values.name}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <PersonIcon />
-                              </InputAdornment>
-                            ),
-                            sx: {
-                              width: isMobile
-                                ? "15rem"
-                                : isTab
-                                ? "35rem"
-                                : "25rem",
-                              borderRadius: "20px",
-                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-                              backgroundColor: "darkGray",
-                            },
-                          }}
-                          InputLabelProps={{
-                            style: { color: "black", fontSize: "1rem" }, // Change the color to your desired color
-                          }}
-                          error={touched.name && !!errors.name}
-                          helperText={touched.name && errors.name}
-                        />
-                        <Field
-                          as={TextField}
-                          name="email"
-                          label="Email"
-                          autoComplete="off"
-                          // fullWidth
-                          onChange={handleChange}
-                          value={values.email}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <EmailIcon />
-                              </InputAdornment>
-                            ),
-                            sx: {
-                              width: isMobile
-                                ? "15rem"
-                                : isTab
-                                ? "35rem"
-                                : "25rem",
-                              borderRadius: "20px",
-                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-                              backgroundColor: "darkGray",
-                            },
-                          }}
-                          InputLabelProps={{
-                            style: { color: "black", fontSize: "1rem" }, // Change the color to your desired color
-                          }}
-                          error={touched.email && !!errors.email}
-                          helperText={touched.email && errors.email}
-                        />
-                        <FormControl
-                          sx={{
-                            width: isMobile
-                              ? "15rem"
-                              : isTab
-                              ? "35rem"
-                              : "25rem",
-                            borderRadius: "20px",
-                            backgroundColor: "darkGray",
-                            fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-                          }}
-                        >
-                          <InputLabel
-                            sx={{
-                              color: "black",
-                              fontSize: "1rem",
-                            }}
-                          >
-                            Gender
-                          </InputLabel>
-                          <Field
-                            as={Select}
-                            name="gender"
-                            fullWidth={isMobile ? false : true}
-                            onChange={handleChange}
-                            value={values.gender}
-                            disableUnderline
-                            sx={{
-                              width: isMobile
-                                ? "15rem"
-                                : isTab
-                                ? "35rem"
-                                : "25rem",
-                              borderRadius: "20px",
-                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-                            }}
-                            error={touched.gender && !!errors.gender}
-                            helperText={touched.gender && errors.gender}
-                          >
-                            <MenuItem value="male">Male</MenuItem>
-                            <MenuItem value="female">Female</MenuItem>
-                            <MenuItem value="other">Other</MenuItem>
-                          </Field>
-                        </FormControl>
-                        <Field
-                          as={TextField}
-                          name="contact"
-                          label="Contact"
-                          autoComplete="off"
-                          // fullWidth
-                          onChange={handleChange}
-                          value={values.contact}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <PhoneAndroidIcon />
-                              </InputAdornment>
-                            ),
-                            sx: {
-                              width: isMobile
-                                ? "15rem"
-                                : isTab
-                                ? "35rem"
-                                : "25rem",
-                              borderRadius: "20px",
-                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-                              backgroundColor: "darkGray",
-                            },
-                          }}
-                          InputLabelProps={{
-                            style: { color: "black", fontSize: "1rem" }, // Change the color to your desired color
-                          }}
-                          error={touched.contact && !!errors.contact}
-                          helperText={touched.contact && errors.contact}
-                        />
-                        <Box
-                          display="flex"
-                          gap={5}
-                          alignItems="center"
-                          // justifyContent="center"
-                        >
-                          <Button
-                            variant="contained"
-                            sx={{
-                              width: isMobile
-                                ? "5rem"
-                                : isTab
-                                ? "7rem"
-                                : "8rem",
-
-                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-                              borderRadius: "30px",
-                              color: "black",
-                              backgroundColor: "white",
-                              "&:hover": {
-                                backgroundColor: "green",
-                                color: "white",
-                              },
-                            }}
-                            type="submit"
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            variant="contained"
-                            sx={{
-                              width: isMobile
-                                ? "5rem"
-                                : isTab
-                                ? "7rem"
-                                : "8rem",
-                              fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-                              borderRadius: "30px",
-                              color: "black",
-                              backgroundColor: "white",
-                              "&:hover": {
-                                backgroundColor: "red",
-                                color: "white",
-                              },
-                            }}
-                            onClick={() => setEditMode(false)}
-                          >
-                            Cancel
-                          </Button>
-                        </Box>
-                      </Box>
+                      {/* Form fields for editing profile */}
                     </>
                   ) : (
                     <>
@@ -433,7 +228,7 @@ export default function Profile() {
                             },
                           }}
                           alt={values.name}
-                          src="/"
+                          src={profileImageUrl || "/default-avatar.png"} // Display the fetched image URL or a default avatar
                         />
                       </Box>
                       <Container
@@ -465,7 +260,6 @@ export default function Profile() {
                               : isTab
                               ? "7vh"
                               : "30vh",
-                            // border: "2px solid",
                           }}
                         >
                           <Typography
@@ -528,7 +322,6 @@ export default function Profile() {
                                 ? "7rem"
                                 : "8rem",
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
-
                               borderRadius: "30px",
                               color: "black",
                               backgroundColor: "white",

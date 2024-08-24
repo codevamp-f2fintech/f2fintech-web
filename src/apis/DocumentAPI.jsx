@@ -35,6 +35,17 @@ export const DocumentAPI = {
         ? cancelApiObject[this.uploadDocument.name].handleRequestCancellation().signal
         : undefined,
     });
+  },
+
+  getCustomerDocuments: async (customerId, cancel = false) => {
+    return await axiosInstance.request({
+      url: `/get-customer-document`,
+      method: "GET",
+      params: { customer_id: customerId },
+      signal: cancel
+        ? cancelApiObject[this.getCustomerDocuments.name].handleRequestCancellation().signal
+        : undefined,
+    });
   }
 };
 
