@@ -39,9 +39,8 @@ export const DocumentAPI = {
 
   getCustomerDocuments: async (customerId, cancel = false) => {
     return await axiosInstance.request({
-      url: `/get-customer-document`,
+      url: `/get-customer-document/${customerId}`,
       method: "GET",
-      params: { customer_id: customerId },
       signal: cancel
         ? cancelApiObject[this.getCustomerDocuments.name].handleRequestCancellation().signal
         : undefined,
