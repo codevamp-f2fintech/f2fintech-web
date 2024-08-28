@@ -4,6 +4,7 @@ import Calculator from "../calculator/Calculator";
 import Advantages from "../../components/advantages/Advantages";
 import { bLadvantagesData } from "../data/Data.jsx";
 import LendingPartners from "../lendingpartners/Lendingpartners";
+import Eligibility from "../../components/eligibility/Eligibility";
 
 const BusinessLoanForWomen = () => {
   return (
@@ -109,6 +110,7 @@ const BusinessLoanForWomen = () => {
       <Calculator />
       <Advantages advantagesData={bLadvantagesData} />
       <LendingPartners />
+      <Eligibility />
     </>
   );
 };

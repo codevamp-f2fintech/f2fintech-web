@@ -7,6 +7,7 @@ import Advantages from "../../components/advantages/Advantages";
 import { bLadvantagesData } from "../data/Data.jsx";
 import Apply from "../apply/Apply";
 import LendingPartners from "../lendingpartners/Lendingpartners";
+import Eligibility from "../../components/eligibility/Eligibility";
 
 const ECommerceBusinessLoan = () => {
   return (
@@ -112,6 +113,7 @@ const ECommerceBusinessLoan = () => {
       <Calculator />
       <Apply />
       <LendingPartners />
+      <Eligibility />
     </>
   );
 };
