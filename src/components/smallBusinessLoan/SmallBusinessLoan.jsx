@@ -5,6 +5,7 @@ import { Box, Container, Typography } from "@mui/material";
 import Calculator from "../calculator/Calculator";
 import Apply from "../apply/Apply";
 import Advantages from "../../components/advantages/Advantages";
+import Eligibility from "../../components/eligibility/Eligibility";
 import { bLadvantagesData } from "../data/Data.jsx";
 
 const SmallBusinessLoan = () => {
@@ -113,6 +114,7 @@ const SmallBusinessLoan = () => {
       <Calculator />
       <Apply />
       <Advantages advantagesData={bLadvantagesData} />
+      <Eligibility />
     </>
   );
 };

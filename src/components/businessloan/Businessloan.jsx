@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Container, Typography } from "@mui/material";
+import Eligibility from "../../components/eligibility/Eligibility";
 import Calculator from "../calculator/Calculator";
 import Advantages from "../../components/advantages/Advantages";
 import { bLadvantagesData } from "../data/Data.jsx";
@@ -117,6 +118,7 @@ const Businessloan = () => {
       </Box>
       <Advantages advantagesData={bLadvantagesData} />
       <Calculator />
+      <Eligibility />
     </>
   );
 };
