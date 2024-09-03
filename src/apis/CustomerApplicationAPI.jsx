@@ -3,38 +3,27 @@ import { defineCancelApiObject } from "./config/axiosUtils";
 
 export const CustomerApplicationAPI = {
     // Function to create a loan application with amount and tenure
-    createLoanApplication: async (data, cancel = false) => {
-      try {
-        const response = await axiosInstance.request({
-          url: `/create-loanapplication`,  // Corrected endpoint to match your backend route
-          method: "POST",
-          data: data,  // Data containing amount and tenure
-          signal: cancel
-            ? cancelApiObject[this.createLoanApplication.name].handleRequestCancellation().signal
-            : undefined,
-        });
-        return response;
-      } catch (error) {
-        console.error('Error during loan application creation:', error.message || error);
-        throw error;
-      }
+    createApplication: async (document, cancel = false) => {
+      return await axiosInstance.request({
+        url: `/create-applications`,
+        method: "POST",
+        data: document,
+        signal: cancel
+          ? cancelApiObject[this.createApplication.name].handleRequestCancellation().signal
+          : undefined,
+      });
     },
   
-    getCustomerDocuments: async (cancel = false) => {
-      try {
-        const response = await axiosInstance.request({
-          url: `/get-loanapplication`,
-          method: "GET",
-          signal: cancel
-            ? cancelApiObject[this.getCustomerDocuments.name].handleRequestCancellation().signal
-            : undefined,
-        });
-        return response;
-      } catch (error) {
-        console.error('Error retrieving customer documents:', error.message || error);
-        throw error;
-      }
-    },
+   // Function to get Applications from the DB
+    getApplications: async (cancel = false) => {
+      return await axiosInstance.request({
+        url: `/get-applications`,
+        method: "GET",
+        signal: cancel
+          ? cancelApiObject[this.getApplications.name].handleRequestCancellation().signal
+          : undefined,
+      });
+    }
   };
   
   const cancelApiObject = defineCancelApiObject(CustomerApplicationAPI);

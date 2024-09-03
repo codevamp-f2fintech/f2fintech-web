@@ -69,7 +69,7 @@ const initialValues = {
 const Step1Form = ({ setLoanType }) => {
   const [doYouHaveGSTRegistration, setDoYouHaveGSTRegistration] =
     useState(false);
-  const [companyNameOption, setCompanyNameOption] = useState(""); // Add state for radio button selection
+  const [companyNameOption, setCompanyNameOption] = useState(""); 
 
   const [amount, setAmount] = useState('');
   const [tenure, setTenure] = useState('');
@@ -83,8 +83,9 @@ const Step1Form = ({ setLoanType }) => {
   const handleCompanyNameOptionChange = (event) => {
     setCompanyNameOption(event.target.value);
   };
-
+  console.log(amount, tenure ,"value")
   const create = useCallback((values) => {
+   
     const { contact, email, name, status, ...restValues } = values;
     const customer = {
       contact,
@@ -132,7 +133,6 @@ const Step1Form = ({ setLoanType }) => {
     padding: theme.spacing(2),
     backgroundColor: "white",
     boxShadow: theme.shadows[3],
-    // borderRadius: theme.shape.borderRadius,
     margin: theme.spacing(1),
   }));
 
@@ -143,7 +143,8 @@ const Step1Form = ({ setLoanType }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        marginTop: 2 
       }}>
         <Typography
           sx={{
@@ -152,52 +153,62 @@ const Step1Form = ({ setLoanType }) => {
             color: "black",
             fontWeight: "600",
             fontFamily: "cursive",
+            marginBottom: 2 
           }}
         >
           Get the loan best suited for your wish
         </Typography>
-        <TextField
-          fullWidth
-          variant="filled"
-          name="amount"
-          label="Enter Amount"
-          placeholder="How Much Loan Do You Require?"
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <CurrencyRupeeIcon />
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            width: "45%",
-            fontSize: "13px",
-            borderRadius: "10px",
-            overflow: "hidden",
-            marginBottom: '20px',
-            "& .MuiFilledInput-root": {
+        <Box sx={{ width: "45%", marginBottom: 3 }}>
+          <TextField
+            fullWidth
+            variant="filled"
+            name="amount"
+            label="Enter Amount"
+            placeholder="How Much Loan Do You Require?"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <CurrencyRupeeIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              fontSize: "13px",
               borderRadius: "10px",
-              border: "1px solid transparent",
-              transition: "border-color 0.3s, border-width 0.3s",
-              "&:hover": {
-                borderColor: "#0000ff",
+              overflow: "hidden",
+              marginBottom: 1, 
+              "& .MuiFilledInput-root": {
+                borderRadius: "10px",
+                border: "1px solid transparent",
+                transition: "border-color 0.3s, border-width 0.3s",
+                "&:hover": {
+                  borderColor: "#0000ff",
+                },
+                "&.Mui-focused": {
+                  borderColor: "#0000ff",
+                  borderWidth: "2px",
+                },
               },
-              "&.Mui-focused": {
-                borderColor: "#0000ff",
-                borderWidth: "2px",
+              "& .MuiInputAdornment-root": {
+                color: "#000",
               },
-            },
-            "& .MuiInputAdornment-root": {
-              color: "#000",
-            },
-            "& .MuiInputLabel-root.Mui-focused": {
-              color: "#0000ff",
-            },
-          }}
-        />
-        <br />
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#0000ff",
+              },
+            }}
+          />
+          <Typography
+            sx={{
+              fontSize: "0.9vw",
+              color: "black",
+              textAlign: "left", 
+            }}
+          >
+            Please enter loan amount between 50,000 & 50,00,000 (Multiple Of 1000)
+          </Typography>
+        </Box>
         <FormControl
           variant="filled"
           sx={{
@@ -205,6 +216,7 @@ const Step1Form = ({ setLoanType }) => {
             fontSize: "13px",
             borderRadius: "10px",
             overflow: "hidden",
+            marginBottom: 3, 
           }}
         >
           <InputLabel>Select A Comfortable Tenure</InputLabel>
@@ -212,10 +224,26 @@ const Step1Form = ({ setLoanType }) => {
             variant="filled"
             name="tenure"
             value={tenure}
-            onChange={e => {
-              console.log(e.target, 'event')
-              setTenure(e.target.value)
-
+            onChange={e => setTenure(e.target.value)}
+            sx={{
+              "& .MuiFilledInput-root": {
+                borderRadius: "10px",
+                border: "1px solid transparent",
+                transition: "border-color 0.3s, border-width 0.3s",
+                "&:hover": {
+                  borderColor: "#0000ff",
+                },
+                "&.Mui-focused": {
+                  borderColor: "#0000ff",
+                  borderWidth: "2px",
+                },
+              },
+              "& .MuiInputAdornment-root": {
+                color: "#000",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#0000ff",
+              },
             }}
           >
             <MenuItem value="12">12 Months</MenuItem>
@@ -238,6 +266,9 @@ const Step1Form = ({ setLoanType }) => {
             fontSize: "1rem",
             lineHeight: "1.5rem",
             mt: 2,
+            width: "45%", 
+            alignSelf: "center", 
+            marginBottom: 3 
           }}
         >
           LET&apos;S GET STARTED
@@ -284,6 +315,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontFamily: "bold 10px",
                     fontSize: "4vh",
                     fontWeight: "300vh",
+                    marginBottom: 3 
                   }}
                 >
                   Basic Details
@@ -293,6 +325,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontFamily: "-moz-initial",
                     fontSize: "2.5vh",
                     color: "gray",
+                    marginBottom: 3 
                   }}
                 >
                   Step 1/5
@@ -323,6 +356,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
@@ -343,6 +377,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
@@ -363,6 +398,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
@@ -381,6 +417,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
@@ -400,11 +437,12 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
 
-                <Typography sx={{ marginRight: "20px", font: "18px bold" }}>
+                <Typography sx={{ marginRight: "20px", font: "18px bold", marginBottom: 2 }}>
                   Is your Company Registered?
                 </Typography>
                 <RadioGroup
@@ -415,6 +453,7 @@ const Step1Form = ({ setLoanType }) => {
                     display: "flex",
                     flexDirection: "row",
                     marginRight: "150px",
+                    marginBottom: 3
                   }}
                 >
                   <FormControlLabel
@@ -482,6 +521,7 @@ const Step1Form = ({ setLoanType }) => {
                       fontSize: "16px",
                       borderRadius: "10px",
                       overflow: "hidden",
+                      marginBottom: 3 
                     }}
                     fullWidth
                   />
@@ -494,6 +534,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                 >
                   <InputLabel>Entity Type</InputLabel>
@@ -521,6 +562,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                 >
                   <InputLabel>Bank Account Type</InputLabel>
@@ -543,7 +585,7 @@ const Step1Form = ({ setLoanType }) => {
                 </FormControl>
 
                 <FormControlLabel
-                  sx={{ marginRight: "20px" }}
+                  sx={{ marginRight: "20px", marginBottom: 3 }}
                   label="Do you have GST Registration?"
                   control={
                     <Checkbox
@@ -571,6 +613,7 @@ const Step1Form = ({ setLoanType }) => {
                       fontSize: "16px",
                       borderRadius: "10px",
                       overflow: "hidden",
+                      marginBottom: 3 
                     }}
                     fullWidth
                   />
@@ -590,6 +633,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
@@ -614,6 +658,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
@@ -633,11 +678,12 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
+                    marginBottom: 3 
                   }}
                   fullWidth
                 />
 
-                <FormGroup sx={{ display: "flex", ml: 5, mr: 8 }}>
+                <FormGroup sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}>
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
                     label={
@@ -650,7 +696,7 @@ const Step1Form = ({ setLoanType }) => {
                     }
                   />
                 </FormGroup>
-                <FormGroup sx={{ display: "flex", ml: 5, mr: 8 }}>
+                <FormGroup sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}>
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
                     label={
@@ -676,6 +722,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "1rem",
                     lineHeight: "1.5rem",
                     mt: 2,
+                    marginBottom: 3 
                   }}
                 >
                   Apply Now
