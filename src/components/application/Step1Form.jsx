@@ -8,6 +8,7 @@ import {
   FormControl,
   FormGroup,
   FormControlLabel,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Radio,
@@ -18,8 +19,10 @@ import {
   Typography,
   useRadioGroup,
 } from "@mui/material";
+import { CurrencyRupee as CurrencyRupeeIcon } from "@mui/icons-material";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PropTypes from "prop-types";
-import applicationValidation from "./applicationValidation";
+
 import API from "../../apis";
 
 const StyledFormControlLabel = styled((props) => (
@@ -63,12 +66,14 @@ const initialValues = {
   refrrel_id: "",
 };
 
-const Step1Form = ({ handleNext, loanType, setLoanType }) => {
+const Step1Form = ({ setLoanType }) => {
   const [doYouHaveGSTRegistration, setDoYouHaveGSTRegistration] =
     useState(false);
   const [companyNameOption, setCompanyNameOption] = useState(""); // Add state for radio button selection
 
-  const [getStarted, setGetStarted] = useState(false);
+  const [amount, setAmount] = useState('');
+  const [tenure, setTenure] = useState('');
+  const [getStarted, setGetStarted] = useState(false);    //get started button click
 
   const handleGSTCheckboxChange = (event) => {
     setLoanType(event.target.checked ? "business" : "personal");
@@ -80,7 +85,6 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
   };
 
   const create = useCallback((values) => {
-    //object and array destructing , spread and rest operator , object assignment
     const { contact, email, name, status, ...restValues } = values;
     const customer = {
       contact,
@@ -131,51 +135,116 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
     // borderRadius: theme.shape.borderRadius,
     margin: theme.spacing(1),
   }));
-  
 
 
   if (!getStarted) {
     return (
-   <TextField
-   variant="filled"
-   name="name"
-   label="Name"
-   value={values.name}
-   onChange={handleChange}
-   onBlur={handleBlur}
-   error={touched.name && Boolean(errors.name)}
-   helperText={touched.name && errors.name}
-   sx={{
-     width: "75%",
-     height: "50px",
-     fontSize: "16px",
-     borderRadius: "10px",
-     overflow: "hidden",
-   }}
-   fullWidth
- />
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column'
+      }}>
+        <Typography
+          sx={{
+            fontSize: "1.1vw",
+            lineHeight: "2rem",
+            color: "black",
+            fontWeight: "600",
+            fontFamily: "cursive",
+          }}
+        >
+          Get the loan best suited for your wish
+        </Typography>
+        <TextField
+          fullWidth
+          variant="filled"
+          name="amount"
+          label="Enter Amount"
+          placeholder="How Much Loan Do You Require?"
+          value={amount}
+          onChange={e => setAmount(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <CurrencyRupeeIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            width: "45%",
+            fontSize: "13px",
+            borderRadius: "10px",
+            overflow: "hidden",
+            marginBottom: '20px',
+            "& .MuiFilledInput-root": {
+              borderRadius: "10px",
+              border: "1px solid transparent",
+              transition: "border-color 0.3s, border-width 0.3s",
+              "&:hover": {
+                borderColor: "#0000ff",
+              },
+              "&.Mui-focused": {
+                borderColor: "#0000ff",
+                borderWidth: "2px",
+              },
+            },
+            "& .MuiInputAdornment-root": {
+              color: "#000",
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: "#0000ff",
+            },
+          }}
+        />
+        <br />
+        <FormControl
+          variant="filled"
+          sx={{
+            width: "45%",
+            fontSize: "13px",
+            borderRadius: "10px",
+            overflow: "hidden",
+          }}
+        >
+          <InputLabel>Select A Comfortable Tenure</InputLabel>
+          <Select
+            variant="filled"
+            name="tenure"
+            value={tenure}
+            onChange={e => {
+              console.log(e.target, 'event')
+              setTenure(e.target.value)
 
- <TextField
-   type="number"
-   variant="filled"
-   name="contact"
-   label="contact"
-   value={values.contact}
-   onChange={handleChange}
-   onBlur={handleBlur}
-   error={touched.contact && Boolean(errors.contact)}
-   helperText={touched.contact && errors.contact}
-   sx={{
-     width: "75%",
-     height: "50px",
-     fontSize: "16px",
-     borderRadius: "10px",
-     overflow: "hidden",
-   }}
-   fullWidth
- />
-    )
-}
+            }}
+          >
+            <MenuItem value="12">12 Months</MenuItem>
+            <MenuItem value="24">24 Months</MenuItem>
+            <MenuItem value="36">36 Months</MenuItem>
+            <MenuItem value="48">48 Months</MenuItem>
+            <MenuItem value="60">60 Months</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Button
+          color="primary"
+          disabled={!amount && !tenure}
+          type="submit"
+          variant="contained"
+          endIcon={<ArrowForwardIcon />}
+          onClick={() => setGetStarted(true)}
+          sx={{
+            fontWeight: "500",
+            fontSize: "1rem",
+            lineHeight: "1.5rem",
+            mt: 2,
+          }}
+        >
+          LET&apos;S GET STARTED
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <>
