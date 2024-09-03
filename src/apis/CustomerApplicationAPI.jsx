@@ -5,7 +5,7 @@ export const CustomerApplicationAPI = {
     // Function to create a loan application with amount and tenure
     createApplication: async (document, cancel = false) => {
       return await axiosInstance.request({
-        url: `/create-applications`,
+        url: `/create-application`,
         method: "POST",
         data: document,
         signal: cancel

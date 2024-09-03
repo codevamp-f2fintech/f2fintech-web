@@ -11,8 +11,6 @@ import {
   InputAdornment,
   InputLabel,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
   styled,
   TextField,
@@ -21,6 +19,11 @@ import {
 } from "@mui/material";
 import { CurrencyRupee as CurrencyRupeeIcon } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import PropTypes from "prop-types";
 
 import API from "../../apis";
@@ -54,60 +57,50 @@ const initialValues = {
   email: "",
   contact: "",
   status: "active",
+  dob: null,
   pan: "",
-  gst_number: "",
-  bank_ac_type: "",
-  zipcode: "",
-
-  company_name: "",
-  entity_type: "",
-  industry_type: "",
-  sub_industry_type: "",
-  refrrel_id: "",
+  occupation_type: ""
 };
 
 const Step1Form = ({ setLoanType }) => {
-  const [doYouHaveGSTRegistration, setDoYouHaveGSTRegistration] =
-    useState(false);
-  const [companyNameOption, setCompanyNameOption] = useState(""); 
 
   const [amount, setAmount] = useState('');
   const [tenure, setTenure] = useState('');
   const [getStarted, setGetStarted] = useState(false);    //get started button click
 
-  const handleGSTCheckboxChange = (event) => {
-    setLoanType(event.target.checked ? "business" : "personal");
-    setDoYouHaveGSTRegistration(event.target.checked);
-  };
+  console.log(amount, tenure, "value")
 
-  const handleCompanyNameOptionChange = (event) => {
-    setCompanyNameOption(event.target.value);
-  };
-  console.log(amount, tenure ,"value")
   const create = useCallback((values) => {
-   
-    const { contact, email, name, status, ...restValues } = values;
+    let promise1;
+    let promise2;
+    const { contact, email, name, status, dob, ...restValues } = values;
     const customer = {
       contact,
+      dob,
       email,
       name,
       status,
     };
-    console.log("these are form values=>", customer, restValues);
+    console.log("these are form values=>", customer, restValues, amount, tenure);
     API.CustomerAPI.register(customer)
       .then(({ data: res }) => {
         if (res.status === "Success") {
-          const customerInfo = {
+          console.log("here it is");
+          promise1 = API.CustomerInfoAPI.create({
             customer_id: res.data.id,
-            ...restValues,
-          };
-          // console.log("here it is", customerInfo);
-          API.CustomerInfoAPI.create(customerInfo)
-            .then((res) => {
-              // console.log("final boss", res);
+            ...restValues
+          });
+          promise2 = API.CustomerApplicationAPI.createApplication({
+            customer_id: res.data.id,
+            amount,
+            tenure
+          });
+          return Promise.all([promise1, promise2])
+            .then(() => {
+              console.log('successfully created everything')
             })
             .catch((err) => {
-              console.log("Error in Customer Info API", err);
+              console.log("Error in API", err);
             });
         } else {
           console.error("Registration failed");
@@ -144,7 +137,7 @@ const Step1Form = ({ setLoanType }) => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        marginTop: 2 
+        marginTop: 2
       }}>
         <Typography
           sx={{
@@ -153,7 +146,7 @@ const Step1Form = ({ setLoanType }) => {
             color: "black",
             fontWeight: "600",
             fontFamily: "cursive",
-            marginBottom: 2 
+            marginBottom: 2
           }}
         >
           Get the loan best suited for your wish
@@ -178,7 +171,7 @@ const Step1Form = ({ setLoanType }) => {
               fontSize: "13px",
               borderRadius: "10px",
               overflow: "hidden",
-              marginBottom: 1, 
+              marginBottom: 1,
               "& .MuiFilledInput-root": {
                 borderRadius: "10px",
                 border: "1px solid transparent",
@@ -199,7 +192,7 @@ const Step1Form = ({ setLoanType }) => {
               },
             }}
           />
-          <Typography
+          {/* <Typography
             sx={{
               fontSize: "0.9vw",
               color: "black",
@@ -207,7 +200,7 @@ const Step1Form = ({ setLoanType }) => {
             }}
           >
             Please enter loan amount between 50,000 & 50,00,000 (Multiple Of 1000)
-          </Typography>
+          </Typography> */}
         </Box>
         <FormControl
           variant="filled"
@@ -216,7 +209,7 @@ const Step1Form = ({ setLoanType }) => {
             fontSize: "13px",
             borderRadius: "10px",
             overflow: "hidden",
-            marginBottom: 3, 
+            marginBottom: 3,
           }}
         >
           <InputLabel>Select A Comfortable Tenure</InputLabel>
@@ -266,9 +259,9 @@ const Step1Form = ({ setLoanType }) => {
             fontSize: "1rem",
             lineHeight: "1.5rem",
             mt: 2,
-            width: "45%", 
-            alignSelf: "center", 
-            marginBottom: 3 
+            width: "45%",
+            alignSelf: "center",
+            marginBottom: 3
           }}
         >
           LET&apos;S GET STARTED
@@ -288,7 +281,7 @@ const Step1Form = ({ setLoanType }) => {
           errors,
           touched,
           values,
-          isSubmitting,
+          setFieldValue,
           handleChange,
           handleBlur,
           handleSubmit,
@@ -315,7 +308,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontFamily: "bold 10px",
                     fontSize: "4vh",
                     fontWeight: "300vh",
-                    marginBottom: 3 
+                    marginBottom: 3
                   }}
                 >
                   Basic Details
@@ -325,7 +318,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontFamily: "-moz-initial",
                     fontSize: "2.5vh",
                     color: "gray",
-                    marginBottom: 3 
+                    marginBottom: 3
                   }}
                 >
                   Step 1/5
@@ -356,7 +349,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3 
+                    marginBottom: 3
                   }}
                   fullWidth
                 />
@@ -377,7 +370,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3 
+                    marginBottom: 3
                   }}
                   fullWidth
                 />
@@ -398,30 +391,10 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3 
+                    marginBottom: 3
                   }}
                   fullWidth
                 />
-                <TextField
-                  variant="filled"
-                  name="zipcode"
-                  label="zipcode"
-                  value={values.zipcode}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.zipcode && Boolean(errors.zipcode)}
-                  helperText={touched.zipcode && errors.zipcode}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3 
-                  }}
-                  fullWidth
-                />
-
                 <TextField
                   variant="filled"
                   name="pan"
@@ -437,251 +410,43 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3 
+                    marginBottom: 3
                   }}
                   fullWidth
                 />
 
-                <Typography sx={{ marginRight: "20px", font: "18px bold", marginBottom: 2 }}>
-                  Is your Company Registered?
-                </Typography>
-                <RadioGroup
-                  name="company_name"
-                  value={companyNameOption}
-                  onChange={handleCompanyNameOptionChange}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Enter Date Of Birth"
+                    value={values.dob}
+                    onChange={(newValue) => setFieldValue('dob', newValue)}
+                  />
+                </LocalizationProvider>
+
+                <FormControl
+                  variant="filled"
                   sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    marginRight: "150px",
+                    width: "75%",
+                    height: "50px",
+                    fontSize: "16px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
                     marginBottom: 3
                   }}
                 >
-                  <FormControlLabel
-                    value="yes"
-                    control={<Radio />}
-                    label="Yes"
-                    sx={{
-                      marginLeft: "8vw",
-                      padding: "1px 30px",
-                      height: "40px",
-                      borderRadius: "15px",
-                      boxShadow:
-                        "rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      position: "relative",
-                      border:
-                        companyNameOption === "yes"
-                          ? "1px solid skyblue"
-                          : "2px solid transparent",
-                      "&:hover": {
-                        borderColor: "lightblue",
-                      },
-                    }}
-                  />
-                  <FormControlLabel
-                    value="no"
-                    control={<Radio />}
-                    label="No"
-                    sx={{
-                      padding: "1px 30px",
-                      height: "40px",
-                      borderRadius: "15px",
-                      boxShadow:
-                        "rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      position: "relative",
-                      border:
-                        companyNameOption === "no"
-                          ? "1px solid skyblue"
-                          : "2px solid transparent",
-                      "&:hover": {
-                        borderColor: "lightblue",
-                      },
-                    }}
-                  />
-                </RadioGroup>
-
-                {companyNameOption === "yes" && (
-                  <TextField
-                    variant="filled"
-                    name="company_name"
-                    label="Company Name"
-                    value={values.company_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.company_name && Boolean(errors.company_name)}
-                    helperText={touched.company_name && errors.company_name}
-                    sx={{
-                      width: "75%",
-                      height: "50px",
-                      fontSize: "16px",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                      marginBottom: 3 
-                    }}
-                    fullWidth
-                  />
-                )}
-                <FormControl
-                  variant="filled"
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3 
-                  }}
-                >
-                  <InputLabel>Entity Type</InputLabel>
+                  <InputLabel>Occupation Type</InputLabel>
                   <Select
                     variant="filled"
-                    name="entity_type"
-                    value={values.entity_type}
+                    name="occupation_type"
+                    value={values.occupation_type}
                     onChange={handleChange}
                     onBlur={handleBlur}
                   >
-                    <MenuItem value="Sole Proprietorship">
-                      Sole Proprietorship
-                    </MenuItem>
-                    <MenuItem value="Partnership">Partnership</MenuItem>
-                    <MenuItem value="LLC">LLC</MenuItem>
-                    <MenuItem value="Corporation">Corporation</MenuItem>
+                    <MenuItem value="salaried">Salaried </MenuItem>
+                    <MenuItem value="non-salaried">Non-Salaried</MenuItem>
                   </Select>
                 </FormControl>
 
-                <FormControl
-                  variant="filled"
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3 
-                  }}
-                >
-                  <InputLabel>Bank Account Type</InputLabel>
-                  <Select
-                    variant="filled"
-                    name="bank_ac_type"
-                    value={values.bank_ac_type}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  >
-                    <MenuItem value="Savings Account">Savings Account</MenuItem>
-                    <MenuItem value="Current Account">Current Account</MenuItem>
-                    <MenuItem value="Fixed Deposit Account">
-                      Fixed Deposit Account
-                    </MenuItem>
-                    <MenuItem value="Recurring Deposit Account">
-                      Recurring Deposit Account
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-
-                <FormControlLabel
-                  sx={{ marginRight: "20px", marginBottom: 3 }}
-                  label="Do you have GST Registration?"
-                  control={
-                    <Checkbox
-                      color="default"
-                      name="do_you_have_gst_registration"
-                      checked={doYouHaveGSTRegistration}
-                      onChange={handleGSTCheckboxChange}
-                    />
-                  }
-                />
-
-                {doYouHaveGSTRegistration && (
-                  <TextField
-                    variant="filled"
-                    name="gst_number"
-                    label="GST Number"
-                    value={values.gst_number}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.gst_number && Boolean(errors.gst_number)}
-                    helperText={touched.gst_number && errors.gst_number}
-                    sx={{
-                      width: "75%",
-                      height: "50px",
-                      fontSize: "16px",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                      marginBottom: 3 
-                    }}
-                    fullWidth
-                  />
-                )}
-                <TextField
-                  variant="filled"
-                  name="industry_type"
-                  label="Industry Type"
-                  value={values.industry_type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.industry_type && Boolean(errors.industry_type)}
-                  helperText={touched.industry_type && errors.industry_type}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3 
-                  }}
-                  fullWidth
-                />
-
-                <TextField
-                  variant="filled"
-                  name="sub_industry_type"
-                  label="Sub Industry Type"
-                  value={values.sub_industry_type}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={
-                    touched.sub_industry_type &&
-                    Boolean(errors.sub_industry_type)
-                  }
-                  helperText={
-                    touched.sub_industry_type && errors.sub_industry_type
-                  }
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3 
-                  }}
-                  fullWidth
-                />
-
-                <TextField
-                  variant="filled"
-                  name="refrrel_id"
-                  label="Refrrel id (Optional)"
-                  value={values.refrrel_id}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.refrrel_id && Boolean(errors.refrrel_id)}
-                  helperText={touched.refrrel_id && errors.refrrel_id}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3 
-                  }}
-                  fullWidth
-                />
 
                 <FormGroup sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}>
                   <FormControlLabel
@@ -722,7 +487,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "1rem",
                     lineHeight: "1.5rem",
                     mt: 2,
-                    marginBottom: 3 
+                    marginBottom: 3
                   }}
                 >
                   Apply Now
