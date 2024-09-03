@@ -68,6 +68,8 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
     useState(false);
   const [companyNameOption, setCompanyNameOption] = useState(""); // Add state for radio button selection
 
+  const [getStarted, setGetStarted] = useState(false);
+
   const handleGSTCheckboxChange = (event) => {
     setLoanType(event.target.checked ? "business" : "personal");
     setDoYouHaveGSTRegistration(event.target.checked);
@@ -129,6 +131,51 @@ const Step1Form = ({ handleNext, loanType, setLoanType }) => {
     // borderRadius: theme.shape.borderRadius,
     margin: theme.spacing(1),
   }));
+  
+
+
+  if (!getStarted) {
+    return (
+   <TextField
+   variant="filled"
+   name="name"
+   label="Name"
+   value={values.name}
+   onChange={handleChange}
+   onBlur={handleBlur}
+   error={touched.name && Boolean(errors.name)}
+   helperText={touched.name && errors.name}
+   sx={{
+     width: "75%",
+     height: "50px",
+     fontSize: "16px",
+     borderRadius: "10px",
+     overflow: "hidden",
+   }}
+   fullWidth
+ />
+
+ <TextField
+   type="number"
+   variant="filled"
+   name="contact"
+   label="contact"
+   value={values.contact}
+   onChange={handleChange}
+   onBlur={handleBlur}
+   error={touched.contact && Boolean(errors.contact)}
+   helperText={touched.contact && errors.contact}
+   sx={{
+     width: "75%",
+     height: "50px",
+     fontSize: "16px",
+     borderRadius: "10px",
+     overflow: "hidden",
+   }}
+   fullWidth
+ />
+    )
+}
 
   return (
     <>
