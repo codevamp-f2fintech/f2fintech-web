@@ -16,13 +16,18 @@ import {
   TextField,
   Typography,
   useRadioGroup,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { CurrencyRupee as CurrencyRupeeIcon } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import PropTypes from "prop-types";
 
@@ -59,57 +64,66 @@ const initialValues = {
   status: "active",
   dob: null,
   pan: "",
-  occupation_type: ""
+  occupation_type: "",
 };
 
 const Step1Form = ({ setLoanType }) => {
+  const [amount, setAmount] = useState("");
+  const [tenure, setTenure] = useState("");
+  const [getStarted, setGetStarted] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false); // Popup control
 
-  const [amount, setAmount] = useState('');
-  const [tenure, setTenure] = useState('');
-  const [getStarted, setGetStarted] = useState(false);    //get started button click
+  console.log(amount, tenure, "value");
 
-  console.log(amount, tenure, "value")
+  const create = useCallback(
+    (values) => {
+      const { contact, email, name, status, dob, ...restValues } = values;
+      const customer = {
+        contact,
+        dob,
+        email,
+        name,
+        status,
+      };
+      
+      // Display the dialog when form is successfully submitted
+      setOpenDialog(true); // Test if the dialog opens
 
-  const create = useCallback((values) => {
-    let promise1;
-    let promise2;
-    const { contact, email, name, status, dob, ...restValues } = values;
-    const customer = {
-      contact,
-      dob,
-      email,
-      name,
-      status,
-    };
-    console.log("these are form values=>", customer, restValues, amount, tenure);
-    API.CustomerAPI.register(customer)
-      .then(({ data: res }) => {
-        if (res.status === "Success") {
-          console.log("here it is");
-          promise1 = API.CustomerInfoAPI.create({
-            customer_id: res.data.id,
-            ...restValues
-          });
-          promise2 = API.CustomerApplicationAPI.createApplication({
-            customer_id: res.data.id,
-            amount,
-            tenure
-          });
-          return Promise.all([promise1, promise2])
-            .then(() => {
-              console.log('successfully created everything')
-            })
-            .catch((err) => {
-              console.log("Error in API", err);
+      API.CustomerAPI.register(customer)
+        .then(({ data: res }) => {
+          if (res.status === "Success") {
+            const promise1 = API.CustomerInfoAPI.create({
+              customer_id: res.data.id,
+              ...restValues,
             });
-        } else {
-          console.error("Registration failed");
-        }
-      })
-      .catch((err) => {
-        console.error("Error during registration:", err);
-      });
-  }, []);
+            const promise2 = API.CustomerApplicationAPI.createApplication({
+              customer_id: res.data.id,
+              amount,
+              tenure,
+            });
+            return Promise.all([promise1, promise2])
+              .then(() => {
+                setOpenDialog(true); // Show the dialog on success
+              })
+              .catch((err) => {
+                console.log("Error in creating customer info or application:", err);
+              });
+          } else {
+            console.error("Registration failed:", res.message);
+          }
+        })
+        .catch((err) => {
+          // Handle network error
+          if (err.message === "Network Error") {
+            console.error("Network error. Backend server might be down or unreachable.");
+            alert("Network error. Please try again later.");
+          } else {
+            console.error("Error during registration:", err);
+          }
+        });
+    },
+    [amount, tenure]
+  );
 
   const MyFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
     margin: theme.spacing(1),
@@ -129,16 +143,17 @@ const Step1Form = ({ setLoanType }) => {
     margin: theme.spacing(1),
   }));
 
-
   if (!getStarted) {
     return (
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        marginTop: 2
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          marginTop: 2,
+        }}
+      >
         <Typography
           sx={{
             fontSize: "1.1vw",
@@ -146,7 +161,7 @@ const Step1Form = ({ setLoanType }) => {
             color: "black",
             fontWeight: "600",
             fontFamily: "cursive",
-            marginBottom: 2
+            marginBottom: 2,
           }}
         >
           Get the loan best suited for your wish
@@ -159,7 +174,7 @@ const Step1Form = ({ setLoanType }) => {
             label="Enter Amount"
             placeholder="How Much Loan Do You Require?"
             value={amount}
-            onChange={e => setAmount(e.target.value)}
+            onChange={(e) => setAmount(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -192,15 +207,6 @@ const Step1Form = ({ setLoanType }) => {
               },
             }}
           />
-          {/* <Typography
-            sx={{
-              fontSize: "0.9vw",
-              color: "black",
-              textAlign: "left", 
-            }}
-          >
-            Please enter loan amount between 50,000 & 50,00,000 (Multiple Of 1000)
-          </Typography> */}
         </Box>
         <FormControl
           variant="filled"
@@ -217,7 +223,7 @@ const Step1Form = ({ setLoanType }) => {
             variant="filled"
             name="tenure"
             value={tenure}
-            onChange={e => setTenure(e.target.value)}
+            onChange={(e) => setTenure(e.target.value)}
             sx={{
               "& .MuiFilledInput-root": {
                 borderRadius: "10px",
@@ -261,7 +267,7 @@ const Step1Form = ({ setLoanType }) => {
             mt: 2,
             width: "45%",
             alignSelf: "center",
-            marginBottom: 3
+            marginBottom: 3,
           }}
         >
           LET&apos;S GET STARTED
@@ -308,7 +314,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontFamily: "bold 10px",
                     fontSize: "4vh",
                     fontWeight: "300vh",
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                 >
                   Basic Details
@@ -318,7 +324,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontFamily: "-moz-initial",
                     fontSize: "2.5vh",
                     color: "gray",
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                 >
                   Step 1/5
@@ -349,7 +355,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                   fullWidth
                 />
@@ -370,7 +376,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                   fullWidth
                 />
@@ -391,7 +397,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                   fullWidth
                 />
@@ -410,7 +416,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                   fullWidth
                 />
@@ -419,7 +425,7 @@ const Step1Form = ({ setLoanType }) => {
                   <DatePicker
                     label="Enter Date Of Birth"
                     value={values.dob}
-                    onChange={(newValue) => setFieldValue('dob', newValue)}
+                    onChange={(newValue) => setFieldValue("dob", newValue)}
                   />
                 </LocalizationProvider>
 
@@ -431,7 +437,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "16px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                 >
                   <InputLabel>Occupation Type</InputLabel>
@@ -447,8 +453,9 @@ const Step1Form = ({ setLoanType }) => {
                   </Select>
                 </FormControl>
 
-
-                <FormGroup sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}>
+                <FormGroup
+                  sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
+                >
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
                     label={
@@ -461,7 +468,9 @@ const Step1Form = ({ setLoanType }) => {
                     }
                   />
                 </FormGroup>
-                <FormGroup sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}>
+                <FormGroup
+                  sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
+                >
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
                     label={
@@ -476,6 +485,32 @@ const Step1Form = ({ setLoanType }) => {
                   />
                 </FormGroup>
 
+                <Dialog
+                  open={openDialog}
+                  onClose={() => setOpenDialog(false)}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {"Application Submitted"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Your application is submitted, and we will connect with
+                      you over a call in the next half an hour.
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      onClick={() => setOpenDialog(false)}
+                      color="primary"
+                      autoFocus
+                    >
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+
                 <Button
                   color="primary"
                   disabled={!dirty}
@@ -487,7 +522,7 @@ const Step1Form = ({ setLoanType }) => {
                     fontSize: "1rem",
                     lineHeight: "1.5rem",
                     mt: 2,
-                    marginBottom: 3
+                    marginBottom: 3,
                   }}
                 >
                   Apply Now
