@@ -72,11 +72,17 @@ const Step1Form = ({ setLoanType }) => {
   const [tenure, setTenure] = useState("");
   const [getStarted, setGetStarted] = useState(false);
   const [openDialog, setOpenDialog] = useState(false); // Popup control
+  const [applicationNumber, setApplicationNumber] = useState(0);
 
-  console.log(amount, tenure, "value");
+  const randomNumberGenerator = () => {
+    return Math.floor(10000000 + Math.random() * 90000000);
+  }
 
   const create = useCallback(
     (values) => {
+      const applicationNumber = randomNumberGenerator();
+      setApplicationNumber(applicationNumber);
+      console.log(amount, tenure, applicationNumber, "amount tenure no");
       const { contact, email, name, status, dob, ...restValues } = values;
       const customer = {
         contact,
@@ -85,9 +91,6 @@ const Step1Form = ({ setLoanType }) => {
         name,
         status,
       };
-      
-      // Display the dialog when form is successfully submitted
-      setOpenDialog(true); // Test if the dialog opens
 
       API.CustomerAPI.register(customer)
         .then(({ data: res }) => {
@@ -98,8 +101,9 @@ const Step1Form = ({ setLoanType }) => {
             });
             const promise2 = API.CustomerApplicationAPI.createApplication({
               customer_id: res.data.id,
-              amount,
-              tenure,
+              application_no: applicationNumber,
+              amount: amount,
+              tenure: tenure,
             });
             return Promise.all([promise1, promise2])
               .then(() => {
@@ -113,13 +117,7 @@ const Step1Form = ({ setLoanType }) => {
           }
         })
         .catch((err) => {
-          // Handle network error
-          if (err.message === "Network Error") {
-            console.error("Network error. Backend server might be down or unreachable.");
-            alert("Network error. Please try again later.");
-          } else {
-            console.error("Error during registration:", err);
-          }
+          console.error("Error during registration:", err);
         });
     },
     [amount, tenure]
@@ -492,12 +490,12 @@ const Step1Form = ({ setLoanType }) => {
                   aria-describedby="alert-dialog-description"
                 >
                   <DialogTitle id="alert-dialog-title">
-                    {"Application Submitted"}
+                    Application Submitted
                   </DialogTitle>
                   <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                      Your application is submitted, and we will connect with
-                      you over a call in the next half an hour.
+                      Your application is submitted, we will connect with
+                      you over call in next half an hour.<br />Your Application Number is {applicationNumber}
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
