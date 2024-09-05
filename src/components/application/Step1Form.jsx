@@ -16,11 +16,6 @@ import {
   TextField,
   Typography,
   useRadioGroup,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@mui/material";
 import { CurrencyRupee as CurrencyRupeeIcon } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -43,7 +38,6 @@ const StyledFormControlLabel = styled((props) => (
 
 function MyFormControlLabel(props) {
   const radioGroup = useRadioGroup();
-
   let checked = false;
 
   if (radioGroup) {
@@ -71,18 +65,17 @@ const Step1Form = ({ setLoanType }) => {
   const [amount, setAmount] = useState("");
   const [tenure, setTenure] = useState("");
   const [getStarted, setGetStarted] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false); // Popup control
+  const [isSubmitted, setIsSubmitted] = useState(false); 
   const [applicationNumber, setApplicationNumber] = useState(0);
 
   const randomNumberGenerator = () => {
     return Math.floor(10000000 + Math.random() * 90000000);
-  }
+  };  
 
   const create = useCallback(
     (values) => {
       const applicationNumber = randomNumberGenerator();
       setApplicationNumber(applicationNumber);
-      console.log(amount, tenure, applicationNumber, "amount tenure no");
       const { contact, email, name, status, dob, ...restValues } = values;
       const customer = {
         contact,
@@ -107,7 +100,7 @@ const Step1Form = ({ setLoanType }) => {
             });
             return Promise.all([promise1, promise2])
               .then(() => {
-                setOpenDialog(true); // Show the dialog on success
+                setIsSubmitted(true); 
               })
               .catch((err) => {
                 console.log("Error in creating customer info or application:", err);
@@ -123,25 +116,7 @@ const Step1Form = ({ setLoanType }) => {
     [amount, tenure]
   );
 
-  const MyFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
-    margin: theme.spacing(1),
-    "& .MuiTypography-root": {
-      fontWeight: "bold",
-    },
-  }));
-
-  // Custom styled Box
-  const CustomBox = styled(Box)(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: theme.spacing(2),
-    backgroundColor: "white",
-    boxShadow: theme.shadows[3],
-    margin: theme.spacing(1),
-  }));
-
-  if (!getStarted) {
+  if (isSubmitted) {
     return (
       <Box
         sx={{
@@ -152,124 +127,14 @@ const Step1Form = ({ setLoanType }) => {
           marginTop: 2,
         }}
       >
-        <Typography
-          sx={{
-            fontSize: "1.1vw",
-            lineHeight: "2rem",
-            color: "black",
-            fontWeight: "600",
-            fontFamily: "cursive",
-            marginBottom: 2,
-          }}
-        >
-          Get the loan best suited for your wish
+        <Typography variant="h5" sx={{ color: "green", marginBottom: 2 }}>
+          Your application is submitted successfully!
         </Typography>
-        <Box sx={{ width: "45%", marginBottom: 3 }}>
-          <TextField
-            fullWidth
-            variant="filled"
-            name="amount"
-            label="Enter Amount"
-            placeholder="How Much Loan Do You Require?"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CurrencyRupeeIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              fontSize: "13px",
-              borderRadius: "10px",
-              overflow: "hidden",
-              marginBottom: 1,
-              "& .MuiFilledInput-root": {
-                borderRadius: "10px",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s, border-width 0.3s",
-                "&:hover": {
-                  borderColor: "#0000ff",
-                },
-                "&.Mui-focused": {
-                  borderColor: "#0000ff",
-                  borderWidth: "2px",
-                },
-              },
-              "& .MuiInputAdornment-root": {
-                color: "#000",
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#0000ff",
-              },
-            }}
-          />
-        </Box>
-        <FormControl
-          variant="filled"
-          sx={{
-            width: "45%",
-            fontSize: "13px",
-            borderRadius: "10px",
-            overflow: "hidden",
-            marginBottom: 3,
-          }}
-        >
-          <InputLabel>Select A Comfortable Tenure</InputLabel>
-          <Select
-            variant="filled"
-            name="tenure"
-            value={tenure}
-            onChange={(e) => setTenure(e.target.value)}
-            sx={{
-              "& .MuiFilledInput-root": {
-                borderRadius: "10px",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s, border-width 0.3s",
-                "&:hover": {
-                  borderColor: "#0000ff",
-                },
-                "&.Mui-focused": {
-                  borderColor: "#0000ff",
-                  borderWidth: "2px",
-                },
-              },
-              "& .MuiInputAdornment-root": {
-                color: "#000",
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#0000ff",
-              },
-            }}
-          >
-            <MenuItem value="12">12 Months</MenuItem>
-            <MenuItem value="24">24 Months</MenuItem>
-            <MenuItem value="36">36 Months</MenuItem>
-            <MenuItem value="48">48 Months</MenuItem>
-            <MenuItem value="60">60 Months</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Button
-          color="primary"
-          disabled={!amount && !tenure}
-          type="submit"
-          variant="contained"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => setGetStarted(true)}
-          sx={{
-            fontWeight: "500",
-            fontSize: "1rem",
-            lineHeight: "1.5rem",
-            mt: 2,
-            width: "45%",
-            alignSelf: "center",
-            marginBottom: 3,
-          }}
-        >
-          LET&apos;S GET STARTED
-        </Button>
+        <Typography variant="body1">
+          We will connect with you over call in the next half an hour.
+          <br />
+          Your Application Number is {applicationNumber}.
+        </Typography>
       </Box>
     );
   }
@@ -399,6 +264,7 @@ const Step1Form = ({ setLoanType }) => {
                   }}
                   fullWidth
                 />
+
                 <TextField
                   variant="filled"
                   name="pan"
@@ -482,32 +348,6 @@ const Step1Form = ({ setLoanType }) => {
                     }
                   />
                 </FormGroup>
-
-                <Dialog
-                  open={openDialog}
-                  onClose={() => setOpenDialog(false)}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogTitle id="alert-dialog-title">
-                    Application Submitted
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                      Your application is submitted, we will connect with
-                      you over call in next half an hour.<br />Your Application Number is {applicationNumber}
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      onClick={() => setOpenDialog(false)}
-                      color="primary"
-                      autoFocus
-                    >
-                      Close
-                    </Button>
-                  </DialogActions>
-                </Dialog>
 
                 <Button
                   color="primary"
