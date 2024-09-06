@@ -1,4 +1,6 @@
-import { useCallback, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import PropTypes from "prop-types";
+import { useCallback, useEffect, useState } from "react";
 import { Formik, Form } from "formik";
 import {
   Box,
@@ -16,22 +18,16 @@ import {
   TextField,
   Typography,
   useRadioGroup,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@mui/material";
 import { CurrencyRupee as CurrencyRupeeIcon } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import PropTypes from "prop-types";
-
 import API from "../../apis";
+
+import { Utility } from "../utility";
 
 const StyledFormControlLabel = styled((props) => (
   <FormControlLabel {...props} />
@@ -41,6 +37,7 @@ const StyledFormControlLabel = styled((props) => (
   },
 }));
 
+// Custom component for handling radio button styles
 function MyFormControlLabel(props) {
   const radioGroup = useRadioGroup();
 
@@ -67,22 +64,43 @@ const initialValues = {
   occupation_type: "",
 };
 
-const Step1Form = ({ setLoanType }) => {
+const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   const [amount, setAmount] = useState("");
   const [tenure, setTenure] = useState("");
-  const [getStarted, setGetStarted] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false); // Popup control
-  const [applicationNumber, setApplicationNumber] = useState(0);
+  const [getStarted, setGetStarted] = useState(false);    // To toggle form fields display
+  const [customerId, setCustomerId] = useState(null);
 
-  const randomNumberGenerator = () => {
-    return Math.floor(10000000 + Math.random() * 90000000);
-  }
+  const { getLocalStorage, setLocalStorage } = Utility();
 
+  // Generate random application number
+  const randomNumberGenerator = () => Math.floor(10000000 + Math.random() * 90000000);
+
+  // Fetch customer ID from localStorage when the component mounts
+  useEffect(() => {
+    const storedCustomerId = getLocalStorage("newCustomerId");
+    if (storedCustomerId) setCustomerId(storedCustomerId);
+  }, [getLocalStorage]);
+
+  // Fetch application number using customer ID
+  useEffect(() => {
+    if (customerId) {
+      API.CustomerApplicationAPI.getApplicationById(customerId)
+        .then(({ data: response }) => {
+          if (response.status === "Success") {
+            console.log(response.data.application_no, 'api res');
+            setApplicationNumber(response.data.application_no);
+          }
+        })
+        .catch(err => {
+          console.log("Error fetching customer ID:", err);
+        });
+    }
+  }, [customerId]);
+
+  // Create a new customer with a loan application
   const create = useCallback(
     (values) => {
       const applicationNumber = randomNumberGenerator();
-      setApplicationNumber(applicationNumber);
-      console.log(amount, tenure, applicationNumber, "amount tenure no");
       const { contact, email, name, status, dob, ...restValues } = values;
       const customer = {
         contact,
@@ -95,6 +113,8 @@ const Step1Form = ({ setLoanType }) => {
       API.CustomerAPI.register(customer)
         .then(({ data: res }) => {
           if (res.status === "Success") {
+            setCustomerId(res.data.id);
+            setLocalStorage("newCustomerId", res.data.id);
             const promise1 = API.CustomerInfoAPI.create({
               customer_id: res.data.id,
               ...restValues,
@@ -106,41 +126,59 @@ const Step1Form = ({ setLoanType }) => {
               tenure: tenure,
             });
             return Promise.all([promise1, promise2])
-              .then(() => {
-                setOpenDialog(true); // Show the dialog on success
-              })
               .catch((err) => {
-                console.log("Error in creating customer info or application:", err);
+                console.log("Error creating customer info/application:", err);
               });
           } else {
-            console.error("Registration failed:", res.message);
+            console.log("Registration failed:", res.message);
           }
         })
         .catch((err) => {
-          console.error("Error during registration:", err);
+          console.log("Error during registration:", err);
         });
     },
     [amount, tenure]
   );
 
-  const MyFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
-    margin: theme.spacing(1),
-    "& .MuiTypography-root": {
-      fontWeight: "bold",
-    },
-  }));
+  // If application number exists, display success message without making user to fill the form again
+  if (applicationNumber) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          marginTop: 2,
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: "1.2rem",
+            lineHeight: "2rem",
+            color: "green",
+            fontWeight: "600",
+            fontFamily: "cursive",
+            marginBottom: 2,
+          }}
+        >
+          Your application is submitted. We will contact you over call in next half an hour.
+          To speed up the process, please complete the next steps........
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: "1rem",
+            color: "gray",
+            marginBottom: 2,
+          }}
+        >
+          Your Application Number is <strong>{applicationNumber}</strong>.
+        </Typography>
+      </Box>
+    );
+  }
 
-  // Custom styled Box
-  const CustomBox = styled(Box)(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: theme.spacing(2),
-    backgroundColor: "white",
-    boxShadow: theme.shadows[3],
-    margin: theme.spacing(1),
-  }));
-
+  // Initial form view with amount and tenure selection
   if (!getStarted) {
     return (
       <Box
@@ -250,11 +288,9 @@ const Step1Form = ({ setLoanType }) => {
             <MenuItem value="60">60 Months</MenuItem>
           </Select>
         </FormControl>
-
         <Button
           color="primary"
-          disabled={!amount && !tenure}
-          type="submit"
+          disabled={!amount || !tenure}
           variant="contained"
           endIcon={<ArrowForwardIcon />}
           onClick={() => setGetStarted(true)}
@@ -274,6 +310,7 @@ const Step1Form = ({ setLoanType }) => {
     );
   }
 
+  // Main form view for getting customer details
   return (
     <>
       <Formik
@@ -357,7 +394,6 @@ const Step1Form = ({ setLoanType }) => {
                   }}
                   fullWidth
                 />
-
                 <TextField
                   type="number"
                   variant="filled"
@@ -378,7 +414,6 @@ const Step1Form = ({ setLoanType }) => {
                   }}
                   fullWidth
                 />
-
                 <TextField
                   variant="filled"
                   type="email"
@@ -418,7 +453,6 @@ const Step1Form = ({ setLoanType }) => {
                   }}
                   fullWidth
                 />
-
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Enter Date Of Birth"
@@ -426,7 +460,6 @@ const Step1Form = ({ setLoanType }) => {
                     onChange={(newValue) => setFieldValue("dob", newValue)}
                   />
                 </LocalizationProvider>
-
                 <FormControl
                   variant="filled"
                   sx={{
@@ -450,7 +483,6 @@ const Step1Form = ({ setLoanType }) => {
                     <MenuItem value="non-salaried">Non-Salaried</MenuItem>
                   </Select>
                 </FormControl>
-
                 <FormGroup
                   sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
                 >
@@ -482,33 +514,6 @@ const Step1Form = ({ setLoanType }) => {
                     }
                   />
                 </FormGroup>
-
-                <Dialog
-                  open={openDialog}
-                  onClose={() => setOpenDialog(false)}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogTitle id="alert-dialog-title">
-                    Application Submitted
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                      Your application is submitted, we will connect with
-                      you over call in next half an hour.<br />Your Application Number is {applicationNumber}
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      onClick={() => setOpenDialog(false)}
-                      color="primary"
-                      autoFocus
-                    >
-                      Close
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-
                 <Button
                   color="primary"
                   disabled={!dirty}
