@@ -133,25 +133,43 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
           alignItems: "center",
           flexDirection: "column",
           marginTop: 2,
+          padding: 3,
+          border: "1px solid #b6b6b6",
+          borderRadius: "20px",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          backgroundColor: "#f9f9f9",
+          maxWidth: "500px",
+          margin: "auto",
         }}
       >
         <Typography
           sx={{
-            fontSize: "1.2rem",
+            fontSize: "1.4rem",
             lineHeight: "2rem",
-            color: "green",
+            color: "#1976d2",
             fontWeight: "600",
-            fontFamily: "cursive",
+            fontFamily: "Roboto, sans-serif",
             marginBottom: 2,
+            textAlign: "center",
           }}
         >
-          Your application is submitted. We will contact you over call in next half an hour.
-          To speed up the process, please complete the next steps........
+          Your application is submitted!
         </Typography>
         <Typography
           sx={{
             fontSize: "1rem",
-            color: "gray",
+            color: "#333",
+            marginBottom: 2,
+            textAlign: "center",
+          }}
+        >
+          We will contact you within the next half an hour. To speed up the
+          process, please complete the next steps.
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: "1rem",
+            color: "#333",
             marginBottom: 2,
           }}
         >
@@ -160,6 +178,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
       </Box>
     );
   }
+  
   // Initial form view with amount and tenure selection
   if (!getStarted) {
     return (
