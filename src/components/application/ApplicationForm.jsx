@@ -20,10 +20,10 @@ const steps_form = [
     label: "Basic Details",
     icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/basic-details.svg",
   },
-  {
-    label: "PAN veriﬁcation",
-    icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/pan.svg",
-  },
+  // {
+  //   label: "PAN veriﬁcation",
+  //   icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/pan.svg",
+  // },
   {
     label: "Statement upload",
     icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/statement.svg",
@@ -32,25 +32,27 @@ const steps_form = [
     label: "Proﬁle details and proof",
     icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/profile-details.svg",
   },
-  {
-    label: "Business Details",
-    icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/business-details.svg",
-  },
+  // {
+  //   label: "Business Details",
+  //   icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/business-details.svg",
+  // },
   // {
   //   label: "Disbursal",
   //   icon: "https://open-frontend-bucket.s3.amazonaws.com/open-capital/onboarding/register/icons/disbursal.svg",
   // },
 ];
 
-const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"];
+const steps = ["Step 1", "Step 2", "Step 3"];
 
 const MultiStepForm = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [loanType, setLoanType] = useState("");
+  // const [loanType, setLoanType] = useState("");    //for business or personal loan
+  const [applicationNumber, setApplicationNumber] = useState(null);   //for step form 1
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    
+    if (applicationNumber) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleBack = () => {
@@ -60,15 +62,15 @@ const MultiStepForm = () => {
   const getStepContent = (step) => {
     switch (step) {
       case 0:
-        return <Step1Form setLoanType={setLoanType} handleNext={handleNext} />;
+        return <Step1Form applicationNumber={applicationNumber} setApplicationNumber={setApplicationNumber} />;
       case 1:
-        return <Step2Form handleNext={handleNext} />;
-      case 2:
         return <Step3Form />;
-      case 3:
+      case 2:
         return <Step4Form />;
-      case 4:
-        return loanType === "business" && <Step5Form />;
+      // case 3:
+      //   return loanType === "business" && <Step5Form />;
+      // case 4:
+      // return <Step2Form handleNext={handleNext} />;
       // case 5:
       //   return (
       //     <Step6Form />

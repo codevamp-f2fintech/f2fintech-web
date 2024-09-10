@@ -7,6 +7,7 @@
  */
 
 import { CustomerAPI } from "./CustomerAPI";
+import { CustomerApplicationAPI  } from "./CustomerApplicationAPI";
 import { CustomerInfoAPI } from "./CustomerInfoAPI";
 import { DocumentAPI } from "./DocumentAPI";
 import { LoanProviderAPI } from "./LoanProviderAPI";
@@ -18,6 +19,7 @@ import { RatingRevAPI } from "./RatingRevAPI";
 
 export default {
   CustomerAPI,
+  CustomerApplicationAPI,
   CustomerInfoAPI,
   DocumentAPI,
   LoanProviderAPI,
