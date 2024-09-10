@@ -19,7 +19,7 @@ import ResponsiveAppBar from "./components/appBar/Appbar";
 import ResetPassword from "./components/login/Resetpassword";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
-import Query from "./components/query/Query";
+import QueryMain from "./components/query/QueryMain";
 import Chatbot from "./components/chatbot/chatbot";
 import FavouriteCard from "./components/providers/FavouriteCard";
 
@@ -56,7 +56,7 @@ function App() {
               path="/ecommerce-business-loan"
               element={<ECommerceBusinessLoan />}
             />
-            <Route exact path="/query" element={<Query />} />
+            <Route exact path="/query" element={<QueryMain />} />
             <Route exact path="/chatbot" element={<Chatbot />} />
             <Route exact path="/blogs" element={<Blogs />} />
             <Route exact path="/profile" element={<Profile />} />
