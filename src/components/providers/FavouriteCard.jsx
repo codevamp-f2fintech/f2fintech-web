@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -19,6 +19,7 @@ import styled from "@emotion/styled";
 import PropTypes from "prop-types";
 import ButtonComp from "../common/button/Button";
 import { Utility } from "../utility";
+import API from "../../apis";
 
 const StyledCard = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -71,6 +72,8 @@ const ProductCard = ({
   text,
   handleCompareToggle,
   handleRemove,
+  isFavourite, 
+  toggleFavourite
 }) => {
   const [checked, setChecked] = useState(false);
   return (
@@ -121,6 +124,10 @@ const ProductCard = ({
               handleCompareToggle();
             }}
           />
+          {/* Toggle Favourite Heart Button */}
+          <IconButton onClick={toggleFavourite}>
+            {isFavourite ? "❤️" : "🤍"}
+          </IconButton>
         </Box>
       </Box>
     </StyledCard>
@@ -135,25 +142,9 @@ ProductCard.propTypes = {
   text: PropTypes.object.isRequired,
   handleCompareToggle: PropTypes.func.isRequired,
   handleRemove: PropTypes.func.isRequired,
+  isFavourite: PropTypes.bool.isRequired,
+  toggleFavourite: PropTypes.func.isRequired,
 };
-
-const Filter = ({ filter, setFilter }) => (
-  <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-    <FormControl fullWidth sx={{ width: "15%" }}>
-      <InputLabel id="filter-label">Sort By</InputLabel>
-      <Select
-        labelId="filter-label"
-        value={filter}
-        label="Filter by"
-        onChange={(e) => setFilter(e.target.value)}
-      >
-        <MenuItem value="interestRate">Interest Rate</MenuItem>
-        <MenuItem value="rating">Rating</MenuItem>
-        <MenuItem value="popular">Popular Banks</MenuItem>
-      </Select>
-    </FormControl>
-  </Box>
-);
 
 const FavouriteCard = () => {
   const location = useLocation();
@@ -161,16 +152,44 @@ const FavouriteCard = () => {
   const [compares, setCompares] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const { getLocalStorage } = Utility();
-  const favoriteItems = getLocalStorage("favorites") || [];
-  console.log('locals', favoriteItems, typeof (favoriteItems))
+  const [favoriteItems, setFavoriteItems] = useState([]);
 
-  const handleCompareToggle = (item) => {
-    console.log('toggle', item, typeof (item), compares)
+  const handleCompareToggle = async (item) => {
     setCompares((prevCompares) =>
       prevCompares.includes(item)
         ? prevCompares.filter((comp) => comp !== item)
         : [...prevCompares, item]
     );
+  };
+
+  useEffect(() => {
+    // Fetch favorite items from the database
+    const fetchFavourites = async () => {
+      try {
+        const response = await API.CustomerFavourite.getCustomerFavourite();
+        setFavoriteItems(response.data);
+      } catch (error) {
+        console.error("Error fetching favorite items:", error);
+      }
+    };
+
+    fetchFavourites();
+  }, []);
+  
+
+  const handleToggleFavourite = async (item) => {
+    const isFavourite = favoriteItems.includes(item);
+
+    try {
+      await API.CustomerFavouriteAPI.toggleFavourite(item, isFavourite);
+      setFavoriteItems((prevFavorites) =>
+        isFavourite
+          ? prevFavorites.filter((fav) => fav.id !== item.id)
+          : [...prevFavorites, item]
+      );
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
   };
 
   const handleProceedToCompare = () => {
@@ -228,6 +247,8 @@ const FavouriteCard = () => {
                   short_description: item.short_description,
                   long_description: item.long_description,
                 }}
+                isFavourite={favoriteItems.includes(item)}
+                toggleFavourite={() => handleToggleFavourite(item)}
                 handleCompareToggle={() => handleCompareToggle(item)}
                 handleRemove={() => handleRemoveCard(index)}
               />

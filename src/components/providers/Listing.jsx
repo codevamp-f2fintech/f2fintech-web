@@ -166,6 +166,7 @@ const Listing = () => {
   useEffect(() => {
     API.LoanProviderAPI.getAll()
       .then((response) => {
+        console.log(response.data, "response")
         if (response.data.status === "Success") {
           dispatch(
             setLoanProviders({
@@ -240,7 +241,8 @@ const Listing = () => {
     setOpenDialog(false);
     navigate("/login");
   };
-
+  
+  console.log(favorites)
   if (loading) {
     return (
       <Box
