@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
@@ -14,13 +15,15 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  IconButton,
   useMediaQuery,
 } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup"; // Import Yup for validation
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 import API from "../../apis";
 import Toast from "../toast/Toast";
@@ -40,10 +43,15 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [open, setOpen] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+
   const dispatch = useDispatch();
   const toastInfo = useSelector((state) => state.toastInfo);
-  const { getLocalStorage, toastAndNavigate } = Utility();
+
+  const { formatName, getLocalStorage, toastAndNavigate } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
   const isMobile = useMediaQuery("(max-width:900px)");
   const isTab = useMediaQuery("(max-width:1200px)");
@@ -62,7 +70,55 @@ export default function Profile() {
       .finally(() => {
         setLoading(false);
       });
+
+    API.DocumentAPI.getCustomerDocuments(customerId)
+      .then(({ data }) => {
+        console.log(data.data.document_url, 'data')
+        if (data.status === "Success") {
+          setImageSrc(data.data.document_url);
+        }
+      })
+      .catch((err) => {
+        console.log(err, "API response error");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [!editMode]);
+
+  const uploadFileToS3 = (file, type) => {
+    const formattedName = formatName(file.name);
+    API.DocumentAPI.uploadDocument({
+      document: file,
+      folder: `profile/${formattedName}`,
+    })
+      .then((res) => {
+        if (res.data.status === "Success") {
+          API.DocumentAPI.createDocument({
+            document_url: res.data.data,
+            customer_id: customerId,
+            type: type
+          });
+          console.log(`Document of ${type} uploaded successfully`);
+        } else {
+          console.error("Upload failed");
+        }
+      })
+      .catch((err) => {
+        console.error("Error in document creation:", err);
+      });
+  };
+
+  const handleUploadClick = useCallback(() => {
+    if (selectedPhoto) {
+      uploadFileToS3(selectedPhoto, "profile");
+    }
+  }, [selectedPhoto]);
+
+  const handleReInput = () => {
+    setSelectedPhoto(null);
+    setImageSrc(null);
+  };
 
   const handleSubmit = (formData, resetForm) => {
     console.log("handlesubmit", formData);
@@ -76,14 +132,11 @@ export default function Profile() {
         if (res.status === "Success") {
           setEditMode(false);
           resetForm();
-          console.log("tosttest");
           toastAndNavigate(
             dispatch,
             true,
             "success",
-            "Updated Successfully"
-            // navigateTo,
-            // "/"
+            "Profile updated successfully!"
           );
         }
       })
@@ -150,9 +203,7 @@ export default function Profile() {
           sx={{
             display: isMobile ? "block" : isTab ? "block" : "flex",
             justifyContent: isMobile ? "normal" : isTab ? "normal" : "flex-end",
-            marginRight: isMobile ? "0vh" : "7vh",
-            // position: isMobile ? "false" : "absolute",
-            // border: "2px solid",
+            marginRight: isMobile ? "0vh" : "7vh"
           }}
         >
           <Box
@@ -161,8 +212,7 @@ export default function Profile() {
               textAlign: "center",
               justifyContent: "center",
               alignItems: "center",
-              marginLeft: isMobile ? "0vh" : "0vh",
-              // border: "2px solid",
+              marginLeft: isMobile ? "0vh" : "0vh"
             }}
           >
             <Formik
@@ -179,13 +229,7 @@ export default function Profile() {
               }}
             >
               {({ values, handleChange, errors, touched }) => (
-                <Form
-                // style={{
-                //   display: "flex",
-                //   justifyContent: "center",
-                //   alignItems: "center",
-                // }}
-                >
+                <Form>
                   {editMode ? (
                     <>
                       <Box
@@ -209,14 +253,14 @@ export default function Profile() {
                             fontSize: isMobile
                               ? "8vw"
                               : isTab
-                              ? "5vw"
-                              : "2.5vw",
+                                ? "5vw"
+                                : "2.5vw",
                             fontWeight: "300",
                             marginRight: isMobile
                               ? "23vh"
                               : isTab
-                              ? "27vh"
-                              : "50vh",
+                                ? "27vh"
+                                : "50vh",
                           }}
                         >
                           Edit
@@ -239,8 +283,8 @@ export default function Profile() {
                               width: isMobile
                                 ? "15rem"
                                 : isTab
-                                ? "35rem"
-                                : "25rem",
+                                  ? "35rem"
+                                  : "25rem",
                               borderRadius: "20px",
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               backgroundColor: "darkGray",
@@ -270,8 +314,8 @@ export default function Profile() {
                               width: isMobile
                                 ? "15rem"
                                 : isTab
-                                ? "35rem"
-                                : "25rem",
+                                  ? "35rem"
+                                  : "25rem",
                               borderRadius: "20px",
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               backgroundColor: "darkGray",
@@ -288,8 +332,8 @@ export default function Profile() {
                             width: isMobile
                               ? "15rem"
                               : isTab
-                              ? "35rem"
-                              : "25rem",
+                                ? "35rem"
+                                : "25rem",
                             borderRadius: "20px",
                             backgroundColor: "darkGray",
                             fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
@@ -314,8 +358,8 @@ export default function Profile() {
                               width: isMobile
                                 ? "15rem"
                                 : isTab
-                                ? "35rem"
-                                : "25rem",
+                                  ? "35rem"
+                                  : "25rem",
                               borderRadius: "20px",
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                             }}
@@ -345,8 +389,8 @@ export default function Profile() {
                               width: isMobile
                                 ? "15rem"
                                 : isTab
-                                ? "35rem"
-                                : "25rem",
+                                  ? "35rem"
+                                  : "25rem",
                               borderRadius: "20px",
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               backgroundColor: "darkGray",
@@ -362,7 +406,7 @@ export default function Profile() {
                           display="flex"
                           gap={5}
                           alignItems="center"
-                          // justifyContent="center"
+                        // justifyContent="center"
                         >
                           <Button
                             variant="contained"
@@ -370,8 +414,8 @@ export default function Profile() {
                               width: isMobile
                                 ? "5rem"
                                 : isTab
-                                ? "7rem"
-                                : "8rem",
+                                  ? "7rem"
+                                  : "8rem",
 
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               borderRadius: "30px",
@@ -392,8 +436,8 @@ export default function Profile() {
                               width: isMobile
                                 ? "5rem"
                                 : isTab
-                                ? "7rem"
-                                : "8rem",
+                                  ? "7rem"
+                                  : "8rem",
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
                               borderRadius: "30px",
                               color: "black",
@@ -412,30 +456,74 @@ export default function Profile() {
                     </>
                   ) : (
                     <>
-                      <Box>
-                        <Avatar
-                          sx={{
-                            width: isMobile ? "15vh" : isTab ? "20vh" : "30vh",
-                            height: isMobile ? "15vh" : isTab ? "20vh" : "30vh",
-                            fontSize: isMobile ? "10vw" : isTab ? "7vw" : "5vw",
-                            marginLeft: isMobile
-                              ? "-7vh"
-                              : isTab
-                              ? "24vh"
-                              : "-6vh",
-                            position: "absolute",
-                            marginTop: "-7vh",
-                            boxShadow:
-                              "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-                            ":hover": {
-                              transform: "scale(1.1)",
-                              transition: "all 300ms ease-in-out",
-                            },
-                          }}
-                          alt={values.name}
-                          src="/"
-                        />
+                      <Box position="relative">
+                        {imageSrc ? (
+                          <>
+                            <Avatar
+                              sx={{
+                                width: isMobile ? "15vh" : isTab ? "20vh" : "32vh",
+                                height: isMobile ? "15vh" : isTab ? "20vh" : "32vh",
+                                fontSize: isMobile ? "10vw" : isTab ? "7vw" : "5vw",
+                                marginLeft: isMobile ? "-4vh" : isTab ? "24vh" : "-2vh",
+                                position: "absolute",
+                                marginTop: "-7vh",
+                                boxShadow:
+                                  "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
+                                ":hover": {
+                                  transform: "scale(1.1)",
+                                  transition: "all 300ms ease-in-out",
+                                },
+                              }}
+                              alt={values.name}
+                              src={imageSrc}
+                            />
+                            <Box
+                              sx={{
+                                display: "flex",
+                                position: "absolute",
+                                gap: 2,
+                                mt: 10,
+                                ml: 2,
+                              }}
+                            >
+                              <Button variant="contained" color="primary" onClick={handleUploadClick}>
+                                Upload
+                              </Button>
+                              <Button variant="outlined" color="secondary" onClick={handleReInput}>
+                                Folder
+                              </Button>
+                            </Box>
+                          </>
+                        ) : (
+                          <IconButton
+                            sx={{
+                              width: isMobile ? "15vh" : isTab ? "20vh" : "32vh",
+                              height: isMobile ? "15vh" : isTab ? "20vh" : "32vh",
+                              marginLeft: isMobile ? "-40vh" : isTab ? "24vh" : "-48vh",
+                              position: "absolute",
+                              marginTop: "-4vh",
+                              boxShadow:
+                                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
+                            }}
+                            component="label"
+                          >
+                            <AddPhotoAlternateIcon sx={{ fontSize: isMobile ? "10vw" : isTab ? "7vw" : "5vw" }} />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              hidden
+                              onChange={(event) => {
+                                const file = event.target.files[0];
+                                if (file) {
+                                  setSelectedPhoto(file);
+                                  setImageSrc(URL.createObjectURL(file));
+                                }
+                              }}
+                            />
+                          </IconButton>
+                        )}
                       </Box>
+
                       <Container
                         sx={{
                           width: isMobile ? "27vh" : isTab ? "60vh" : "100vh",
@@ -447,8 +535,8 @@ export default function Profile() {
                             width: isMobile
                               ? "40vh"
                               : isTab
-                              ? "100vh"
-                              : "100vh",
+                                ? "100vh"
+                                : "100vh",
                             height: isMobile ? "30vh" : isTab ? "40vh" : "40vh",
                             display: "flex",
                             flexDirection: "column",
@@ -458,13 +546,13 @@ export default function Profile() {
                             marginTop: isMobile
                               ? "32vh"
                               : isTab
-                              ? "30vh"
-                              : "18vh",
+                                ? "30vh"
+                                : "18vh",
                             marginLeft: isMobile
                               ? "-9vh"
                               : isTab
-                              ? "7vh"
-                              : "30vh",
+                                ? "7vh"
+                                : "30vh",
                             // border: "2px solid",
                           }}
                         >
@@ -474,8 +562,8 @@ export default function Profile() {
                               fontSize: isMobile
                                 ? "5vw"
                                 : isTab
-                                ? "4vw"
-                                : "2vw",
+                                  ? "4vw"
+                                  : "2vw",
                               fontWeight: "500",
                               marginRight: {
                                 xs: "0vh", // Adjust margin for extra small screens
@@ -491,8 +579,8 @@ export default function Profile() {
                               fontSize: isMobile
                                 ? "4vw"
                                 : isTab
-                                ? "4vw"
-                                : "1.5vw",
+                                  ? "4vw"
+                                  : "1.5vw",
                               fontWeight: "400",
                               marginRight: {
                                 xs: "0vh", // Adjust margin for extra small screens
@@ -508,8 +596,8 @@ export default function Profile() {
                               fontSize: isMobile
                                 ? "4vw"
                                 : isTab
-                                ? "4vw"
-                                : "1.5vw",
+                                  ? "4vw"
+                                  : "1.5vw",
                               fontWeight: "400",
                               marginRight: {
                                 xs: "0vh", // Adjust margin for extra small screens
@@ -525,8 +613,8 @@ export default function Profile() {
                               width: isMobile
                                 ? "5rem"
                                 : isTab
-                                ? "7rem"
-                                : "8rem",
+                                  ? "7rem"
+                                  : "8rem",
                               fontSize: isMobile ? "2vw" : isTab ? "2vw" : "",
 
                               borderRadius: "30px",
@@ -535,8 +623,8 @@ export default function Profile() {
                               marginRight: isMobile
                                 ? "0vh"
                                 : isTab
-                                ? "50vh"
-                                : "",
+                                  ? "50vh"
+                                  : "",
                               "&:hover": {
                                 backgroundColor: "blue",
                                 color: "white",
@@ -558,9 +646,10 @@ export default function Profile() {
         </Box>
       </Card>
       <Toast
-        open={open}
-        message="Profile updated successfully!"
-        severity="success"
+        alerting={toastInfo.toastAlert}
+        message={toastInfo.toastMessage}
+        severity={toastInfo.toastSeverity}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       />
     </Container>
   );

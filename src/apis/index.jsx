@@ -8,16 +8,21 @@
 
 import { CustomerAPI } from "./CustomerAPI";
 import { CustomerInfoAPI } from "./CustomerInfoAPI";
+import { DocumentAPI } from "./DocumentAPI";
 import { LoanProviderAPI } from "./LoanProviderAPI";
 import { LoanTrackingAPI } from "./LoanTrackingAPI";
 import { QueryAPI } from "./QueryAPI";
 import { QueryResponseAPI } from "./QueryResponseAPI";
+import { RatingRevAPI } from "./RatingRevAPI";
+
 
 export default {
   CustomerAPI,
   CustomerInfoAPI,
+  DocumentAPI,
   LoanProviderAPI,
   LoanTrackingAPI,
   QueryAPI,
   QueryResponseAPI,
+  RatingRevAPI
 };

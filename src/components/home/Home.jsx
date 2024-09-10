@@ -1,16 +1,17 @@
 import React from "react";
+
 import Calculator from "../calculator/Calculator";
-import { customersdata } from "../../components/data/data";
 import Customers from "../customers/Customers";
 import Intro from "../intro/IntroCarousel";
 import Carousel from "../../components/carousel/Carousel";
 import Apply from "../../components/apply/Apply";
 import Advantages from "../../components/advantages/Advantages";
 import Eligibility from "../../components/eligibility/Eligibility";
+import Rating from "../../components/ratingAndReview/Rating";
 import LendingPartners from "../../components/lendingpartners/Lendingpartners";
 import Faq from "../faq/Faq";
 
-import { advantagesData } from "../data/Data.jsx";
+import { advantagesData, customersdata } from "../data/Data.jsx";
 
 const Home = () => {
   return (
@@ -24,6 +25,7 @@ const Home = () => {
       <LendingPartners />
       <Customers customersdata={customersdata} />
       <Faq />
+      <Rating />
     </>
   );
 };

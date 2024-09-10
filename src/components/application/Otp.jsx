@@ -17,7 +17,6 @@ function OTP({ separator, length, value, onChange }) {
     targetInput.select();
   };
 
-
   //for pan verification otpindex back next
   const handleKeyDown = (event, currentIndex) => {
     switch (event.key) {

@@ -5,7 +5,7 @@ import { Box, Container, Typography } from "@mui/material";
 import Calculator from "../calculator/Calculator";
 import Eligibility from "../../components/eligibility/Eligibility";
 import Advantages from "../../components/advantages/Advantages";
-import { bLadvantagesData } from "../data/Data";
+import { bLadvantagesData } from "../data/Data.jsx";
 
 const MsmeLoan = () => {
   // Scroll to the section when the component mounts

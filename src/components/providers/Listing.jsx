@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
@@ -31,7 +30,6 @@ import PropTypes from "prop-types";
 import API from "../../apis";
 import ButtonComp from "../common/button/Button";
 import { Utility } from "../utility";
-
 const StyledCard = styled(Box)(({ theme }) => ({
   width: "100%",
   maxWidth: 300,
@@ -45,7 +43,6 @@ const StyledCard = styled(Box)(({ theme }) => ({
     boxShadow: "0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.15)",
   },
 }));
-
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
   position: "absolute",
   top: 8,
@@ -57,13 +54,11 @@ const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
     backgroundColor: "rgba(255, 255, 255, 1)",
   },
 }));
-
 const StyledButton = styled(Button)(({ theme }) => ({
   fontSize: "0.8rem",
   padding: "0.25rem 0.5rem",
   minWidth: "80px",
 }));
-
 const ProductCard = ({
   title,
   home,
@@ -100,7 +95,7 @@ const ProductCard = ({
         {home && (
           <>
             <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
-              Interest Rate: {interestRate}%
+              Interest Rate: {interestRate}
             </Typography>
           </>
         )}
@@ -121,7 +116,6 @@ const ProductCard = ({
     </StyledCard>
   );
 };
-
 ProductCard.propTypes = {
   title: PropTypes.string.isRequired,
   home: PropTypes.bool.isRequired,
@@ -133,7 +127,6 @@ ProductCard.propTypes = {
   isCompared: PropTypes.bool.isRequired,
   handleCompareToggle: PropTypes.func.isRequired,
 };
-
 const Filter = ({ filter, setFilter }) => (
   <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
     <FormControl fullWidth sx={{ width: "15%" }}>
@@ -151,7 +144,6 @@ const Filter = ({ filter, setFilter }) => (
     </FormControl>
   </Box>
 );
-
 const Listing = () => {
   const location = useLocation(); // Add this line
   const navigate = useNavigate(); // Add this line
@@ -164,17 +156,13 @@ const Listing = () => {
   const loanProviders = useSelector((state) => state.allLoanProviders);
   const { getLocalStorage } = Utility();
   const [openDialog, setOpenDialog] = useState(false);
-
   const customer = getLocalStorage("customerInfo");
-
   const token = customer?.token;
-
   useEffect(() => {
     if (location.state?.showFavorites) {
       setFavorites(location.state.favoriteItems || []);
     }
   }, [location.state]);
-
   useEffect(() => {
     API.LoanProviderAPI.getAll()
       .then((response) => {
@@ -192,31 +180,26 @@ const Listing = () => {
         setLoading(false);
       });
   }, [dispatch]);
-
   const handleFavoriteToggle = (item) => {
     if (!token) {
       // If the user is not logged in, open the login dialog
       setOpenDialog(true);
       return;
     }
-
     // If the user is logged in, update the favorites
-    setFavorites((prevFavorites) => {
-      const updatedFavorites = prevFavorites.includes(item)
-        ? prevFavorites.filter((fav) => fav !== item)
-        : [...prevFavorites, item];
+    if (!favorites.includes(item)) {
+      setFavorites((prevFavorites) => {
+        const updatedFavorites = [...prevFavorites, item];
+        // Save the updated favorites to localStorage
+        localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+        return updatedFavorites;
 
-      // Save the updated favorites to localStorage
-      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-      return updatedFavorites;
-    });
+      });
+    }
   };
-
-
-
   useEffect(() => {
     // Load favorites from localStorage on component mount
-    const savedFavorites = JSON.parse(localStorage.getItem('favorites'));
+    const savedFavorites = JSON.parse(localStorage.getItem("favorites"));
     if (savedFavorites) {
       setFavorites(savedFavorites);
     }
@@ -228,28 +211,21 @@ const Listing = () => {
         : [...prevCompares, item]
     );
   };
-
   const handlePopoverClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
-
   const handleRemoveAll = () => {
     setCompares([]);
     handlePopoverClose();
   };
-
   const handleProceedToCompare = () => {
     navigate("/providers/Compare", { state: { compares } });
     handlePopoverClose();
   };
-
-
   const open = Boolean(anchorEl);
-
   const getFilteredData = () => {
     let sortedData = [...(loanProviders?.listData || [])];
     if (filter === "interestRate") {
@@ -258,11 +234,6 @@ const Listing = () => {
       sortedData.sort((a, b) => b.rating - a.rating);
     }
     return sortedData;
-  };
-
-  const handleDialogClose = () => {
-    setOpenDialog(true);
-    navigate("/FavouriteCard");
   };
 
   const handleLoginRedirect = () => {
@@ -284,7 +255,6 @@ const Listing = () => {
       </Box>
     );
   }
-
   return (
     <Container sx={{ marginTop: 4 }}>
       <Filter filter={filter} setFilter={setFilter} />
@@ -299,7 +269,7 @@ const Listing = () => {
       <Grid container spacing={4}>
         <Dialog
           open={openDialog}
-          onClose={handleDialogClose}
+          onClose={() => setOpenDialog(false)}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
@@ -310,7 +280,7 @@ const Listing = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleDialogClose} color="primary">
+            <Button onClick={() => setOpenDialog(false)} color="primary">
               Cancel
             </Button>
             <Button onClick={handleLoginRedirect} color="primary" autoFocus>
@@ -322,8 +292,8 @@ const Listing = () => {
           <Grid item xs={12} sm={6} md={4} key={index}>
             <ProductCard
               title={item.title}
-              home={item.home}
-              homeimg={item.homeimage}
+              home={item.is_home}
+              homeimg={item.home_image}
               interestRate={item.interest_rate}
               text={{
                 description: item.description,
@@ -423,12 +393,8 @@ const Listing = () => {
             )}
           </Popover>
         </Box>
-
       )}
-
     </Container>
   );
-
 };
-
 export default Listing;

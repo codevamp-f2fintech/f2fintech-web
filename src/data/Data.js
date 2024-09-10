@@ -6,7 +6,7 @@ const pages = [
   {
     title: "Login",
     href: "/login",
-  },
+  }
 ];
 
 const products = [
