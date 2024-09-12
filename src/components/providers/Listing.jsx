@@ -29,7 +29,6 @@ const StyledButton = styled(Button)(() => ({
 const Listing = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("interestRate");
-  const [favorites, setFavorites] = useState([]);
   const [compares, setCompares] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const loanProviders = useSelector((state) => state.allLoanProviders);
@@ -89,8 +88,6 @@ const Listing = () => {
       : sortedData.sort((a, b) => b.rating - a.rating);
   }, [loanProviders?.listData, filter]);
 
-  console.log(favorites)
-
   if (loading) {
     return (
       <Box
@@ -114,6 +111,7 @@ const Listing = () => {
           <Grid item xs={12} sm={6} md={4} key={index}>
             <ProductCard
               api={API.CustomerFavouriteAPI}
+              loanProviderId={item.id}
               title={item.title}
               home={item.is_home}
               homeimg={item.home_image}
@@ -123,8 +121,6 @@ const Listing = () => {
                 short_description: item.short_description,
                 long_description: item.long_description,
               }}
-              favorites={favorites}
-              setFavorites={setFavorites}
               isCompared={compares.includes(item)}
               handleCompareToggle={() => handleCompareToggle(item)}
             />

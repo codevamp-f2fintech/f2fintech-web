@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Box, Button, Typography, Checkbox, Dialog,
@@ -42,21 +42,39 @@ const StyledCheckbox = styled(Checkbox)(() => ({
 
 const ProductCard = ({
     api,
+    loanProviderId,
     title,
     home,
     homeimg,
     interestRate,
     text,
-    setFavorites,
     isCompared,
     handleCompareToggle,
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);    // State to track favorite status
     const navigateTo = useNavigate();
 
     const { getLocalStorage } = Utility();
     const customer = getLocalStorage("customerInfo");
     const token = customer?.token;
+
+    useEffect(() => {
+        api.getFavourites(loanProviderId, customer?.id)
+            .then(({ data: resp }) => {
+                console.log(resp, 'favorites resp');
+                if (resp?.data.isFavorite) {
+                    setIsFavorite(true);
+                } else {
+                    setIsFavorite(false);
+                }
+            })
+            .catch(err => {
+                console.log('Error occured in Getting Favourites from db', err);
+            })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
 
     // Redirects the user to the login page if they are not logged in.
     const handleLoginRedirect = () => {
@@ -65,15 +83,27 @@ const ProductCard = ({
     };
 
     // Adds/removes loan providers from the favorites list. If the user is not logged in, it triggers the login dialog.
-    const handleFavoriteToggle = (item) => {
+    const handleFavoriteToggle = (event) => {
+        event.stopPropagation();
         if (!token) {
             setOpenDialog(true);
             return;
         }
-        console.log(item, 'item')
-        api.toggleFavourite()
 
-    };
+        const customerFavourite = {
+            loan_provider_id: loanProviderId,
+            customer_id: customer.id,
+        };
+        console.log(customerFavourite, isFavorite, 'loanProviderId and customer');
+        api.toggleFavourite(customerFavourite, isFavorite)
+            .then(res => {
+                console.log('response created', res);
+                setIsFavorite(!isFavorite);
+            })
+            .catch(err => {
+                console.log('error creating favorite', err);
+            })
+    }
 
     return (
         <StyledCard>
@@ -86,7 +116,7 @@ const ProductCard = ({
                 <DialogTitle id="alert-dialog-title">{"Login Required"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        You must be logged in to add items to your favorites.
+                        You must be logged in to add items to your Favorites.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -109,6 +139,7 @@ const ProductCard = ({
                 <StyledCheckbox
                     icon={<FavoriteBorder />}
                     checkedIcon={<Favorite sx={{ color: "red" }} />}
+                    checked={isFavorite}
                     onChange={handleFavoriteToggle}
                 />
             </Box>
@@ -144,12 +175,12 @@ const ProductCard = ({
 
 ProductCard.propTypes = {
     api: PropTypes.any,
+    loanProviderId: PropTypes.any,
     title: PropTypes.string.isRequired,
     home: PropTypes.bool.isRequired,
     homeimg: PropTypes.string.isRequired,
     interestRate: PropTypes.string.isRequired,
     text: PropTypes.object.isRequired,
-    favorites: PropTypes.array.isRequired,
     isCompared: PropTypes.bool.isRequired,
     handleCompareToggle: PropTypes.func.isRequired,
 };

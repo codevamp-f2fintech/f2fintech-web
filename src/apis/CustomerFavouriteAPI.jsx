@@ -22,33 +22,38 @@ export const CustomerFavouriteAPI = {
     });
   },
 
-  // get the document in db
-  getFavourites: async (cancel = false) => {
+  // get the document from db
+  getFavourites: async (loan_provider_id = null, customer_id = null, cancel = false) => {
+    const data = loan_provider_id && customer_id
+      ? { loan_provider_id, customer_id }
+      : {};
+
     return await axiosInstance.request({
-      url: `/get-favourite`,
-      method: "GET",
+      url: `/get-favourites`,
+      method: "POST",
+      data,
       signal: cancel
-        ? cancelApiObject["getFavourites"].handleRequestCancellation()
-          .signal
+        ? cancelApiObject["getFavourites"].handleRequestCancellation().signal
         : undefined,
     });
   },
 
-  //  API function to handle both adding and removing a favorite
-  toggleFavourite: async (customerFavourite, isFavourite, cancel = false) => {
-    const url = isFavourite ? '/remove-favourite-by-id/:id' : '/create-favourite';
-    const method = isFavourite ? 'GET' : 'POST';
+  // API function to handle both adding and removing a favorite
+  toggleFavourite: async (customerFavourite, isFavorite, cancel = false) => {
+    const url = isFavorite
+      ? `/remove-favourite`
+      : '/create-favourite';
+    const method = 'POST';
 
     return await axiosInstance.request({
       url,
       method,
       data: customerFavourite,
       signal: cancel
-        ? cancelApiObject[isFavourite ? 'removeFavourite' : 'createFavourite'].handleRequestCancellation().signal
+        ? cancelApiObject[isFavorite ? 'removeFavourite' : 'createFavourite'].handleRequestCancellation().signal
         : undefined,
     });
-  },
-
+  }
 };
 
 // Defining the cancel API object for CustomerFavouriteAPI
