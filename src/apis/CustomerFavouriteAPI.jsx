@@ -23,10 +23,15 @@ export const CustomerFavouriteAPI = {
   },
 
   // get the document from db
-  getFavourites: async (loan_provider_id = null, customer_id = null, cancel = false) => {
-    const data = loan_provider_id && customer_id
-      ? { loan_provider_id, customer_id }
-      : {};
+  getFavourites: async (
+    loan_provider_id = null,
+    customer_id = null,
+    cancel = false
+  ) => {
+    const data =
+      loan_provider_id && customer_id
+        ? { loan_provider_id, customer_id }
+        : { customer_id };
 
     return await axiosInstance.request({
       url: `/get-favourites`,
@@ -40,20 +45,20 @@ export const CustomerFavouriteAPI = {
 
   // API function to handle both adding and removing a favorite
   toggleFavourite: async (customerFavourite, isFavorite, cancel = false) => {
-    const url = isFavorite
-      ? `/remove-favourite`
-      : '/create-favourite';
-    const method = 'POST';
+    const url = isFavorite ? `/remove-favourite` : "/create-favourite";
+    const method = "POST";
 
     return await axiosInstance.request({
       url,
       method,
       data: customerFavourite,
       signal: cancel
-        ? cancelApiObject[isFavorite ? 'removeFavourite' : 'createFavourite'].handleRequestCancellation().signal
+        ? cancelApiObject[
+            isFavorite ? "removeFavourite" : "createFavourite"
+          ].handleRequestCancellation().signal
         : undefined,
     });
-  }
+  },
 };
 
 // Defining the cancel API object for CustomerFavouriteAPI

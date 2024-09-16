@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import {
   Box,
   Container,
   Typography,
   Grid,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   IconButton,
   Popover,
   Checkbox,
@@ -17,7 +13,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 import PropTypes from "prop-types";
-import ButtonComp from "../common/button/Button";
+
 import { Utility } from "../utility";
 import API from "../../apis";
 
@@ -72,62 +68,90 @@ const ProductCard = ({
   text,
   handleCompareToggle,
   handleRemove,
-  isFavourite, 
-  toggleFavourite
+  isFavourite,
+  toggleFavourite,
 }) => {
-  const [checked, setChecked] = useState(false);
   return (
     <StyledCard>
       <Box sx={{ position: "relative", minWidth: 200, maxWidth: 200 }}>
         <img
           src={homeimg}
           alt={title}
-          style={{ height: "100%", width: "100%", objectFit: "cover", borderRadius: "5px" }}
+          style={{
+            height: "100%",
+            width: "100%",
+            objectFit: "cover",
+            borderRadius: "5px",
+          }}
         />
       </Box>
       <Box p={2} sx={{ flex: 1 }}>
-        <Typography gutterBottom variant="h6" color="primary" sx={{ fontWeight: "bold", fontSize: "24px", lineHeight: "1.5" }}>
+        <Typography
+          gutterBottom
+          variant="h6"
+          color="primary"
+          sx={{ fontWeight: "bold", fontSize: "24px", lineHeight: "1.5" }}
+        >
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: "14px" }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mb: 1, fontSize: "14px" }}
+        >
           {text.description}
         </Typography>
         {home && (
           <>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: "14px" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mb: 1, fontSize: "14px" }}
+            >
               {text.short_description}
             </Typography>
-            <Typography variant="h6" color="primary" sx={{ fontWeight: "bold", fontSize: "24px" }}>
+            <Typography
+              variant="h6"
+              color="primary"
+              sx={{ fontWeight: "bold", fontSize: "24px" }}
+            >
               {interestRate}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: "14px" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 1, fontSize: "14px" }}
+            >
               {text.long_description}
             </Typography>
           </>
         )}
-        <Box mt={2} display="flex" justifyContent="space-between" alignItems="center">
+        <Box
+          mt={2}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Box display="flex" alignItems="center">
-            <StyledButton onClick={() => console.log("Apply Now clicked!")}>
-              Apply Now
+            <StyledButton>
+              <Link
+                to="/application-form"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Apply Now
+              </Link>
             </StyledButton>
-            <StyledButton 
-              onClick={handleRemove} 
+            {/* <StyledButton 
               sx={{ backgroundColor: "red", "&:hover": { backgroundColor: "darkred" }, ml: 2 }}
+              onClick={handleRemove}
             >
               Remove
-            </StyledButton>
+            </StyledButton> */}
           </Box>
-          <StyledCheckbox
-            checked={checked}
-            onChange={(event) => {
-              setChecked(event.target.checked);
-              handleCompareToggle();
-            }}
-          />
-          {/* Toggle Favourite Heart Button */}
-          <IconButton onClick={toggleFavourite}>
-            {isFavourite ? "❤️" : "🤍"}
-          </IconButton>
+          {/* <StyledCheckbox
+            checked={isFavourite}
+            onChange={toggleFavourite}
+          /> */}
         </Box>
       </Box>
     </StyledCard>
@@ -140,10 +164,8 @@ ProductCard.propTypes = {
   homeimg: PropTypes.string.isRequired,
   interestRate: PropTypes.string.isRequired,
   text: PropTypes.object.isRequired,
-  handleCompareToggle: PropTypes.func.isRequired,
-  handleRemove: PropTypes.func.isRequired,
-  isFavourite: PropTypes.bool.isRequired,
-  toggleFavourite: PropTypes.func.isRequired,
+  // isFavourite: PropTypes.bool.isRequired,
+  // toggleFavourite: PropTypes.func.isRequired,
 };
 
 const FavouriteCard = () => {
@@ -154,42 +176,30 @@ const FavouriteCard = () => {
   const { getLocalStorage } = Utility();
   const [favoriteItems, setFavoriteItems] = useState([]);
 
+  const open = Boolean(anchorEl);
+  const customerId = getLocalStorage("customerInfo")?.id;
+
+  useEffect(() => {
+    API.CustomerFavouriteAPI.getFavourites(null, customerId)
+      .then(({ data: fav }) => {
+        if (fav.status === "Success") {
+          console.log("fav", fav.data);
+          setFavoriteItems(fav.data);
+        } else {
+          console.log("Error getting favourites");
+        }
+      })
+      .catch((err) => {
+        console.log("Error occurred in getting favourites", err);
+      });
+  }, [customerId]);
+
   const handleCompareToggle = async (item) => {
     setCompares((prevCompares) =>
       prevCompares.includes(item)
         ? prevCompares.filter((comp) => comp !== item)
         : [...prevCompares, item]
     );
-  };
-
-  useEffect(() => {
-    // Fetch favorite items from the database
-    const fetchFavourites = async () => {
-      try {
-        const response = await API.CustomerFavourite.getCustomerFavourite();
-        setFavoriteItems(response.data);
-      } catch (error) {
-        console.error("Error fetching favorite items:", error);
-      }
-    };
-
-    fetchFavourites();
-  }, []);
-  
-
-  const handleToggleFavourite = async (item) => {
-    const isFavourite = favoriteItems.includes(item);
-
-    try {
-      await API.CustomerFavouriteAPI.toggleFavourite(item, isFavourite);
-      setFavoriteItems((prevFavorites) =>
-        isFavourite
-          ? prevFavorites.filter((fav) => fav.id !== item.id)
-          : [...prevFavorites, item]
-      );
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
   };
 
   const handleProceedToCompare = () => {
@@ -213,43 +223,47 @@ const FavouriteCard = () => {
   const handleRemoveCard = (index) => {
     const updatedFavorites = favoriteItems.filter((_, i) => i !== index);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-    window.location.reload(); // Reload to update the displayed list
+    window.location.reload();
   };
-
-  const open = Boolean(anchorEl);
 
   return (
     <Container
       style={{
         backgroundSize: "cover",
         backgroundPosition: "center",
-        background: "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
+        background:
+          "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
         borderRadius: "0% 100% 0% 1% / 0% 100% 0% 100%",
         padding: "40px",
       }}
     >
-      <Typography variant="h4" gutterBottom sx={{ marginTop: "20px", animation: "bounce 1s infinite", textAlign: "Right" }}>
-       Favourite ❤️ Items!
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          marginTop: "20px",
+          animation: "bouncee 1s infinite",
+          textAlign: "Right",
+        }}
+      >
+        Favourite ❤️ Items!
       </Typography>
-      {favoriteItems.length === 0 ? (
-        <Typography>No favorite items to display.</Typography>
+      {!favoriteItems.length ? (
+        <Typography>No Favorite Items To Display</Typography>
       ) : (
         <Grid container spacing={4}>
           {favoriteItems.map((item, index) => (
             <Grid item xs={12} key={index}>
               <ProductCard
                 title={item.title}
-                home={item.home}
-                homeimg={item.homeimage}
+                home={item.is_home}
+                homeimg={item.home_image}
                 interestRate={item.interest_rate}
                 text={{
                   description: item.description,
                   short_description: item.short_description,
                   long_description: item.long_description,
                 }}
-                isFavourite={favoriteItems.includes(item)}
-                toggleFavourite={() => handleToggleFavourite(item)}
-                handleCompareToggle={() => handleCompareToggle(item)}
                 handleRemove={() => handleRemoveCard(index)}
               />
             </Grid>
