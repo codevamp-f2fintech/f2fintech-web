@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-
+import { useState } from "react";
 import {
   Typography,
   FilledInput,
@@ -204,7 +203,7 @@ function EMICalculator(props) {
                 <input
                   id="slideAmount"
                   min="50000"
-                  max="4000000"
+                  max="100000000"
                   value={amount}
                   onChange={handleRangeChange}
                   type="range"
