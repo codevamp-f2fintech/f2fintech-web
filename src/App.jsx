@@ -19,6 +19,8 @@ import ResponsiveAppBar from "./components/appBar/Appbar";
 import ResetPassword from "./components/login/Resetpassword";
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
+import QueryMain from "./components/query/QueryMain";
+import Chatbot from "./components/chatbot/chatbot";
 import FavouriteCard from "./components/providers/FavouriteCard";
 
 import { useMode } from "./theme";
@@ -51,11 +53,7 @@ function App() {
                 path="/small-business-loan"
                 element={<SmallBusinessLoan />}
               />
-              <Route
-                exact
-                path="/unsecured-loan"
-                element={<UnsecuredLoan />}
-              />
+              <Route exact path="/unsecured-loan" element={<UnsecuredLoan />} />
               <Route
                 exact
                 path="/business-loan-for-women"
@@ -66,6 +64,8 @@ function App() {
                 path="/ecommerce-business-loan"
                 element={<ECommerceBusinessLoan />}
               />
+              <Route exact path="/query" element={<QueryMain />} />
+              <Route exact path="/chatbot" element={<Chatbot />} />
               <Route exact path="/blogs" element={<Blogs />} />
               <Route exact path="/profile" element={<Profile />} />
               <Route exact path="/providers" element={<Listing />} />
@@ -80,11 +80,7 @@ function App() {
                 path="/customer-favourites"
                 element={<FavouriteCard />}
               />
-              <Route
-                exact
-                path="/reset-password"
-                element={<ResetPassword />}
-              />
+              <Route exact path="/reset-password" element={<ResetPassword />} />
               <Route
                 exact
                 path="/maintenance-page"
