@@ -77,7 +77,7 @@ function App() {
               />
               <Route
                 exact
-                path="/providers/favourite-card"
+                path="/customer-favourites"
                 element={<FavouriteCard />}
               />
               <Route exact path="/reset-password" element={<ResetPassword />} />

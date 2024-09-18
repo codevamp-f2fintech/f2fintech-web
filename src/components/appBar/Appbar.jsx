@@ -215,7 +215,7 @@ export default function ResponsiveAppBar() {
                         lineHeight: "2vw",
                       }}
                       component="a"
-                      href="/providers/favourite-card"
+                      href="/customer-favourites"
                     >
                       Favourite
                     </MenuItem>
