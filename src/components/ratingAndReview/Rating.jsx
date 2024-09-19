@@ -1,8 +1,18 @@
 import React, { useState } from "react";
-
 import { useSelector, useDispatch } from "react-redux";
-
-import { Box, Typography, Button, TextField, Rating } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom"; 
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Rating,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import { Formik, Form } from "formik";
 import Toast from "../toast/Toast";
 import { Utility } from "../utility";
@@ -10,7 +20,10 @@ import { RatingRevAPI } from "../../apis/RatingRevAPI";
 
 const RatingReview = () => {
   const [rating, setRating] = useState(0);
+  const [openLoginDialog, setOpenLoginDialog] = useState(false); 
   const toastInfo = useSelector((state) => state.toastInfo);
+  const navigate = useNavigate();
+  const location = useLocation(); 
 
   const dispatch = useDispatch();
   const { toastAndNavigate, getLocalStorage } = Utility();
@@ -21,11 +34,17 @@ const RatingReview = () => {
   };
 
   const handleSubmit = (values, { resetForm }) => {
+    if (!customer) {
+      setOpenLoginDialog(true); 
+      return;
+    }
+
     const ratingData = {
       rating: rating,
       review: values.comment,
       customer_id: customer.id,
     };
+
     RatingRevAPI.createRating(ratingData).then((response) => {
       console.log("response", response);
       toastAndNavigate(dispatch, true, "success", "Review Submitted");
@@ -33,6 +52,11 @@ const RatingReview = () => {
 
     setRating(0);
     resetForm();
+  };
+
+  const handleLoginRedirect = () => {
+    setOpenLoginDialog(false);
+    navigate("/login", { state: { from: location } });
   };
 
   return (
@@ -137,26 +161,26 @@ const RatingReview = () => {
               sx={{
                 width: "30vw",
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "lightgray", // Set background color to white
-                  borderRadius: "15px", // Customize border radius
+                  backgroundColor: "lightgray",
+                  borderRadius: "15px",
                   "& fieldset": {
-                    borderColor: "lightgray", // Default border color
-                    borderRadius: "15px", // Ensure border radius applies to fieldset as well
+                    borderColor: "lightgray",
+                    borderRadius: "15px",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "lightgray", // Border color on focus
+                    borderColor: "lightgray",
                   },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "black", // Default label color
+                  color: "black",
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "black", // Label color on focus
+                  color: "black",
                 },
               }}
               InputLabelProps={{
                 sx: {
-                  fontSize: "1rem", // Increase label size
+                  fontSize: "1rem",
                 },
               }}
               error={touched.name && !!errors.name}
@@ -174,6 +198,28 @@ const RatingReview = () => {
           </Form>
         )}
       </Formik>
+     
+      <Dialog
+        open={openLoginDialog}
+        onClose={() => setOpenLoginDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Login Required"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            You must be logged in to submit a review.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenLoginDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleLoginRedirect} color="primary" autoFocus>
+            Log In
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Toast
         alerting={toastInfo.toastAlert}
         message={toastInfo.toastMessage}
