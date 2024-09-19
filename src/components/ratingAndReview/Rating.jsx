@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom"; 
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -20,22 +20,30 @@ import { RatingRevAPI } from "../../apis/RatingRevAPI";
 
 const RatingReview = () => {
   const [rating, setRating] = useState(0);
-  const [openLoginDialog, setOpenLoginDialog] = useState(false); 
+  const [initialComment, setInitialComment] = useState("");
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const toastInfo = useSelector((state) => state.toastInfo);
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
 
   const dispatch = useDispatch();
-  const { toastAndNavigate, getLocalStorage } = Utility();
+  const { toastAndNavigate, getLocalStorage, setLocalStorage, remLocalStorage } = Utility();
   const customer = getLocalStorage("customerInfo");
 
-  const initialValues = {
-    comment: "",
-  };
+  useEffect(() => {
+    const savedData = getLocalStorage("savedRatingReview");
+
+    if (savedData) {
+      setRating(Number(savedData.rating));
+      setInitialComment(savedData.review);
+    }
+  }, []);
 
   const handleSubmit = (values, { resetForm }) => {
     if (!customer) {
-      setOpenLoginDialog(true); 
+      setLocalStorage("savedRatingReview", { rating: rating, review: values.comment });
+
+      setOpenLoginDialog(true);
       return;
     }
 
@@ -48,10 +56,14 @@ const RatingReview = () => {
     RatingRevAPI.createRating(ratingData).then((response) => {
       console.log("response", response);
       toastAndNavigate(dispatch, true, "success", "Review Submitted");
-    });
 
-    setRating(0);
-    resetForm();
+      setRating(0);
+      setInitialComment("");
+
+      remLocalStorage("savedRatingReview");
+
+      resetForm();
+    });
   };
 
   const handleLoginRedirect = () => {
@@ -128,15 +140,17 @@ const RatingReview = () => {
           }}
         />
       </Box>
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={{ comment: initialComment }}
+        enableReinitialize={true}
+        onSubmit={handleSubmit}
+      >
         {({
           errors,
           touched,
-          isSubmitting,
           handleChange,
           handleBlur,
           values,
-          setErrors,
         }) => (
           <Form
             style={{
@@ -183,8 +197,8 @@ const RatingReview = () => {
                   fontSize: "1rem",
                 },
               }}
-              error={touched.name && !!errors.name}
-              helperText={touched.name && errors.name}
+              error={touched.comment && !!errors.comment}
+              helperText={touched.comment && errors.comment}
             />
             <Button
               sx={{ width: "12vw", borderRadius: "20px", marginTop: "2vh" }}
@@ -198,7 +212,6 @@ const RatingReview = () => {
           </Form>
         )}
       </Formik>
-     
       <Dialog
         open={openLoginDialog}
         onClose={() => setOpenLoginDialog(false)}
