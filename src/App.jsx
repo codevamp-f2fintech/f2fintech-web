@@ -17,6 +17,7 @@ import MsmeLoan from "./components/msmeLoan/MsmeLoan";
 import Profile from "./components/login/Profile";
 import ResponsiveAppBar from "./components/appBar/Appbar";
 import ResetPassword from "./components/login/Resetpassword";
+import ScrollToTop from './components/common/ScrollToTop';
 import SmallBusinessLoan from "./components/smallBusinessLoan/SmallBusinessLoan";
 import UnsecuredLoan from "./components/unsecuredLoan/UnsecuredLoan";
 import QueryMain from "./components/query/QueryMain";
@@ -42,6 +43,7 @@ function App() {
           <MaintenancePage />
         ) : (
           <>
+            <ScrollToTop />
             <ResponsiveAppBar />
             <Routes>
               <Route path="*" element={<NotFoundPage />} />

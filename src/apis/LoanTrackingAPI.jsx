@@ -22,12 +22,15 @@ export const LoanTrackingAPI = {
     });
   },
 
-  getLoanTracking: async (cancel = false) => {
+  // Function to get Loan Tracking from the DB by applicationId
+  getLoanTrackingById: async (applicationId, cancel = false) => {
     return await axiosInstance.request({
-      url: `/get-loan-tracking`,
+      url: `/get-loan-tracking-by-id/${applicationId}`,
       method: "GET",
       signal: cancel
-        ? cancelApiObject[this.getLoanTracking.name].handleRequestCancellation().signal
+        ? cancelApiObject[
+          this.getLoanTrackingById.name
+        ].handleRequestCancellation().signal
         : undefined,
     });
   }

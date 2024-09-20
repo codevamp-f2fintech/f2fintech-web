@@ -97,7 +97,7 @@ const Step3Form = () => {
                   color: "gray",
                 }}
               >
-                Step 3/5
+                Step 2/3
               </Typography>
             </Box>
 
