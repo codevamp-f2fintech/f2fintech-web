@@ -10,7 +10,7 @@ import {
   Grid,
   StepConnector,
 } from "@mui/material";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import PublishTwoToneIcon from "@mui/icons-material/PublishTwoTone";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
@@ -22,8 +22,10 @@ import MoneyIcon from "@mui/icons-material/Money";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import InfoIcon from "@mui/icons-material/Info";
-import { LoanTrackingAPI } from "../../apis/LoanTrackingAPI";
+
+import API from "../../apis";
 import stepsData from "../stepsData";
+import { Utility } from "../utility";
 
 const initialSteps = [
   { label: "Submitted", icon: <PublishTwoToneIcon /> },
@@ -82,28 +84,36 @@ const Loan = () => {
   const [steps, setSteps] = useState(initialSteps);
   const [loanData, setLoanData] = useState(null);
 
+  const { getLocalStorage } = Utility();
+  const customerId = getLocalStorage("customerInfo")?.id;
+
   useEffect(() => {
     const fetchLoanTracking = async () => {
       try {
-        const response = await LoanTrackingAPI.getLoanTracking();
-        const { data } = response;
-        console.log("Fetched loan tracking data:", data);
+        const { data: resp } = await API.CustomerApplicationAPI.getApplicationById(customerId);
+        if (resp.status === "Success") {
+          const { data: response } = await API.LoanTrackingAPI.getLoanTrackingById(resp.data.id);
+          console.log(response.data, 'loan trackking response')
 
-        if (data?.data?.rows?.length > 0) {
-          const { status } = data.data.rows[0];
-          const normalizedStatus = status.replace(/_/g, " ").toLowerCase();
-          const statusIndex = initialSteps.findIndex(
-            (step) => step.label.toLowerCase() === normalizedStatus
-          );
+          if (response.status === "Success") {
+            const { status } = response.data;
+            const normalizedStatus = status.replace(/_/g, " ").toLowerCase();
+            const statusIndex = initialSteps.findIndex(
+              (step) => step.label.toLowerCase() === normalizedStatus
+            );
+            console.log(statusIndex, 'statusindex')
 
-          if (statusIndex !== -1) {
-            setActiveStep(statusIndex);
+            if (statusIndex !== -1) {
+              setActiveStep(statusIndex);
+            } else {
+              console.error("Invalid status:", status);
+            }
+            // setLoanData(response.data);
           } else {
-            console.error("Invalid status:", status);
+            console.error("Invalid data format:", response);
           }
-          setLoanData(data.data.rows[0]);
         } else {
-          console.error("Invalid data format:", data);
+          console.error("Failed to fetch application:", resp);
         }
       } catch (error) {
         console.error("Error fetching loan tracking data:", error);
@@ -111,7 +121,8 @@ const Loan = () => {
     };
 
     fetchLoanTracking();
-  }, []);
+  }, [customerId]);
+
 
   const getStepColor = (index) => {
     if (index <= activeStep) {

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
 import {
   Box,
@@ -24,8 +25,10 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
 import API from "../../apis";
 import { Utility } from "../utility";
+
 const StyledFormControlLabel = styled((props) => (
   <FormControlLabel {...props} />
 ))(({ theme, checked }) => ({
@@ -33,6 +36,7 @@ const StyledFormControlLabel = styled((props) => (
     color: theme.palette.primary.main,
   },
 }));
+
 // Custom component for handling radio button styles
 function MyFormControlLabel(props) {
   const radioGroup = useRadioGroup();
@@ -42,39 +46,49 @@ function MyFormControlLabel(props) {
   }
   return <StyledFormControlLabel checked={checked} {...props} />;
 }
+
 MyFormControlLabel.propTypes = {
   value: PropTypes.any,
 };
+
 const initialValues = {
   name: "",
   email: "",
   contact: "",
   status: "active",
   dob: null,
+  city: "",
   pan: "",
   occupation_type: "",
 };
+
 const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   const [amount, setAmount] = useState("");
   const [tenure, setTenure] = useState("");
+  const [loanStatus, setLoanStatus] = useState(null);
   const [getStarted, setGetStarted] = useState(false);    // To toggle form fields display
-  const [customerId, setCustomerId] = useState(null);
+
   const { getLocalStorage, setLocalStorage } = Utility();
+  const customerId = getLocalStorage("customerInfo")?.id;
+
   // Generate random application number
   const randomNumberGenerator = () => Math.floor(10000000 + Math.random() * 90000000);
-  // Fetch customer ID from localStorage when the component mounts
-  useEffect(() => {
-    const storedCustomerId = getLocalStorage("newCustomerId");
-    if (storedCustomerId) setCustomerId(storedCustomerId);
-  }, [getLocalStorage]);
-  // Fetch application number using customer ID
+
+  // Fetch application number and loan status using customer ID
   useEffect(() => {
     if (customerId) {
       API.CustomerApplicationAPI.getApplicationById(customerId)
         .then(({ data: response }) => {
           if (response.status === "Success") {
-            console.log(response.data.application_no, 'api res');
+            console.log(response.data, 'get application res');
             setApplicationNumber(response.data.application_no);
+            API.LoanTrackingAPI.getLoanTrackingById(response.data.id)
+              .then(({ data: resp }) => {
+                if (resp.status === "Success") {
+                  console.log(resp.data, 'loan tracking resp');
+                  setLoanStatus(resp.data.status);
+                }
+              })
           }
         })
         .catch(err => {
@@ -82,7 +96,8 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
         });
     }
   }, [customerId]);
-  // Create a new customer with a loan application
+
+  // Create new customer with loan application
   const create = useCallback(
     (values) => {
       const applicationNumber = randomNumberGenerator();
@@ -92,39 +107,89 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
         dob,
         email,
         name,
+        password: `${name.toLowerCase()}@9876`,
         status,
       };
-      API.CustomerAPI.register(customer)
-        .then(({ data: res }) => {
-          if (res.status === "Success") {
-            setCustomerId(res.data.id);
-            setLocalStorage("newCustomerId", res.data.id);
-            const promise1 = API.CustomerInfoAPI.create({
-              customer_id: res.data.id,
-              ...restValues,
-            });
-            const promise2 = API.CustomerApplicationAPI.createApplication({
-              customer_id: res.data.id,
+      if (!customerId) {
+        console.log('if condition chali')
+        API.CustomerAPI.register(customer)
+          .then(async ({ data: res }) => {
+            if (res.status === "Success") {
+              // Create customer info
+              await API.CustomerInfoAPI.create({
+                customer_id: res.data.id,
+                ...restValues,
+              });
+              return res.data.id; // Pass customer_id for the next step
+            } else {
+              throw new Error(`Registration failed: ${res.message}`);
+            }
+          })
+          .then((customerId) => {
+            return API.CustomerApplicationAPI.createApplication({
+              customer_id: customerId,
               application_no: applicationNumber,
               amount: amount,
               tenure: tenure,
             });
-            return Promise.all([promise1, promise2])
-              .catch((err) => {
-                console.log("Error creating customer info/application:", err);
-              });
-          } else {
-            console.log("Registration failed:", res.message);
-          }
+          })
+          .then(({ data: applicationResponse }) => {
+            console.log(applicationResponse.data, 'applicationResponse')
+            return API.LoanTrackingAPI.createLoanTracking({
+              customer_application_id: applicationResponse.data.applicationId,
+              status: 'submitted'
+            });
+          })
+          .then(() => {
+            // Automatically log in the new customer
+            API.CustomerAPI.login({
+              contact,
+              password: `${name.toLowerCase()}@9876`
+            })
+              .then((response) => {
+                if (response.data.status === "Success") {
+                  const customerInfo = {
+                    id: response.data.data.id,
+                    name: response.data.data.name,
+                    token: response.data.data.token,
+                  };
+                  setLocalStorage("customerInfo", customerInfo);
+                  location.reload();
+                  console.log("Customer info, application, and loan tracking created successfully");
+                }
+              })
+          })
+          .catch((err) => {
+            console.log("Error during customer creation:", err);
+          });
+        // If customerId is already present, skip registration and create application
+      } else {
+        console.log('else condition chali')
+        API.CustomerApplicationAPI.createApplication({
+          customer_id: customerId,
+          application_no: applicationNumber,
+          amount: amount,
+          tenure: tenure,
         })
-        .catch((err) => {
-          console.log("Error during registration:", err);
-        });
+          .then(({ data: applicationResponse }) => {
+            console.log(applicationResponse.data, 'applicationResponse')
+            API.LoanTrackingAPI.createLoanTracking({
+              customer_application_id: applicationResponse.data.applicationId,
+              status: 'submitted'
+            });
+            location.reload();
+            console.log("Application and loan tracking completed for existing customer");
+          })
+          .catch((err) => {
+            console.log("Error during customer creation:", err);
+          });
+      }
     },
     [amount, tenure]
   );
-  // If application number exists, display success message without making user to fill the form again
-  if (applicationNumber) {
+
+  // If application number and loan status exists, display success message without making user to fill the form again
+  if (applicationNumber && !(loanStatus === 'disbursed' || loanStatus === 'rejected')) {
     return (
       <Box
         sx={{
@@ -160,11 +225,9 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             fontSize: "1rem",
             color: "#333",
             marginBottom: 2,
-            textAlign: "center",
           }}
         >
-          We will contact you within the next half an hour. To speed up the
-          process, please complete the next steps.
+          Your Application Number is <strong>{applicationNumber}</strong>.
         </Typography>
         <Typography
           sx={{
@@ -173,12 +236,25 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             marginBottom: 2,
           }}
         >
-          Your Application Number is <strong>{applicationNumber}</strong>.
+          <Link to='/loan-tracker'>
+            Track Your Loan Status By Clicking Here
+          </Link>
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: "1rem",
+            color: "#333",
+            marginBottom: 2,
+            textAlign: "center",
+          }}
+        >
+          We will contact you within the next half an hour. To speed up the
+          process, please complete the next steps.
         </Typography>
       </Box>
     );
   }
-  
+
   // Initial form view with amount and tenure selection
   if (!getStarted) {
     return (
@@ -310,6 +386,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
       </Box>
     );
   }
+
   // Main form view for getting customer details
   return (
     <>
@@ -362,7 +439,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     marginBottom: 3,
                   }}
                 >
-                  Step 1/5
+                  Step 1/3
                 </Typography>
               </Box>
               <Box
@@ -453,13 +530,25 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   }}
                   fullWidth
                 />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Enter Date Of Birth"
-                    value={values.dob}
-                    onChange={(newValue) => setFieldValue("dob", newValue)}
-                  />
-                </LocalizationProvider>
+                <TextField
+                  variant="filled"
+                  name="city"
+                  label="City"
+                  value={values.city}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.city && Boolean(errors.city)}
+                  helperText={touched.city && errors.city}
+                  sx={{
+                    width: "75%",
+                    height: "50px",
+                    fontSize: "16px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    marginBottom: 3,
+                  }}
+                  fullWidth
+                />
                 <FormControl
                   variant="filled"
                   sx={{
@@ -483,6 +572,18 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     <MenuItem value="non-salaried">Non-Salaried</MenuItem>
                   </Select>
                 </FormControl>
+                <Box sx={{
+                  width: '75%',
+                  marginBottom: 3,
+                }}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Enter Date Of Birth"
+                      value={values.dob}
+                      onChange={(newValue) => setFieldValue("dob", newValue)}
+                    />
+                  </LocalizationProvider>
+                </Box>
                 <FormGroup
                   sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
                 >
@@ -538,4 +639,10 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
     </>
   );
 };
+
+Step1Form.propTypes = {
+  applicationNumber: PropTypes.any,
+  setApplicationNumber: PropTypes.func.isRequired
+};
+
 export default Step1Form;

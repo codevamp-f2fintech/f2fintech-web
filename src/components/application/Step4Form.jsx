@@ -189,7 +189,7 @@ const Step4Form = () => {
                 color: "gray",
               }}
             >
-              Step 4/5
+              Step 3/3
             </Typography>
 
             {/* Aadhar Card Front */}

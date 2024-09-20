@@ -1,39 +1,39 @@
 import React, { Component } from "react";
-import { Launcher } from "react-chat-window";
+// import { Launcher } from "react-chat-window";
 
 class Chatbot extends Component {
-  constructor() {
-    super();
-    this.state = {
-      messageList: [],
-    };
-  }
-
-  _onMessageWasSent(message) {
-    this.setState({
-      messageList: [...this.state.messageList, message],
-    });
-  }
-
-  _sendMessage(text) {
-    if (text.length > 0) {
-      this.setState({
-        messageList: [
-          ...this.state.messageList,
-          {
-            author: "them",
-            type: "text",
-            data: { text },
-          },
-        ],
-      });
+    constructor() {
+        super();
+        this.state = {
+            messageList: [],
+        };
     }
-  }
 
-  render() {
-    return (
-      <div>
-        <Launcher
+    _onMessageWasSent(message) {
+        this.setState({
+            messageList: [...this.state.messageList, message],
+        });
+    }
+
+    _sendMessage(text) {
+        if (text.length > 0) {
+            this.setState({
+                messageList: [
+                    ...this.state.messageList,
+                    {
+                        author: "them",
+                        type: "text",
+                        data: { text },
+                    },
+                ],
+            });
+        }
+    }
+
+    render() {
+        return (
+            <div>
+                {/* <Launcher
           agentProfile={{
             teamName: "react-chat-window",
             imageUrl:
@@ -42,10 +42,10 @@ class Chatbot extends Component {
           onMessageWasSent={this._onMessageWasSent.bind(this)}
           messageList={this.state.messageList}
           showEmoji
-        />
-      </div>
-    );
-  }
+        /> */}
+            </div>
+        );
+    }
 }
 export default Chatbot;
 
