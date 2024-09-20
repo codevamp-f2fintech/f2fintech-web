@@ -12,7 +12,7 @@ import { defineCancelApiObject } from "./config/axiosUtils";
 export const RatingRevAPI = {
   createRating: async (ratingData, cancel = false) => {
     return await axiosInstance.request({
-      url: `/create-rating`,
+      url: `/create-customer-review`,
       method: "POST",
       data: ratingData,
       signal: cancel
@@ -25,7 +25,7 @@ export const RatingRevAPI = {
 
   getRating: async (cancel = false) => {
     return await axiosInstance.request({
-      url: `/get-rating`,
+      url: `/get-customer-review`,
       method: "GET",
       signal: cancel
         ? cancelApiObject[this.getRating.name].handleRequestCancellation()
