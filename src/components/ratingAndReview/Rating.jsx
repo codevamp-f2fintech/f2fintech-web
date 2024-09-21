@@ -14,9 +14,20 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Formik, Form } from "formik";
+import * as Yup from "yup"; 
 import Toast from "../toast/Toast";
 import { Utility } from "../utility";
 import { RatingRevAPI } from "../../apis/RatingRevAPI";
+
+
+const ReviewSchema = Yup.object().shape({
+  comment: Yup.string()
+    .test("wordCount", "Review must be between 2 and 200 words", function (value) {
+      const wordCount = value ? value.trim().split(/\s+/).length : 0;
+      return wordCount >= 2 && wordCount <= 200;
+    })
+    .required("Review is required"),
+});
 
 const RatingReview = () => {
   const [rating, setRating] = useState(0);
@@ -143,6 +154,7 @@ const RatingReview = () => {
       <Formik
         initialValues={{ comment: initialComment }}
         enableReinitialize={true}
+        validationSchema={ReviewSchema} 
         onSubmit={handleSubmit}
       >
         {({
