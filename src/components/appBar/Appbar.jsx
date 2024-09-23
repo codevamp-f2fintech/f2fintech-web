@@ -103,7 +103,7 @@ export default function ResponsiveAppBar() {
               // fontSize: "1.3rem",
               // borderRadius: "22px",
               // marginRight: "10px",
-        
+
               // color: " rgba(6,55,158,1)",
               color: "white",
               fontSize: "1.2vw",
@@ -165,7 +165,7 @@ export default function ResponsiveAppBar() {
                     sx={{
                       height: "40px",
                       textTransform: "none",
-                      fontSize: "1.3rem",
+                      fontSize: "1.2vw",
                       borderRadius: "22px",
                       marginLeft: "10px",
                       marginRight: "10px",
@@ -200,7 +200,7 @@ export default function ResponsiveAppBar() {
                     <MenuItem
                       sx={{
                         color: "black",
-                        fontSize: "1vw",
+                        fontSize: "1.2vw",
                         lineHeight: "2vw",
                       }}
                       component="a"
@@ -262,7 +262,7 @@ export default function ResponsiveAppBar() {
                 sx={{
                   height: "40px",
                   textTransform: "none",
-                  fontSize: "1.3rem",
+                  fontSize: "1.2vw",
                   borderRadius: "22px",
                   marginLeft: "10px",
                   color: "white",

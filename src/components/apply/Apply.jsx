@@ -14,13 +14,13 @@ export default function Apply() {
         justifyContent: "space-around",
         height: "",
         marginTop: "40px",
-        width:'100%',
-        background:'#e7eef8',
+        width: '100%',
+        background: '#e7eef8',
         padding: '73px 100px !important',
 
       }}
     >
-     
+
       <Container
         maxWidth="false"
         sx={{
@@ -31,8 +31,8 @@ export default function Apply() {
           padding: "0 !important",
         }}
       >
-        <Grid container spacing={3} sx={{display:'flex', alignItems:'center'}}>
-         
+        <Grid container spacing={3} sx={{ display: 'flex', alignItems: 'center' }}>
+
           <Grid item xs={5}>
             <Box
               sx={{
@@ -42,49 +42,49 @@ export default function Apply() {
                 // width: "50%",
               }}
             >
-              <img src="./new/why.jpeg" style={{ aspectRatio: "2/2", width: '100%', height:'649px' }} />
+              <img src="./new/apply-now.jpeg" style={{ aspectRatio: "2/2", width: '100%', height: '610px' }} />
             </Box>
           </Grid>
           <Grid item xs={7}>
             <Grid container spacing={3}>
-            <Grid item xs={12}>
-          <Typography
-        sx={{
-          color: colors.textBlack,
-          justifyContent: "flex-start",
-          display: "flex",
-          marginTop: "0px",
-          variant: "h4",
-          lineHeight: "2rem",
-          fontSize: "1.5rem",
-          fontWeight: "600",
-          zIndex: "1",
-          marginBottom:'10px'
-        }}
-      >
-        Apply now in 4 easy steps
-      </Typography>
-          <Typography
-        sx={{
-          color: colors.textBlack,
-          justifyContent: "flex-start",
-          display: "flex",
-          marginTop: "0px",
-          variant: "h4",
-          lineHeight: "1.6rem",
-          fontSize: ".8rem",
-          fontWeight: "400",
-          zIndex: "1",
-          marginBottom:'40px'
-        }}
-      >
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
-      </Typography>
-          </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    color: colors.textBlack,
+                    justifyContent: "flex-start",
+                    display: "flex",
+                    marginTop: "0px",
+                    variant: "h4",
+                    lineHeight: "2rem",
+                    fontSize: "1.5rem",
+                    fontWeight: "600",
+                    zIndex: "1",
+                    marginBottom: '10px'
+                  }}
+                >
+                  Apply now in 4 easy steps
+                </Typography>
+                <Typography
+                  sx={{
+                    color: colors.textBlack,
+                    justifyContent: "flex-start",
+                    display: "flex",
+                    marginTop: "0px",
+                    variant: "h4",
+                    lineHeight: "1.6rem",
+                    fontSize: ".8rem",
+                    fontWeight: "400",
+                    zIndex: "1",
+                    marginBottom: '40px'
+                  }}
+                >
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
+                </Typography>
+              </Grid>
               <Grid item xs={6}>
                 <Box className={styles.ripplebutton}
                   sx={{
-                    width: "100%",minHeight:'200px',
+                    width: "100%", minHeight: '200px',
                     height: "100%",
                     maxWidth: "100% !important",
                     display: "flex",
@@ -141,7 +141,7 @@ export default function Apply() {
                       lineHeight: "1.2rem",
                       fontWeight: "500",
                       marginTop: '15px',
-                      width:'50%',
+                      width: '50%',
 
                     }}
                   >
@@ -152,9 +152,9 @@ export default function Apply() {
               </Grid>
               <Grid item xs={6}>
                 <Box
-                 className={styles.ripplebutton}
+                  className={styles.ripplebutton}
                   sx={{
-                    width: "100%",minHeight:'200px',
+                    width: "100%", minHeight: '200px',
                     height: "100%",
                     maxWidth: "100% !important",
                     display: "flex",
@@ -211,21 +211,21 @@ export default function Apply() {
                       lineHeight: "1.2rem",
                       fontWeight: "500",
                       marginTop: '15px',
-                      width:'50%',
+                      width: '50%',
                     }}
                   >
-                   Compare the loan offers & choose the best suited option
+                    Compare the loan offers & choose the best suited option
                   </Typography>
                 </Box>
               </Grid>
-         
+
 
               <Grid item xs={6}>
                 <Box
-                 className={styles.ripplebutton}
+                  className={styles.ripplebutton}
                   sx={{
                     width: "100%",
-                    minHeight:'200px',
+                    minHeight: '200px',
                     height: "100%",
                     maxWidth: "100% !important",
                     display: "flex",
@@ -282,23 +282,23 @@ export default function Apply() {
                       lineHeight: "1.2rem",
                       fontWeight: "500",
                       marginTop: '15px',
-                      width:'50%',
+                      width: '50%',
                     }}
                   >
-                   Accept the loan offer & complete your documentation & KYC
+                    Accept the loan offer & complete your documentation & KYC
                   </Typography>
                 </Box>
               </Grid>
 
 
               <Grid item xs={6}>
-                
+
                 <Box
-                 className={styles.ripplebutton}
+                  className={styles.ripplebutton}
                   sx={{
                     width: "100%",
                     height: "100%",
-                    minHeight:'200px',
+                    minHeight: '200px',
                     maxWidth: "100% !important",
                     display: "flex",
                     alignItems: "center",
@@ -354,15 +354,15 @@ export default function Apply() {
                       lineHeight: "1.2rem",
                       fontWeight: "500",
                       marginTop: '15px',
-                      width:'50%',
+                      width: '50%',
                     }}
                   >
-                  Choose from flexible repayment options and start receiving funds
+                    Choose from flexible repayment options and start receiving funds
                   </Typography>
                 </Box>
               </Grid>
-          
-         
+
+
             </Grid>
 
           </Grid>
