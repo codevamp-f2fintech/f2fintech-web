@@ -45,7 +45,7 @@ export default function ResponsiveAppBar() {
     setAnchorEl(null);
   };
   return (
-    <Box sx={{ display: "flex", height: "16vh" }}>
+    <Box sx={{ display: "flex", height: "10vh" }}>
       <Box
         sx={{
           display: "flex",
@@ -72,8 +72,8 @@ export default function ResponsiveAppBar() {
                 src="f2Fintechlogo.png"
                 alt="Logo"
                 style={{
-                  height: "15vh",
-                  width: "15vh",
+                  height: "auto",
+                  width: "8vh",
                   backgroundColor: "white",
                   borderRadius: "20px",
                   marginTop: ".5vh",

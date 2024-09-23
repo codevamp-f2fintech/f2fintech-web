@@ -1,4 +1,4 @@
-import * as React from "react";
+
 import CssBaseline from "@mui/material/CssBaseline";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
@@ -6,7 +6,8 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Grid, Typography } from "@mui/material";
 import PropTypes from "prop-types";
-
+import styles from './Advantages.module.css';
+import React, { useState , useEffect, useRef,} from "react";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -16,13 +17,42 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function Advantages({ advantagesData }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const textRef1 = useRef(null);
+
+  useEffect(() => {
+    // IntersectionObserver to trigger animation every time text enters the view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true); // Show animation when in view
+          } else {
+            setIsVisible(false); // Reset animation when out of view
+          }
+        });
+      },
+      { threshold: 0.2 } // Trigger when 10% of the element is visible
+    );
+
+    if (textRef1.current) {
+      observer.observe(textRef1.current);
+    }
+
+    // Cleanup observer on unmount
+    return () => {
+      if (textRef1.current) {
+        observer.unobserve(textRef1.current);
+      }
+    };
+  }, []);
   return (
     <React.Fragment>
       <CssBaseline />
       <Container
         sx={{
           background:
-            "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
+           'black',
           height: "70vh",
           maxWidth: "100% !important",
           boxSizing: "border-box",
@@ -43,6 +73,8 @@ export default function Advantages({ advantagesData }) {
         >
           <Box sx={{}}>
             <Typography
+             ref={textRef1}
+            //  className={`${styles.titlehere} ${isVisible ? styles.visible1 : ''}`} 
               variant="h3"
               sx={{
                 color: "white",
@@ -75,21 +107,31 @@ export default function Advantages({ advantagesData }) {
                     flexDirection: "row",
                     alignItems: "center",
                     boxShadow: "none",
+                    border: '15px solid #d7f6ff',
+                    padding: '30px',
+                    borderRadius: '10px',
+                    background: '#003b6f',
+                     flexDirection:'column',
+                     height:'200px',
+                    color: 'black',
                     ":hover": {
-                      transform: "scale(1.1)",
+                      transform: "scale(1.05)",
                       transition: "all 300ms ease-in-out",
                     },
                   }}
                 >
                   <Box
                     sx={{
-                      height: "80px",
-                      width: "80px",
-                      borderRadius: "18px",
+                      height: "70px",
+                      width: "70px",
+                      borderRadius: "10px",
                       backgroundColor: "white",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
+                      flexDirection:'column'
+                   
+                    
                     }}
                   >
                     {advantage.logo}
@@ -101,8 +143,9 @@ export default function Advantages({ advantagesData }) {
                         lineHeight: "2rem",
                         color: "white",
                         fontWeight: "600",
-                        marginLeft: "20px",
+                        marginTop: "20px",
                         fontFamily: "cursive",
+                        textAlign:'center',
                       }}
                     >
                       {advantage.title}

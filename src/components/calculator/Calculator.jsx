@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-
+import React, { useState , useEffect, useRef,} from "react";
+import styles from './Calculator.module.css';
 import {
   Typography,
   FilledInput,
@@ -8,7 +8,6 @@ import {
   InputAdornment,
 } from "@mui/material";
 
-import "./Calculator.css";
 
 function EMICalculator(props) {
   const [amount, setAmount] = useState(50000);
@@ -73,7 +72,46 @@ function EMICalculator(props) {
     changeRange("slideInterest", setInterest);
     calculate();
   };
+  const textStyle = {
+    background: 'linear-gradient(90deg, #ffffff, #00f9ff)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    fontWeight: "800",
+                  fontSize: "3vw",
+                  color:'white',
+                  marginTop: "50px",
+                  marginBottom: "58px",
+  };
+  const [isVisible, setIsVisible] = useState(false);
+  const textRef = useRef(null);
 
+  useEffect(() => {
+    // IntersectionObserver to trigger animation every time text enters the view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true); // Show animation when in view
+          } else {
+            setIsVisible(false); // Reset animation when out of view
+          }
+        });
+      },
+      { threshold: 0.2 } // Trigger when 10% of the element is visible
+    );
+
+    if (textRef.current) {
+      observer.observe(textRef.current);
+    }
+
+    // Cleanup observer on unmount
+    return () => {
+      if (textRef.current) {
+        observer.unobserve(textRef.current);
+      }
+    };
+  }, []);
   return (
     <>
       <Container
@@ -85,14 +123,15 @@ function EMICalculator(props) {
           justifyContent: "space-between",
           alignItems: "center",
           width: "100%",
-          background:
-            "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
-          borderRadius: "0% 100% 0% 100% / 0% 100% 0% 100%",
+          // background:
+          //   "linear-gradient(to right, rgba(0, 235, 219, 0.5), rgba(189, 113, 236, 0.5))",
+          // borderRadius: "0% 100% 0% 100% / 0% 100% 0% 100%",
           padding: "30px",
           margin: "0px",
           marginTop: "30px",
         }}
       >
+        
         <Typography
           sx={{
             justifyContent: "center",
@@ -121,9 +160,13 @@ function EMICalculator(props) {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              borderRadius: "20%",
-              boxShadow:
-                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
+              borderRadius: '10px',
+             boxShadow:'0px 0px 10px 0px #8080806b',
+            //  background:'white'
+             backgroundImage: 'url(./new/rm222batch3-mind-02.jpg)',
+             backgroundSize: '100% 100%',
+             backgroundRepeat: 'no-repeat',
+             backgroundPosition: 'center',
             }}
           >
             <Box
@@ -183,6 +226,7 @@ function EMICalculator(props) {
                     height: "50px",
                     fontSize: "16px",
                     borderRadius: "40px",
+                    border: '1px solid #989898'
                   }}
                   inputProps={{
                     style: {
@@ -234,6 +278,7 @@ function EMICalculator(props) {
                     fontSize: "16px",
                     borderRadius: "40px",
                     textDecoration: "none",
+                      border: '1px solid #989898 '
                   }}
                   inputProps={{
                     style: {
@@ -280,6 +325,7 @@ function EMICalculator(props) {
                     fontSize: "16px",
                     borderRadius: "40px",
                     textDecoration: "none",
+                      border: '1px solid #989898'
                   }}
                   inputProps={{
                     style: {
@@ -315,24 +361,16 @@ function EMICalculator(props) {
               width: "100%",
               justifyContent: "center",
               flexDirection: "column",
-              borderRadius: "20%",
               alignItems: "center",
-              boxShadow:
-                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
+              borderRadius: '10px',
+              background: 'linear-gradient(to right, rgb(217 217 217 / 41%), rgb(33 189 192 / 33%',
               marginLeft: "30px",
             }}
           >
             <Box
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-around",
-                alignItems: "center",
-                height: "85%",
-                width: "90%",
-                padding: "0px 20px",
-                // border: "1px solid red",
-              }}
+             ref={textRef}
+              className={`${styles.calculatorCount} ${isVisible ? styles.visible : ''}`} 
+             
             >
               <Box
                 sx={{
@@ -343,6 +381,7 @@ function EMICalculator(props) {
                 <Typography
                   sx={{
                     fontSize: "2vw",
+                    color:'white',
                   }}
                 >
                   Equated monthly installment
@@ -350,13 +389,8 @@ function EMICalculator(props) {
               </Box>
               <Typography
                 align="center"
-                style={{
-                  fontWeight: "800",
-                  fontSize: "3vw",
-                  color: "rgb(36, 34, 35)",
-                  marginTop: "50px",
-                  marginBottom: "58px",
-                }}
+                style={textStyle}
+               
               >
                 ₹{monthlyEMI}
               </Typography>
@@ -372,18 +406,18 @@ function EMICalculator(props) {
                   width: "280px",
                   ":hover": {
                     transform: "scale(1.1)",
-                    background: "#EEEEEE",
+                    background: "transparent",
                     transition: "all 300ms ease-in-out",
                   },
                 }}
               >
-                <Typography sx={{ fontSize: "1vw" }}>Total Payable</Typography>
+                <Typography sx={{ fontSize: "1vw",color:'white', }}>Total Payable</Typography>
                 <Typography
                   align="center"
                   style={{
                     fontWeight: "bolder",
                     fontSize: "2.2vw",
-                    color: "rgb(36, 34, 35)",
+                    color:'white',
                   }}
                 >
                   ₹{Math.round(totalpayable)}
@@ -394,7 +428,9 @@ function EMICalculator(props) {
                   width: "350px",
                   fontFamily: "cursive",
                   fontSize: "1vw",
+                  color:'white',
                   marginTop: "20px",
+                  textAlign:'center'
                 }}
               >
                 *Starting at 1% monthly reducing interest rate. Apply now to

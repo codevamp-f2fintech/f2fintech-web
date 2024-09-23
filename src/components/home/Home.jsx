@@ -18,7 +18,7 @@ const Home = () => {
     <>
       <Intro />
       <Calculator />
-      <Carousel />
+      {/* <Carousel /> */}
       <Apply />
       <Advantages advantagesData={advantagesData} />
       <Eligibility />

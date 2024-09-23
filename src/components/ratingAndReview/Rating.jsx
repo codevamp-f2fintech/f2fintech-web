@@ -38,32 +38,40 @@ const RatingReview = () => {
   return (
     <Box
       sx={{
-        backgroundImage: "url('ratingthum1.png')",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
+       
         display: "flex",
         alignItems: "center",
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent: "space-between",
         padding: "6vh",
         borderRadius: "30px",
-        margin: "40px auto",
-        maxWidth: "97%",
+        margin: "80px auto",
+        maxWidth: "70%",
         transition: "transform 0.3s ease",
-        boxShadow:
-          "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;",
+        border:'1px solid #dcdcdc',
+        // boxShadow:
+        // '0px 0px 10px 0px #8080804a',
         "&:hover": {
           transform: "scale(1.05)",
           boxShadow:
-            "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;",
+          '0px 0px 10px 0px #8080804a',
         },
       }}
     >
+      <Box sx={{padding:'20px'}}>
+      <img
+                  src='new/feedback1.png'
+                  style={{
+                    height: "",
+                    width:'100%',
+                    paddingTop: "10px",
+                  }}
+                />
+      </Box>
+     <Box>
       <Typography
         sx={{
-          fontSize: "2.5rem",
-          textShadow: "1px 1px 2px gray",
+          fontSize: "2rem",
           fontFamily: "cursive",
           fontWeight: "500",
         }}
@@ -73,10 +81,10 @@ const RatingReview = () => {
       </Typography>
       <Typography
         sx={{
-          fontSize: "1.2rem",
-          color: "white",
+          fontSize: "1rem",
+          color: "black",
           fontWeight: "500",
-          textShadow: "1px 1px 2px gray",
+        
         }}
         gutterBottom
       >
@@ -84,9 +92,8 @@ const RatingReview = () => {
       </Typography>
       <Typography
         sx={{
-          fontSize: "1.2rem",
+          fontSize: ".8rem",
           fontWeight: "400",
-          textShadow: "1px 1px 2px gray",
           marginTop: "2vh",
         }}
         gutterBottom
@@ -94,7 +101,7 @@ const RatingReview = () => {
         Your input is valuable in helping us better understand your needs and
         tailor our service accordingly.
       </Typography>
-      <Box display="flex" justifyContent="center" my={2}>
+      <Box display="flex" justifyContent="flex-start" my={2}>
         <Rating
           sx={{ fontSize: "3rem" }}
           name="simple-controlled"
@@ -137,14 +144,14 @@ const RatingReview = () => {
               sx={{
                 width: "30vw",
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "lightgray", // Set background color to white
+                  backgroundColor: "white", // Set background color to white
                   borderRadius: "15px", // Customize border radius
                   "& fieldset": {
-                    borderColor: "lightgray", // Default border color
+                    borderColor: "gray", // Default border color
                     borderRadius: "15px", // Ensure border radius applies to fieldset as well
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "lightgray", // Border color on focus
+                    borderColor: "gray", // Border color on focus
                   },
                 },
                 "& .MuiInputLabel-root": {
@@ -156,7 +163,7 @@ const RatingReview = () => {
               }}
               InputLabelProps={{
                 sx: {
-                  fontSize: "1rem", // Increase label size
+                  fontSize: ".8rem", // Increase label size
                 },
               }}
               error={touched.name && !!errors.name}
@@ -172,8 +179,10 @@ const RatingReview = () => {
               Submit
             </Button>
           </Form>
+          
         )}
       </Formik>
+      </Box>
       <Toast
         alerting={toastInfo.toastAlert}
         message={toastInfo.toastMessage}
@@ -181,6 +190,7 @@ const RatingReview = () => {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       />
     </Box>
+    
   );
 };
 

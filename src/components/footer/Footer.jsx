@@ -7,6 +7,7 @@ import {
   Stack,
   Divider,
   Button,
+  Grid,TextField
 } from "@mui/material";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import YouTubeIcon from "@mui/icons-material/YouTube";
@@ -24,17 +25,18 @@ const Footer = () => {
       maxWidth="false"
       sx={{
         background:
-          "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
-        height: "100%",
+        '#032261',
         textDecoration: "none",
-        paddingBottom: "60px",
+       
       }}
     >
+      <Box sx={{ paddingRight: "60px",
+        paddingLeft: "60px",}}>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          padding: "60px 60px 30px",
+         padding:'40px 0px'
         }}
       >
         <Box width={350} alignItems="center" sx={{ textDecoration: "none" }}>
@@ -45,7 +47,7 @@ const Footer = () => {
               color: "white",
               marginBottom: "1rem",
               textDecoration: "none",
-              fontSize: "3.3vw",
+              fontSize: "2rem",
             }}
           >
             <Link
@@ -65,9 +67,9 @@ const Footer = () => {
             variant="h3"
             sx={{
               color: "white",
-              lineHeight: "3rem",
+              lineHeight: "1.5rem",
               textDecoration: "none",
-              fontSize: "1.1vw",
+              fontSize: ".9rem",
             }}
           >
             f2fintech Pvt Ltd, A-25, M-1 Arv Park, A-Block, Sector 63, Noida
@@ -88,14 +90,14 @@ const Footer = () => {
               color: "white",
               marginBottom: "1rem",
               textDecoration: "none",
-              fontSize: "2vw",
+              fontSize: "1.2rem",
             }}
           >
             Company
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               style={{
@@ -103,6 +105,7 @@ const Footer = () => {
                 marginBottom: "1rem",
                 underline: "none",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -111,7 +114,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               to="/blogs"
@@ -121,6 +124,7 @@ const Footer = () => {
                 marginBottom: "1rem",
                 underline: "none",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -129,7 +133,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               variant="h6"
@@ -137,6 +141,7 @@ const Footer = () => {
                 color: "white",
                 marginBottom: "1rem",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -145,7 +150,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               variant="h6"
@@ -153,6 +158,7 @@ const Footer = () => {
                 color: "white",
                 marginBottom: "1rem",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -174,14 +180,14 @@ const Footer = () => {
               color: "white",
               marginBottom: "1rem",
               textDecoration: "none",
-              fontSize: "2vw",
+              fontSize: "1.2rem",
             }}
           >
             Products
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               to="/businessLoan"
@@ -190,6 +196,7 @@ const Footer = () => {
                 color: "white",
                 marginBottom: "1rem",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -198,7 +205,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               to="/msmeLoan"
@@ -207,6 +214,7 @@ const Footer = () => {
                 color: "white",
                 marginBottom: "1rem",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -215,7 +223,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               to="/smallBusinessLoan"
@@ -224,6 +232,7 @@ const Footer = () => {
                 color: "white",
                 marginBottom: "1rem",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -232,7 +241,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               to="/unsecuredLoan"
@@ -242,6 +251,7 @@ const Footer = () => {
                 marginBottom: "1rem",
                 underline: "none",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -250,7 +260,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               to="/businessLoanForWomen"
@@ -259,6 +269,7 @@ const Footer = () => {
                 marginBottom: "1rem",
                 fontSize: "16px",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -267,7 +278,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               to="/eCommerceBusinessLoan"
@@ -276,6 +287,7 @@ const Footer = () => {
                 marginBottom: "1rem",
                 fontSize: "16px",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -297,14 +309,14 @@ const Footer = () => {
               color: "white",
               marginBottom: "1rem",
               textDecoration: "none",
-              fontSize: "2vw",
+              fontSize: "1.2rem",
             }}
           >
             Let's Talk
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               variant="h6"
@@ -312,6 +324,7 @@ const Footer = () => {
                 color: "white",
                 marginBottom: "1rem",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
@@ -320,7 +333,7 @@ const Footer = () => {
           </Typography>
           <Typography
             variant="h3"
-            sx={{ lineHeight: "3rem", fontSize: "1.1vw" }}
+            sx={{ lineHeight: "2rem", fontSize: "1rem" }}
           >
             <Link
               variant="h6"
@@ -328,48 +341,43 @@ const Footer = () => {
                 color: "white",
                 marginBottom: "1rem",
                 textDecoration: "none",
+                fontSize:'.8rem',
               }}
               onClick={topFunction}
             >
               Contact Us
             </Link>
           </Typography>
-          <Stack direction="row" spacing={3}>
+          <Box sx={{ width: '100%', maxWidth: '100%' }}>
+      <TextField fullWidth label="Enter Email" id="fullWidth"  sx={{background:'transparent', borderColor:'white',border:'1px solid white', borderRadius:'6px'}}InputLabelProps={{
+    style: { color: '#fff', background:'#032261' },
+  }}/>
+  <Button variant="outlined" fullWidth sx={{marginTop:'20px', border:'1px solid white', color:'white', height:'40px', marginBottom:'20px'}}>Submit</Button>
+    </Box>
+          <Stack direction="row" spacing={3} sx={{color:'white', cursor:'pointer'}}>
             <FacebookOutlinedIcon />
             <YouTubeIcon />
             <InstagramIcon />
           </Stack>
         </Box>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "30vh",
-          padding: "0px 60px 30px",
-        }}
-      >
-        <Typography
+      <Box  sx={{display:'flex', alignItems:'center', padding:'40px 0px', borderTop:'1px solid #c4c4c4'}}>
+            <Box  sx={{width:'30%'}}>
+            <Typography
           style={{
             color: "white",
             textDecoration: "none",
-            fontSize: "1.1vw",
+            fontSize: ".8rem",
           }}
         >
           © 2024 All Rights Reserved by f2fintech
         </Typography>
-        <Divider
-          color="white"
-          sx={{
-            height: "2px",
-            textDecoration: "none",
-          }}
-        />
-        <Typography
+              </Box>
+            <Box  sx={{width:'70%'}}>
+            <Typography
           style={{
             color: "white",
-            fontSize: "1vw",
+            fontSize: ".8rem",
             textDecoration: "none",
           }}
         >
@@ -378,7 +386,12 @@ const Footer = () => {
           platform are subject to the terms and conditions and loan approval
           process of the NBFC partners
         </Typography>
-      </Box>
+              </Box>
+              </Box>
+       
+      
+              </Box>
+     
     </Container>
   );
 };

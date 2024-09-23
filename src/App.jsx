@@ -25,7 +25,8 @@ import { useMode } from "./theme";
 import Loan from "./components/loantracking/loantracking";
 import NotFoundPage from "./components/notfoundpage/notfoundpage";
 import MaintenancePage from "./components/maintenancepage/Maintenance"
-
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 function App() {
   const [theme] = useMode();
   const location = useLocation();

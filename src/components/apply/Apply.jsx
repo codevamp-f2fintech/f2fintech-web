@@ -1,6 +1,6 @@
 import { Box, Container, Grid, Typography, useTheme } from "@mui/material";
 import { tokens, themeSettings } from "../../theme";
-
+import styles from './Apply.module.css';
 export default function Apply() {
   const theme = useTheme();
   const colors = tokens(theme);
@@ -12,230 +12,361 @@ export default function Apply() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-around",
-        height: "800px",
+        height: "",
         marginTop: "40px",
+        width:'100%',
+        background:'#e7eef8',
+        padding: '73px 100px !important',
+
       }}
     >
-      <Typography
-        sx={{
-          color: colors.textBlack,
-          justifyContent: "center",
-          display: "flex",
-          marginTop: "0px",
-          variant: "h4",
-          lineHeight: "4rem",
-          fontSize: "2.5vw",
-          fontWeight: "300",
-          zIndex: "1",
-        }}
-      >
-        Apply now in 4 easy steps
-      </Typography>
+     
       <Container
         maxWidth="false"
         sx={{
-          height: "600px",
+          height: "",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           padding: "0 !important",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "50%",
-          }}
-        >
-          <img src="chart1.png" style={{ aspectRatio: "4/3" }} />
-        </Box>
-        <Box
-          sx={{
-            width: "50%",
-            height: "500px",
-          }}
-        >
-          <Box
-            sx={{
-              height: "120px",
-              maxWidth: "100% !important",
-              marginTop: "20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "10%",
-              boxShadow:
-                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-              ":hover": {
-                transform: "scale(1.1)",
-                background: "white",
-                transition: "all 300ms ease-in-out",
-              },
-            }}
-          >
-            <Typography
+        <Grid container spacing={3} sx={{display:'flex', alignItems:'center'}}>
+         
+          <Grid item xs={5}>
+            <Box
               sx={{
-                height: "40px",
-                width: "40px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                background:
-                  "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
-                color: "white",
-                borderRadius: "5px",
+                // width: "50%",
               }}
             >
-              01
-            </Typography>
-            <Typography
-              sx={{
-                marginLeft: "15px",
-                fontSize: "1.2vw",
-                lineHeight: "1.75rem",
-                fontWeight: "700",
-                width: "538px",
-              }}
-            >
-              Enter your personal, business & bank details to get a fair loan
-              offer
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              height: "120px",
-              maxWidth: "100% !important",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "10%",
-              boxShadow:
-                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-              ":hover": {
-                transform: "scale(1.1)",
-                background: "white",
-                transition: "all 300ms ease-in-out",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                height: "40px",
-                width: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background:
-                  "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
-                color: "white",
-                borderRadius: "5px",
-              }}
-            >
-              02
-            </Typography>
-            <Typography
-              sx={{
-                marginLeft: "15px",
-                fontSize: "1.2vw",
-                lineHeight: "1.75rem",
-                fontWeight: "700",
-                width: "538px",
-              }}
-            >
-              Compare the loan offers & choose the best suited option
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              height: "120px",
-              maxWidth: "100% !important",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "10%",
-              boxShadow:
-                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-              ":hover": {
-                transform: "scale(1.1)",
-                background: "white",
-                transition: "all 300ms ease-in-out",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                height: "40px",
-                width: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background:
-                  "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
-                color: "white",
-                borderRadius: "5px",
-              }}
-            >
-              03
-            </Typography>
-            <Typography
-              sx={{
-                marginLeft: "15px",
-                fontSize: "1.2vw",
-                lineHeight: "1.75rem",
-                fontWeight: "700",
-                width: "538px",
-              }}
-            >
-              Accept the loan offer & complete your documentation & KYC
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              height: "120px",
-              maxWidth: "100% !important",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "10%",
-              boxShadow:
-                "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset",
-              ":hover": {
-                transform: "scale(1.1)",
-                background: "white",
-                transition: "all 300ms ease-in-out",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                height: "40px",
-                width: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background:
-                  "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(6,55,158,1) 100%)",
-                color: "white",
-                borderRadius: "5px",
-              }}
-            >
-              04
-            </Typography>
-            <Typography
-              sx={{
-                marginLeft: "15px",
-                fontSize: "1.2vw",
-                lineHeight: "1.75rem",
-                fontWeight: "700",
-                width: "538px",
-              }}
-            >
-              Choose from flexible repayment options and start receiving funds
-            </Typography>
-          </Box>
-        </Box>
+              <img src="./new/why.jpeg" style={{ aspectRatio: "2/2", width: '100%', height:'649px' }} />
+            </Box>
+          </Grid>
+          <Grid item xs={7}>
+            <Grid container spacing={3}>
+            <Grid item xs={12}>
+          <Typography
+        sx={{
+          color: colors.textBlack,
+          justifyContent: "flex-start",
+          display: "flex",
+          marginTop: "0px",
+          variant: "h4",
+          lineHeight: "2rem",
+          fontSize: "1.5rem",
+          fontWeight: "600",
+          zIndex: "1",
+          marginBottom:'10px'
+        }}
+      >
+        Apply now in 4 easy steps
+      </Typography>
+          <Typography
+        sx={{
+          color: colors.textBlack,
+          justifyContent: "flex-start",
+          display: "flex",
+          marginTop: "0px",
+          variant: "h4",
+          lineHeight: "1.6rem",
+          fontSize: ".8rem",
+          fontWeight: "400",
+          zIndex: "1",
+          marginBottom:'40px'
+        }}
+      >
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
+      </Typography>
+          </Grid>
+              <Grid item xs={6}>
+                <Box className={styles.ripplebutton}
+                  sx={{
+                    width: "100%",minHeight:'200px',
+                    height: "100%",
+                    maxWidth: "100% !important",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: 'column',
+                    borderRadius: "5px",
+                    position: 'relative',
+                    padding: '20px',
+                    textAlign: 'center',
+                    // backgroundImage: 'url(../new/wave3.jpg)',
+                    // backgroundPosition: 'left',
+                    // backgroundRepeat: 'no-repeat',
+                    // backgroundSize: '100% 100%',
+                    boxShadow: '0px 0px 10px 0px #80808061',
+                    ":hover": {
+                      transform: "scale(1.02)",
+                      background: "",
+                      transition: "all 300ms ease-in-out",
+                    },
+                  }}
+                >
+                  <Box sx={{
+                    position: 'absolute',
+                    top: '5px',
+                    left: '-4px',
+                    backgroundImage: 'url(../new/tags.png)',
+                    height: '62px',
+                    width: '85px',
+                    backgroundPosition: 'left',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% 100%',
+                    marginLeft: '-5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+
+                    <Typography sx={{ color: "white", }}>1</Typography>
+                  </Box>
+                  <img
+                    style={{
+                      width: "70px",
+                      height: "auto",
+                      objectFit: "fit",
+                    }}
+                    src={'../new/loan.png'}
+                    alt={''}
+                  />
+                  <Typography
+                    sx={{
+                      marginLeft: "15px",
+                      fontSize: ".9rem",
+                      lineHeight: "1.2rem",
+                      fontWeight: "500",
+                      marginTop: '15px',
+                      width:'50%',
+
+                    }}
+                  >
+                    Enter your personal, business & bank details to get a fair loan
+                    offer
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box
+                 className={styles.ripplebutton}
+                  sx={{
+                    width: "100%",minHeight:'200px',
+                    height: "100%",
+                    maxWidth: "100% !important",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: 'column',
+                    borderRadius: "5px",
+                    position: 'relative',
+                    padding: '20px',
+                    textAlign: 'center',
+                    // backgroundImage: 'url(../new/wave3.jpg)',
+                    // backgroundPosition: 'left',
+                    // backgroundRepeat: 'no-repeat',
+                    // backgroundSize: '100% 100%',
+                    boxShadow: '0px 0px 10px 0px #80808061',
+                    ":hover": {
+                      transform: "scale(1.02)",
+                      background: "white",
+                      transition: "all 300ms ease-in-out",
+                    },
+                  }}
+                >
+                  <Box sx={{
+                    position: 'absolute',
+                    top: '5px',
+                    left: '-4px',
+                    backgroundImage: 'url(../new/tags.png)',
+                    height: '62px',
+                    width: '85px',
+                    backgroundPosition: 'left',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% 100%',
+                    marginLeft: '-5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+
+                    <Typography sx={{ color: "white", }}>2</Typography>
+                  </Box>
+                  <img
+                    style={{
+                      width: "70px",
+                      height: "auto",
+                      objectFit: "fit",
+                    }}
+                    src={'../new/compare.png'}
+                    alt={''}
+                  />
+                  <Typography
+                    sx={{
+                      marginLeft: "15px",
+                      fontSize: ".9rem",
+                      lineHeight: "1.2rem",
+                      fontWeight: "500",
+                      marginTop: '15px',
+                      width:'50%',
+                    }}
+                  >
+                   Compare the loan offers & choose the best suited option
+                  </Typography>
+                </Box>
+              </Grid>
+         
+
+              <Grid item xs={6}>
+                <Box
+                 className={styles.ripplebutton}
+                  sx={{
+                    width: "100%",
+                    minHeight:'200px',
+                    height: "100%",
+                    maxWidth: "100% !important",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: 'column',
+                    borderRadius: "5px",
+                    position: 'relative',
+                    padding: '20px',
+                    textAlign: 'center',
+                    // backgroundImage: 'url(../new/wave3.jpg)',
+                    // backgroundPosition: 'left',
+                    // backgroundRepeat: 'no-repeat',
+                    // backgroundSize: '100% 100%',
+                    boxShadow: '0px 0px 10px 0px #80808061',
+                    ":hover": {
+                      transform: "scale(1.02)",
+                      background: "white",
+                      transition: "all 300ms ease-in-out",
+                    },
+                  }}
+                >
+                  <Box sx={{
+                    position: 'absolute',
+                    top: '5px',
+                    left: '-4px',
+                    backgroundImage: 'url(../new/tags.png)',
+                    height: '62px',
+                    width: '85px',
+                    backgroundPosition: 'left',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% 100%',
+                    marginLeft: '-5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+
+                    <Typography sx={{ color: "white", }}>3</Typography>
+                  </Box>
+                  <img
+                    style={{
+                      width: "70px",
+                      height: "auto",
+                      objectFit: "fit",
+                    }}
+                    src={'../new/verification.png'}
+                    alt={''}
+                  />
+                  <Typography
+                    sx={{
+                      marginLeft: "15px",
+                      fontSize: ".9rem",
+                      lineHeight: "1.2rem",
+                      fontWeight: "500",
+                      marginTop: '15px',
+                      width:'50%',
+                    }}
+                  >
+                   Accept the loan offer & complete your documentation & KYC
+                  </Typography>
+                </Box>
+              </Grid>
+
+
+              <Grid item xs={6}>
+                
+                <Box
+                 className={styles.ripplebutton}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    minHeight:'200px',
+                    maxWidth: "100% !important",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: 'column',
+                    borderRadius: "5px",
+                    position: 'relative',
+                    padding: '20px',
+                    // backgroundImage: 'url(../new/wave3.jpg)',
+                    // backgroundPosition: 'left',
+                    // backgroundRepeat: 'no-repeat',
+                    // backgroundSize: '100% 100%',
+                    textAlign: 'center',
+                    boxShadow: '0px 0px 10px 0px #80808061',
+                    ":hover": {
+                      transform: "scale(1.02)",
+                      background: "white",
+                      transition: "all 300ms ease-in-out",
+                    },
+                  }}
+                >
+                  <Box sx={{
+                    position: 'absolute',
+                    top: '5px',
+                    left: '-4px',
+                    backgroundImage: 'url(../new/tags.png)',
+                    height: '62px',
+                    width: '85px',
+                    backgroundPosition: 'left',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% 100%',
+                    marginLeft: '-5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+
+                    <Typography sx={{ color: "white", }}>4</Typography>
+                  </Box>
+                  <img
+                    style={{
+                      width: "70px",
+                      height: "auto",
+                      objectFit: "fit",
+                    }}
+                    src={'../new/repayment.png'}
+                    alt={''}
+                  />
+                  <Typography
+                    sx={{
+                      marginLeft: "15px",
+                      fontSize: ".9rem",
+                      lineHeight: "1.2rem",
+                      fontWeight: "500",
+                      marginTop: '15px',
+                      width:'50%',
+                    }}
+                  >
+                  Choose from flexible repayment options and start receiving funds
+                  </Typography>
+                </Box>
+              </Grid>
+          
+         
+            </Grid>
+
+          </Grid>
+        </Grid>
       </Container>
     </Container>
   );

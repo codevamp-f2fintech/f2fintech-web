@@ -32,20 +32,21 @@ export default function IntroCarousel() {
   console.log(loanProviders?.listData);
   return (
     <Carousel autoPlay interval={3000}>
-      {loanProviders?.listData?.map((item, index) => (
+      {/* {loanProviders?.listData?.map((item, index) => ( */}
         <Intro
-          key={index}
-          title={item.title}
-          home={item.is_home}
-          homeimg={item.home_image}
-          interestRate={item.interest_rate}
+          key={1}
+          title={'HDFC Bank'}
+          home={true}
+          homeimg={'../new/sl_121021_47240_16.jpg'}
+          interestRate={'8%'}
           text={{
-            description: item.description,
-            short_description: item.short_description,
-            long_description: item.long_description,
+            description: 'Get Loan 8% Interest Rate in HDFC Bank',
+            short_description: 'Loan at 8%',
+            long_description: 'hi this is lorem ipsum text for demo',
           }}
         />
-      ))}
+      
+      {/* ))} */}
     </Carousel>
   );
 }
