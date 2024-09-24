@@ -358,13 +358,19 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               },
             }}
           >
-            <MenuItem value="12">12 Months</MenuItem>
-            <MenuItem value="24">24 Months</MenuItem>
-            <MenuItem value="36">36 Months</MenuItem>
-            <MenuItem value="48">48 Months</MenuItem>
-            <MenuItem value="60">60 Months</MenuItem>
+            {/* Creates an array with 40 elements, when (index < 4) it labels items as months, then it switches to years. */}
+            {[...Array(40)].map((_, index) => {
+              const value = (index + 1) * 12;
+              const label = index < 4 ? `${value} Months` : `${index + 1} Years`;
+              return (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
+
         <Button
           color="primary"
           disabled={!amount || !tenure}
@@ -455,7 +461,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                 <TextField
                   variant="filled"
                   name="name"
-                  label="Name"
+                  label="Name*"
                   value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -475,7 +481,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   type="number"
                   variant="filled"
                   name="contact"
-                  label="contact"
+                  label="Contact*"
                   value={values.contact}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -495,7 +501,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   variant="filled"
                   type="email"
                   name="email"
-                  label="E-mail"
+                  label="E-mail*"
                   value={values.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -533,7 +539,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                 <TextField
                   variant="filled"
                   name="city"
-                  label="City"
+                  label="City*"
                   value={values.city}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -560,7 +566,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     marginBottom: 3,
                   }}
                 >
-                  <InputLabel>Occupation Type</InputLabel>
+                  <InputLabel>Occupation Type*</InputLabel>
                   <Select
                     variant="filled"
                     name="occupation_type"
@@ -578,7 +584,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                 }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      label="Enter Date Of Birth"
+                      label="Enter Date Of Birth*"
                       value={values.dob}
                       onChange={(newValue) => setFieldValue("dob", newValue)}
                     />
