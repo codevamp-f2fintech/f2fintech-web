@@ -4,8 +4,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { MenuItem, Menu, Typography, Box } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
 import { pages, products } from "../../data/Data";
 import { Utility } from "../utility";
+
 export default function ResponsiveAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
@@ -45,7 +47,7 @@ export default function ResponsiveAppBar() {
     setAnchorEl(null);
   };
   return (
-    <Box sx={{ display: "flex", height: "16vh" }}>
+    <Box sx={{ display: "flex", height: "12vh" }}>
       <Box
         sx={{
           display: "flex",
@@ -72,8 +74,8 @@ export default function ResponsiveAppBar() {
                 src="f2Fintechlogo.png"
                 alt="Logo"
                 style={{
-                  height: "15vh",
-                  width: "15vh",
+                  height: "auto",
+                  width: "10vh",
                   backgroundColor: "white",
                   borderRadius: "20px",
                   marginTop: ".5vh",
@@ -103,7 +105,7 @@ export default function ResponsiveAppBar() {
               // fontSize: "1.3rem",
               // borderRadius: "22px",
               // marginRight: "10px",
-        
+
               // color: " rgba(6,55,158,1)",
               color: "white",
               fontSize: "1.2vw",
@@ -165,7 +167,7 @@ export default function ResponsiveAppBar() {
                     sx={{
                       height: "40px",
                       textTransform: "none",
-                      fontSize: "1.3rem",
+                      fontSize: "1.2vw",
                       borderRadius: "22px",
                       marginLeft: "10px",
                       marginRight: "10px",
@@ -200,7 +202,7 @@ export default function ResponsiveAppBar() {
                     <MenuItem
                       sx={{
                         color: "black",
-                        fontSize: "1vw",
+                        fontSize: "1.2vw",
                         lineHeight: "2vw",
                       }}
                       component="a"
@@ -262,7 +264,7 @@ export default function ResponsiveAppBar() {
                 sx={{
                   height: "40px",
                   textTransform: "none",
-                  fontSize: "1.3rem",
+                  fontSize: "1.2vw",
                   borderRadius: "22px",
                   marginLeft: "10px",
                   color: "white",

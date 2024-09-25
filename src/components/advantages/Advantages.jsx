@@ -66,8 +66,8 @@ export default function Advantages({ advantagesData }) {
             rowSpacing={1}
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
-            {advantagesData.map((advantage) => (
-              <Grid item xs={4}>
+            {advantagesData.map((advantage, index) => (
+              <Grid item xs={4} key={index}>
                 <Item
                   sx={{
                     backgroundColor: "transparent",
@@ -133,8 +133,8 @@ export default function Advantages({ advantagesData }) {
 Advantages.propTypes = {
   advantagesData: PropTypes.arrayOf(
     PropTypes.shape({
-      logo: PropTypes.node.isRequired,
-      title: PropTypes.string.isRequired,
+      logo: PropTypes.node,
+      title: PropTypes.string,
       subtitle: PropTypes.string,
     })
   ).isRequired,

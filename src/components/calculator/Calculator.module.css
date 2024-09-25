@@ -1,0 +1,48 @@
+body {
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
+}
+
+.MuiFilledInput-underline:before {
+  content: "none !important";
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.calculatorCount {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 40px 20px;
+  background-image: url(../new/rm314-adj-13.jpg);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  margin-left: -59px;
+  z-index: -1;
+  border-radius: 0px 10px 10px 0px;
+  opacity: 0;
+  /* Initially hidden */
+  transform: translateX(-100%);
+  /* Start off-screen from the left */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.visible {
+  opacity: 1;
+  /* Make it visible */
+  transform: translateX(0);
+  /* Slide it to its normal position */
+}
