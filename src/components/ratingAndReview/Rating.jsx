@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Formik, Form } from "formik";
+
 import Toast from "../toast/Toast";
 import { Utility } from "../utility";
 import { RatingRevAPI } from "../../apis/RatingRevAPI";
@@ -25,14 +26,13 @@ const RatingReview = () => {
   const toastInfo = useSelector((state) => state.toastInfo);
   const navigate = useNavigate();
   const location = useLocation();
-
   const dispatch = useDispatch();
+
   const { toastAndNavigate, getLocalStorage, setLocalStorage, remLocalStorage } = Utility();
   const customer = getLocalStorage("customerInfo");
 
   useEffect(() => {
     const savedData = getLocalStorage("savedRatingReview");
-
     if (savedData) {
       setRating(Number(savedData.rating));
       setInitialComment(savedData.review);
@@ -42,7 +42,6 @@ const RatingReview = () => {
   const handleSubmit = (values, { resetForm }) => {
     if (!customer) {
       setLocalStorage("savedRatingReview", { rating: rating, review: values.comment });
-
       setOpenLoginDialog(true);
       return;
     }
@@ -52,18 +51,18 @@ const RatingReview = () => {
       review: values.comment,
       customer_id: customer.id,
     };
-
-    RatingRevAPI.createRating(ratingData).then((response) => {
-      console.log("response", response);
-      toastAndNavigate(dispatch, true, "success", "Review Submitted");
-
-      setRating(0);
-      setInitialComment("");
-
-      remLocalStorage("savedRatingReview");
-
-      resetForm();
-    });
+    RatingRevAPI.createRating(ratingData)
+      .then((response) => {
+        console.log("response", response);
+        toastAndNavigate(dispatch, true, "success", "Review Submitted");
+        setRating(0);
+        setInitialComment("");
+        remLocalStorage("savedRatingReview");
+        resetForm();
+      })
+      .catch((err) => {
+        console.log("An Error Occurred", err);
+      })
   };
 
   const handleLoginRedirect = () => {
@@ -74,171 +73,178 @@ const RatingReview = () => {
   return (
     <Box
       sx={{
-        backgroundImage: "url('ratingthum1.png')",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
         display: "flex",
         alignItems: "center",
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent: "space-between",
         padding: "6vh",
         borderRadius: "30px",
-        margin: "40px auto",
-        maxWidth: "97%",
+        margin: "80px auto",
+        maxWidth: "70%",
         transition: "transform 0.3s ease",
-        boxShadow:
-          "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;",
+        border: '1px solid #dcdcdc',
+        // boxShadow:
+        // '0px 0px 10px 0px #8080804a',
         "&:hover": {
           transform: "scale(1.05)",
           boxShadow:
-            "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;",
+            '0px 0px 10px 0px #8080804a',
         },
       }}
     >
-      <Typography
-        sx={{
-          fontSize: "2.5rem",
-          textShadow: "1px 1px 2px gray",
-          fontFamily: "cursive",
-          fontWeight: "500",
-        }}
-        gutterBottom
-      >
-        Rating and Review
-      </Typography>
-      <Typography
-        sx={{
-          fontSize: "1.2rem",
-          color: "white",
-          fontWeight: "500",
-          textShadow: "1px 1px 2px gray",
-        }}
-        gutterBottom
-      >
-        How are you feeling?
-      </Typography>
-      <Typography
-        sx={{
-          fontSize: "1.2rem",
-          fontWeight: "400",
-          textShadow: "1px 1px 2px gray",
-          marginTop: "2vh",
-        }}
-        gutterBottom
-      >
-        Your input is valuable in helping us better understand your needs and
-        tailor our service accordingly.
-      </Typography>
-      <Box display="flex" justifyContent="center" my={2}>
-        <Rating
-          sx={{ fontSize: "3rem" }}
-          name="simple-controlled"
-          value={rating}
-          onChange={(event, newValue) => {
-            setRating(newValue);
+      <Box sx={{ padding: '20px' }}>
+        <img
+          src='new/feedback1.png'
+          style={{
+            height: "",
+            width: '100%',
+            paddingTop: "10px",
           }}
         />
       </Box>
-      <Formik
-        initialValues={{ comment: initialComment }}
-        enableReinitialize={true}
-        onSubmit={handleSubmit}
-      >
-        {({
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          values,
-        }) => (
-          <Form
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
+      <Box>
+        <Typography
+          sx={{
+            fontSize: "2rem",
+            fontFamily: "cursive",
+            fontWeight: "500",
+          }}
+          gutterBottom
+        >
+          Rating and Review
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: "1rem",
+            color: "black",
+            fontWeight: "500",
+
+          }}
+          gutterBottom
+        >
+          How are you feeling?
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: ".8rem",
+            fontWeight: "400",
+            marginTop: "2vh",
+          }}
+          gutterBottom
+        >
+          Your input is valuable in helping us better understand your needs and
+          tailor our service accordingly.
+        </Typography>
+        <Box display="flex" justifyContent="flex-start" my={2}>
+          <Rating
+            sx={{ fontSize: "3rem" }}
+            name="simple-controlled"
+            value={rating}
+            onChange={(event, newValue) => {
+              setRating(newValue);
             }}
-          >
-            <TextField
-              name="comment"
-              label="Add a Comment.."
-              variant="outlined"
-              value={values.comment}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              autoComplete="off"
-              fullWidth
-              multiline
-              rows={4}
-              margin="normal"
-              sx={{
-                width: "30vw",
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: "lightgray",
-                  borderRadius: "15px",
-                  "& fieldset": {
-                    borderColor: "lightgray",
-                    borderRadius: "15px",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "lightgray",
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: "black",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "black",
-                },
+          />
+        </Box>
+        <Formik
+          initialValues={{ comment: initialComment }}
+          enableReinitialize={true}
+          onSubmit={handleSubmit}
+        >
+          {({
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            values,
+          }) => (
+            <Form
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
               }}
-              InputLabelProps={{
-                sx: {
-                  fontSize: "1rem",
-                },
-              }}
-              error={touched.comment && !!errors.comment}
-              helperText={touched.comment && errors.comment}
-            />
-            <Button
-              sx={{ width: "12vw", borderRadius: "20px", marginTop: "2vh" }}
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
             >
-              Submit
+              <TextField
+                name="comment"
+                label="Add a Comment.."
+                variant="outlined"
+                value={values.comment}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                autoComplete="off"
+                fullWidth
+                multiline
+                rows={4}
+                margin="normal"
+                sx={{
+                  width: "30vw",
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "white", // Set background color to white
+                    borderRadius: "15px", // Customize border radius
+                    "& fieldset": {
+                      borderColor: "gray", // Default border color
+                      borderRadius: "15px", // Ensure border radius applies to fieldset as well
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "gray", // Border color on focus
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "black", // Default label color
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "black", // Label color on focus
+                  },
+                }}
+                InputLabelProps={{
+                  sx: {
+                    fontSize: ".8rem", // Increase label size
+                  },
+                }}
+                error={touched.comment && !!errors.comment}
+                helperText={touched.comment && errors.comment}
+              />
+              <Button
+                sx={{ width: "12vw", borderRadius: "20px", marginTop: "2vh" }}
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+        <Dialog
+          open={openLoginDialog}
+          onClose={() => setOpenLoginDialog(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Login Required"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              You must be logged in to submit a review.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenLoginDialog(false)} color="primary">
+              Cancel
             </Button>
-          </Form>
-        )}
-      </Formik>
-      <Dialog
-        open={openLoginDialog}
-        onClose={() => setOpenLoginDialog(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Login Required"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            You must be logged in to submit a review.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenLoginDialog(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleLoginRedirect} color="primary" autoFocus>
-            Log In
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Toast
-        alerting={toastInfo.toastAlert}
-        message={toastInfo.toastMessage}
-        severity={toastInfo.toastSeverity}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      />
+            <Button onClick={handleLoginRedirect} color="primary" autoFocus>
+              Log In
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Toast
+          alerting={toastInfo.toastAlert}
+          message={toastInfo.toastMessage}
+          severity={toastInfo.toastSeverity}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        />
+      </Box>
     </Box>
   );
 };
