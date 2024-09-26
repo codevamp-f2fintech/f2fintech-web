@@ -21,7 +21,6 @@ const QueryMain = () => {
   }, [queries]);
 
   const addQuery = (query) => {
-    console.log("query in querymain", query);
     setQueries([
       ...queries,
       {
@@ -32,6 +31,7 @@ const QueryMain = () => {
             response: query.description,
             type: "user",
             created_at: new Date().toISOString(),
+            attachment: query.attachment, // Include the attachment in the first message
           },
         ],
       },
@@ -51,15 +51,26 @@ const QueryMain = () => {
   return (
     <Container
       sx={{
-        height: "120vh",
-        maxHeight: "100%",
+        maxHeight: "70vh",
         display: "flex",
         border: "1px solid lightgray",
         paddingBottom: "10px",
         marginBottom: "10px",
+        overflow: "auto",
+        justifyContent:"space-between"
       }}
     >
-      <Box sx={{ width: "50%", borderRight: "1px solid lightgray" }}>
+      <Box
+        sx={{
+          position: "sticky", // Stick to the container, not the entire viewport
+          top: 0, // Stick to the top of the container
+          width: "50%", 
+          height: "100%",
+          borderRight: "1px solid lightgray",
+          overflowY: "auto", 
+        }}
+       
+      >
         <QueryForm
           customer_id={customerInfo?.id}
           addQuery={addQuery}
@@ -67,12 +78,14 @@ const QueryMain = () => {
         />
       </Box>
       <Box
-        sx={{
-          width: "50%",
-          display: "flex",
-          flexDirection: "column",
-          mb: "10px",
-        }}
+       sx={{
+        width: "50%",
+        display: "flex",
+        flexDirection: "column",
+        mb: "10px",
+        overflowY: "auto",
+        height: "75vh",
+      }}
       >
         <QueryList
           queries={queries}
@@ -81,6 +94,10 @@ const QueryMain = () => {
           setSubmitted={setSubmitted}
           selectedQueryId={selectedQueryId}
           addResponse={addResponse}
+          queryAttachment={queries[selectedQueryId]?.responses[0]?.attachment} // Pass attachment
+          attachmentPreview={
+            queries[selectedQueryId]?.responses[0]?.attachmentPreview
+          } // Pass preview URL
         />
       </Box>
     </Container>
