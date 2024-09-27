@@ -1,11 +1,64 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Typography, Grid } from "@mui/material";
 
 import ButtonComp from "../common/button/Button";
+import styles from './Eligibility.module.css';
 
 export default function Eligibility() {
   return (
-    <Container maxWidth="false" sx={{ paddingBottom: "3%" }}>
-      <Container
+    <Container maxWidth="false" sx={{ paddingBottom: "5%", paddingTop: "10%", width: '91%' }}>
+      <Grid container spacing={3} sx={{ display: 'flex', alignItems: '', }}>
+
+        <Grid item xs={6}>
+
+          <Box className={styles.typoTitle}>
+            <Typography>Who can <span>Apply?</span></Typography>
+          </Box>
+          <Box className={styles.apply_box_cards}>
+            <img src="./new/employee.png" />
+            <Typography className="typo1">Salaried Employees with income more than RS.25,000/- per month</Typography>
+          </Box>
+          <Box className={styles.apply_box_cards}>
+            <img src="./new/meter.png" />
+            <Typography className="typo1">Individuals with CIBIL Score more than 700</Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={6}>
+          <Box className={styles.typoTitle}>
+            <Typography>Keep these <span> Details Handy</span></Typography>
+          </Box>
+          <Grid container spacing={3} sx={{ display: 'flex', alignItems: 'center' }}>
+
+            <Grid item xs={4}>
+              <Box className={styles.apply_box_cards2}>
+                <img src="./new/fingerprint.gif" style={{ width: '100%', height: '100%' }} />
+                <Typography className="typo1">Aadhar Number</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={4}>
+              <Box className={styles.apply_box_cards2}>
+                <img src="./new/address.png" />
+                <Typography className="typo1">Address
+                  Proof</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={4}>
+              <Box className={styles.apply_box_cards2}>
+                <img src="./new/pan.png" />
+                <Typography className="typo1">PAN
+                  Number</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+
+        </Grid>
+      </Grid>
+      <Box sx={{
+        width: '15%',
+        margin: '40px auto 0 auto'
+      }}>
+        <ButtonComp />
+      </Box>
+      {/* <Container
         maxWidth="false"
         sx={{
           height: "75vh",
@@ -215,7 +268,7 @@ export default function Eligibility() {
         }}
       >
         <ButtonComp title="Apply Now" width="400px" />
-      </Container>
+      </Container> */}
     </Container>
   );
 }

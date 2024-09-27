@@ -35,6 +35,6 @@ export default function ButtonComp(props) {
 }
 
 ButtonComp.propTypes = {
-  title: PropTypes.string.isRequired,
-  width: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  width: PropTypes.string
 };

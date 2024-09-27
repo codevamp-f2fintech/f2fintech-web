@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Avatar, Container, Typography, Paper } from "@mui/material";
+import { Container, Typography, Grid, Box } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
 
@@ -49,11 +49,7 @@ const Customers = ({ customersdata }) => {
     <Container
       maxWidth="false"
       sx={{
-        height: "105vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        marginBottom: "30px",
+        width: '80%'
       }}
     >
       <Typography
@@ -61,54 +57,85 @@ const Customers = ({ customersdata }) => {
         sx={{
           display: "flex",
           justifyContent: "center",
-          marginTop: "80px",
           lineHeight: "3rem",
           fontSize: "2.5rem",
-          fontWeight: "400",
+          fontWeight: "500",
+          color: '#07399f',
+          marginTop: '50px',
+          marginBottom: '20px',
         }}
       >
-        What Our Customers Say
+        Happy & Satisfied Faces
       </Typography>
-      <Carousel height={"70vh"}>
+      <Typography
+        variant="h1"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          lineHeight: "3rem",
+          fontSize: "1rem",
+          fontWeight: "300",
+          marginBottom: '40px',
+        }}
+      >
+        Here is what some of our satisfied clients have to say about my work
+      </Typography>
+      <Carousel >
         {customersdata.length && customersdata.map((customer, i) => (
-          <Paper
-            key={i}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              boxShadow: 0,
-              padding: "20px",
-              margin: "20px",
-              cursor: "pointer",
-              "&:hover": {
-                boxShadow: 4,
-                transform: "scale(1.02)",
-              },
-            }}
-          >
-            <Avatar
-              src={customer.img}
-              sx={{ height: "150px", width: "150px", marginBottom: "20px" }}
-            />
-            <Typography
-              variant="h3"
-              sx={{
-                wordWrap: "break-word",
-                width: "70%",
-                lineHeight: "2rem",
-                textAlign: "center",
-                marginBottom: "20px",
-              }}
-            >
-              {customer.description}
-            </Typography>
-            <Typography sx={{ color: "purple", fontSize: "20px" }}>
-              {customer.name}
-            </Typography>
-            <Typography sx={{ color: "blue" }}>{customer.address}</Typography>
-          </Paper>
+          <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }} key={i}>
+            <Grid xs={5} sx={{ padding: '50px' }}>
+              <Box sx={{ background: '#07399f', display: 'inline-block', paddingLeft: '20px', paddingBottom: '20px', borderRadius: '10px' }}>
+                <img
+                  src={customer.img}
+                  style={{ height: "auto", width: "400px", marginTop: '-20px', marginRight: '-20px', borderRadius: '10px' }}
+                />
+              </Box>
+            </Grid>
+            <Grid xs={7}>
+              <Box sx={{ padding: '50px' }}>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    wordWrap: "break-word",
+                    position: 'relative',
+                    lineHeight: "2rem",
+                    textAlign: "left",
+                    marginTop: "50px",
+                  }}
+                >
+                  <span style={{ fontSize: '3rem', color: '#07399f', position: 'absolute', left: '-50px' }}>❝</span>
+
+                  {customer.description}
+                  <span style={{ fontSize: '3rem', color: '#07399f', position: 'absolute', right: '-10px' }}>❞</span>
+                </Typography>
+                <Typography sx={{ color: "#07399f", fontSize: "1.2rem", fontWeight: '600', marginTop: '20px' }}>
+                  {customer.name}
+                </Typography>
+                <Typography sx={{ color: "gray", fontSize: "1rem", fontWeight: '500', marginTop: '10px' }}>{customer.address}</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+
+          //  <Paper
+          //     key={i}
+          //     sx={{
+          //       display: "flex",
+          //       flexDirection: "column",
+          //       justifyContent: "center",
+          //       alignItems: "center",
+          //       boxShadow: 0,
+          //       padding: "20px",
+          //       margin: "20px",
+          //       cursor: "pointer",
+          //       "&:hover": {
+          //         boxShadow: 4,
+          //         transform: "scale(1.02)",
+          //       },
+          //     }}
+          //   >
+
+
+
         ))}
       </Carousel>
     </Container>

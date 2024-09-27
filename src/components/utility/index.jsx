@@ -8,6 +8,7 @@
  */
 
 import { displayToast } from "../../redux/actions/ToastAction";
+import { parseISO, isValid, formatDistanceToNow, format } from "date-fns";
 
 export const Utility = () => {
   /** Formats an image name by appending a random number and removing special characters.
@@ -111,11 +112,40 @@ export const Utility = () => {
     }, 2000);
   };
 
+  const groupNotificationsByDate = (notifications) => {
+    const now = new Date();
+  
+    const formatCustomDate = (date) => {
+      const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+      if (diffInDays < 1) return "Today";
+      if (diffInDays === 1) return "Yesterday";
+      if (diffInDays < 7) return `${diffInDays} days ago`;
+      return format(date, 'MMM d, yyyy');
+    };
+  
+    return notifications.reduce((grouped, notif) => {
+      const parsedDate = parseISO(notif.created_at);
+  
+      if (!isValid(parsedDate)) {
+        console.error("Invalid date encountered:", notif.created_at);
+        return grouped; 
+      }
+  
+      const formattedDate = formatCustomDate(parsedDate);
+  
+      if (!grouped[formattedDate]) grouped[formattedDate] = [];
+      grouped[formattedDate].push(notif);
+  
+      return grouped;
+    }, {});
+  };
+
   return {
     formatName,
     getLocalStorage,
     remLocalStorage,
     setLocalStorage,
     toastAndNavigate,
+    groupNotificationsByDate,
   };
 };

@@ -1,5 +1,3 @@
-import React from "react";
-
 import Calculator from "../calculator/Calculator";
 import Customers from "../customers/Customers";
 import Intro from "../intro/IntroCarousel";

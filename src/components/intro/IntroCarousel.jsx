@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
 
-import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
 import API from "../../apis";
 import Intro from "./Intro";
+import { setLoanProviders } from "../../redux/actions/LoanProviderAction";
 
 export default function IntroCarousel() {
   const dispatch = useDispatch();
@@ -30,6 +30,7 @@ export default function IntroCarousel() {
   }, []);
 
   console.log(loanProviders?.listData);
+
   return (
     <Carousel autoPlay interval={3000}>
       {loanProviders?.listData?.map((item, index) => (
@@ -37,7 +38,7 @@ export default function IntroCarousel() {
           key={index}
           title={item.title}
           home={item.is_home}
-          homeimg={item.home_image}
+          homeimg={'../new/sl_121021_47240_16.jpg'}
           interestRate={item.interest_rate}
           text={{
             description: item.description,
@@ -55,3 +56,10 @@ Intro.propTypes = {
   home: PropTypes.bool.isRequired,
   homeimg: PropTypes.string.isRequired,
 };
+
+{/* <Intro
+homeimg={item.home_image}
+text={{
+
+}}
+/> */}
