@@ -45,21 +45,45 @@ const QueryForm = ({ customer_id, addQuery, setSubmitted }) => {
     setAttachmentPreview(null);
   };
 
+  console.log("attachment queryform", attachment);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (questionType && description) {
+    if ((questionType && description) || attachment) {
       setQuestionType("");
       setDescription("");
-      setAttachment(null);
       setAttachmentPreview(null);
 
-      const data = {
-        customer_id: customer_id,
-        title: questionType,
-        description: description,
-      };
-
-      createQuery(data);
+      if (attachment) {
+        API.DocumentAPI.uploadDocument({
+          document: attachment,
+          folder: `query/${attachment.name}`,
+        })
+          .then((res) => {
+            console.log("res>>>>>", res);
+            const data = {
+              customer_id: customer_id,
+              title: questionType,
+              description: description,
+              attachment: res.data.data, // Add attachment to the query data
+            };
+            createQuery(data);
+          })
+          .catch((err) => {
+            console.error("Error: ", err);
+          });
+      } else {
+        const data = {
+          customer_id: customer_id,
+          title: questionType,
+          description: description,
+        };
+        createQuery(data);
+      }
+    } else {
+      console.log(
+        "Please provide at least a question type, description, or attachment."
+      );
     }
   };
 
@@ -69,6 +93,7 @@ const QueryForm = ({ customer_id, addQuery, setSubmitted }) => {
         if (res.status === 200) {
           addQuery(data);
           setSubmitted(true);
+          setAttachment(null);
           toastAndNavigate(dispatch, true, "info", "Query Submitted");
         }
       })
@@ -85,7 +110,7 @@ const QueryForm = ({ customer_id, addQuery, setSubmitted }) => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();         
+      e.preventDefault();
       handleSubmit(e);
     }
   };

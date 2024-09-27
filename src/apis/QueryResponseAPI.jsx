@@ -33,7 +33,7 @@ export const QueryResponseAPI = {
     });
   },
   
-  update: async (data, cancel = false) => {
+   update: async (data, cancel = false) => {
     return await axiosInstance.request({
       url: `/update-query-response`,
       method: "POST",
