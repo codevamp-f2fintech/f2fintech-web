@@ -18,16 +18,15 @@ import {
   styled,
   TextField,
   Typography,
-  useRadioGroup,
 } from "@mui/material";
 import { CurrencyRupee as CurrencyRupeeIcon } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
 import API from "../../apis";
 import { Utility } from "../utility";
+import * as Yup from "yup";
 
 const StyledFormControlLabel = styled((props) => (
   <FormControlLabel {...props} />
@@ -37,19 +36,24 @@ const StyledFormControlLabel = styled((props) => (
   },
 }));
 
-// Custom component for handling radio button styles
-function MyFormControlLabel(props) {
-  const radioGroup = useRadioGroup();
-  let checked = false;
-  if (radioGroup) {
-    checked = radioGroup.value === props.value;
-  }
-  return <StyledFormControlLabel checked={checked} {...props} />;
-}
-
-MyFormControlLabel.propTypes = {
-  value: PropTypes.any,
-};
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .matches(/^[a-zA-Z\s]+$/, "Name should only contain letters")
+    .required("Name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  contact: Yup.string()
+    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+    .required("Contact number is required"),
+  pan: Yup.string()
+    .matches(
+      /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+      "PAN must be exactly 10 characters: first 5 letters in uppercase and last 5 digits."
+    )
+    .required("PAN is required"),
+  city: Yup.string().required("City is required"),
+  occupation_type: Yup.string().required("Occupation type is required"),
+  dob: Yup.date().nullable().required("Date of birth is required"),
+});
 
 const initialValues = {
   name: "",
@@ -66,38 +70,36 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   const [amount, setAmount] = useState("");
   const [tenure, setTenure] = useState("");
   const [loanStatus, setLoanStatus] = useState(null);
-  const [getStarted, setGetStarted] = useState(false);    // To toggle form fields display
+  const [getStarted, setGetStarted] = useState(false);
+  const [isValidAmount, setIsValidAmount] = useState(true); 
 
   const { getLocalStorage, setLocalStorage } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
 
-  // Generate random application number
-  const randomNumberGenerator = () => Math.floor(10000000 + Math.random() * 90000000);
+  const randomNumberGenerator = () =>
+    Math.floor(10000000 + Math.random() * 90000000);
 
-  // Fetch application number and loan status using customer ID
   useEffect(() => {
     if (customerId) {
       API.CustomerApplicationAPI.getApplicationById(customerId)
         .then(({ data: response }) => {
           if (response.status === "Success") {
-            console.log(response.data, 'get application res');
             setApplicationNumber(response.data.application_no);
-            API.LoanTrackingAPI.getLoanTrackingById(response.data.id)
-              .then(({ data: resp }) => {
+            API.LoanTrackingAPI.getLoanTrackingById(response.data.id).then(
+              ({ data: resp }) => {
                 if (resp.status === "Success") {
-                  console.log(resp.data, 'loan tracking resp');
                   setLoanStatus(resp.data.status);
                 }
-              })
+              }
+            );
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("Error fetching customer ID:", err);
         });
     }
   }, [customerId]);
 
-  // Create new customer with loan application
   const create = useCallback(
     (values) => {
       const applicationNumber = randomNumberGenerator();
@@ -111,16 +113,14 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
         status,
       };
       if (!customerId) {
-        console.log('if condition chali')
         API.CustomerAPI.register(customer)
           .then(async ({ data: res }) => {
             if (res.status === "Success") {
-              // Create customer info
               await API.CustomerInfoAPI.create({
                 customer_id: res.data.id,
                 ...restValues,
               });
-              return res.data.id; // Pass customer_id for the next step
+              return res.data.id; 
             } else {
               throw new Error(`Registration failed: ${res.message}`);
             }
@@ -134,37 +134,31 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             });
           })
           .then(({ data: applicationResponse }) => {
-            console.log(applicationResponse.data, 'applicationResponse')
             return API.LoanTrackingAPI.createLoanTracking({
               customer_application_id: applicationResponse.data.applicationId,
-              status: 'submitted'
+              status: "submitted",
             });
           })
           .then(() => {
-            // Automatically log in the new customer
             API.CustomerAPI.login({
               contact,
-              password: `${name.toLowerCase()}@9876`
-            })
-              .then((response) => {
-                if (response.data.status === "Success") {
-                  const customerInfo = {
-                    id: response.data.data.id,
-                    name: response.data.data.name,
-                    token: response.data.data.token,
-                  };
-                  setLocalStorage("customerInfo", customerInfo);
-                  location.reload();
-                  console.log("Customer info, application, and loan tracking created successfully");
-                }
-              })
+              password: `${name.toLowerCase()}@9876`,
+            }).then((response) => {
+              if (response.data.status === "Success") {
+                const customerInfo = {
+                  id: response.data.data.id,
+                  name: response.data.data.name,
+                  token: response.data.data.token,
+                };
+                setLocalStorage("customerInfo", customerInfo);
+                location.reload();
+              }
+            });
           })
           .catch((err) => {
             console.log("Error during customer creation:", err);
           });
-        // If customerId is already present, skip registration and create application
       } else {
-        console.log('else condition chali')
         API.CustomerApplicationAPI.createApplication({
           customer_id: customerId,
           application_no: applicationNumber,
@@ -172,13 +166,11 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
           tenure: tenure,
         })
           .then(({ data: applicationResponse }) => {
-            console.log(applicationResponse.data, 'applicationResponse')
             API.LoanTrackingAPI.createLoanTracking({
               customer_application_id: applicationResponse.data.applicationId,
-              status: 'submitted'
+              status: "submitted",
             });
             location.reload();
-            console.log("Application and loan tracking completed for existing customer");
           })
           .catch((err) => {
             console.log("Error during customer creation:", err);
@@ -188,8 +180,20 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
     [amount, tenure]
   );
 
-  // If application number and loan status exists, display success message without making user to fill the form again
-  if (applicationNumber && !(loanStatus === 'disbursed' || loanStatus === 'rejected')) {
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setIsValidAmount(true);
+      setAmount(value);
+    } else {
+      setIsValidAmount(false);
+    }
+  };
+
+  if (
+    applicationNumber &&
+    !(loanStatus === "disbursed" || loanStatus === "rejected")
+  ) {
     return (
       <Box
         sx={{
@@ -236,9 +240,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             marginBottom: 2,
           }}
         >
-          <Link to='/loan-tracker'>
-            Track Your Loan Status By Clicking Here
-          </Link>
+          <Link to="/loan-tracker">Track Your Loan Status By Clicking Here</Link>
         </Typography>
         <Typography
           sx={{
@@ -255,7 +257,6 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
     );
   }
 
-  // Initial form view with amount and tenure selection
   if (!getStarted) {
     return (
       <Box
@@ -284,10 +285,10 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             fullWidth
             variant="filled"
             name="amount"
-            label="Enter Amount"
+            label="Enter Amount*"
             placeholder="How Much Loan Do You Require?"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={handleAmountChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -302,23 +303,28 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               marginBottom: 1,
               "& .MuiFilledInput-root": {
                 borderRadius: "10px",
-                border: "1px solid transparent",
+                border: `1px solid ${isValidAmount ? "transparent" : "#f44336"}`,
                 transition: "border-color 0.3s, border-width 0.3s",
                 "&:hover": {
-                  borderColor: "#0000ff",
+                  borderColor: isValidAmount ? "#0000ff" : "#f44336",
                 },
                 "&.Mui-focused": {
-                  borderColor: "#0000ff",
+                  borderColor: isValidAmount ? "#0000ff" : "#f44336",
                   borderWidth: "2px",
                 },
               },
               "& .MuiInputAdornment-root": {
                 color: "#000",
               },
+              "& .MuiInputLabel-root": {
+                color: isValidAmount ? "initial" : "#f44336",
+              },
               "& .MuiInputLabel-root.Mui-focused": {
-                color: "#0000ff",
+                color: isValidAmount ? "#0000ff" : "#f44336",
               },
             }}
+            error={!isValidAmount}
+            helperText={!isValidAmount ? "Please enter only numbers" : ""}
           />
         </Box>
         <FormControl
@@ -365,9 +371,10 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             <MenuItem value="60">60 Months</MenuItem>
           </Select>
         </FormControl>
+
         <Button
           color="primary"
-          disabled={!amount || !tenure}
+          disabled={!amount || !tenure || !isValidAmount}
           variant="contained"
           endIcon={<ArrowForwardIcon />}
           onClick={() => setGetStarted(true)}
@@ -387,262 +394,302 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
     );
   }
 
-  // Main form view for getting customer details
   return (
-    <>
-      <Formik
-        initialValues={initialValues}
-        onSubmit={(values) => create(values)}
-      >
-        {({
-          dirty,
-          errors,
-          touched,
-          values,
-          setFieldValue,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-        }) => (
-          <Form onSubmit={handleSubmit}>
-            <Container
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={(values) => create(values)}
+    >
+      {({
+        dirty,
+        errors,
+        touched,
+        values,
+        setFieldValue,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+      }) => (
+        <Form onSubmit={handleSubmit}>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: "15px",
+            }}
+          >
+            <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                width: "100%",
-                marginBottom: "15px",
               }}
             >
-              <Box
+              <Typography
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: "bold 10px",
-                    fontSize: "4vh",
-                    fontWeight: "300vh",
-                    marginBottom: 3,
-                  }}
-                >
-                  Basic Details
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "-moz-initial",
-                    fontSize: "2.5vh",
-                    color: "gray",
-                    marginBottom: 3,
-                  }}
-                >
-                  Step 1/3
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "15px 15px",
-                  gap: 2,
-                }}
-              >
-                <TextField
-                  variant="filled"
-                  name="name"
-                  label="Name"
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && Boolean(errors.name)}
-                  helperText={touched.name && errors.name}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  type="number"
-                  variant="filled"
-                  name="contact"
-                  label="contact"
-                  value={values.contact}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.contact && Boolean(errors.contact)}
-                  helperText={touched.contact && errors.contact}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  variant="filled"
-                  type="email"
-                  name="email"
-                  label="E-mail"
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.email && Boolean(errors.email)}
-                  helperText={touched.email && errors.email}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  variant="filled"
-                  name="pan"
-                  label="PAN*"
-                  value={values.pan}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.pan && Boolean(errors.pan)}
-                  helperText={touched.pan && errors.pan}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  variant="filled"
-                  name="city"
-                  label="City"
-                  value={values.city}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.city && Boolean(errors.city)}
-                  helperText={touched.city && errors.city}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <FormControl
-                  variant="filled"
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                >
-                  <InputLabel>Occupation Type</InputLabel>
-                  <Select
-                    variant="filled"
-                    name="occupation_type"
-                    value={values.occupation_type}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  >
-                    <MenuItem value="salaried">Salaried </MenuItem>
-                    <MenuItem value="non-salaried">Non-Salaried</MenuItem>
-                  </Select>
-                </FormControl>
-                <Box sx={{
-                  width: '75%',
+                  fontFamily: "bold 10px",
+                  fontSize: "4vh",
+                  fontWeight: "300vh",
                   marginBottom: 3,
-                }}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="Enter Date Of Birth"
-                      value={values.dob}
-                      onChange={(newValue) => setFieldValue("dob", newValue)}
-                    />
-                  </LocalizationProvider>
-                </Box>
-                <FormGroup
-                  sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
+                }}
+              >
+                Basic Details
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "-moz-initial",
+                  fontSize: "2.5vh",
+                  color: "gray",
+                  marginBottom: 3,
+                }}
+              >
+                Step 1/3
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "15px 15px",
+                gap: 2,
+              }}
+            >
+              <TextField
+                variant="filled"
+                name="name"
+                label="Name*"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.name && Boolean(errors.name)}
+                helperText={touched.name && errors.name}
+                sx={{
+                  width: "75%",
+                  height: "50px",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginBottom: 3,
+                }}
+                fullWidth
+              />
+              <TextField
+                type="number"
+                variant="filled"
+                name="contact"
+                label="Contact*"
+                value={values.contact}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.contact && Boolean(errors.contact)}
+                helperText={touched.contact && errors.contact}
+                sx={{
+                  width: "75%",
+                  height: "50px",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginBottom: 3,
+                  "& .MuiFilledInput-root": {
+                    borderColor:
+                      touched.contact && errors.contact
+                        ? "#f44336"
+                        : "initial",
+                    color:
+                      touched.contact && !errors.contact
+                        ? "#000000"
+                        : "#f44336",
+                    "&.Mui-focused": {
+                      borderColor:
+                        touched.contact && !errors.contact
+                          ? "#1976d2"
+                          : "#f44336",
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: touched.contact && errors.contact
+                      ? "#f44336"
+                      : "initial",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color:
+                      touched.contact && !errors.contact
+                        ? "#1976d2"
+                        : "#f44336",
+                  },
+                }}
+                fullWidth
+              />
+              <TextField
+                variant="filled"
+                type="email"
+                name="email"
+                label="E-mail*"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.email && Boolean(errors.email)}
+                helperText={touched.email && errors.email}
+                sx={{
+                  width: "75%",
+                  height: "50px",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginBottom: 3,
+                }}
+                fullWidth
+              />
+              <TextField
+                variant="filled"
+                name="pan"
+                label="PAN*"
+                value={values.pan}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.pan && Boolean(errors.pan)}
+                helperText={touched.pan && errors.pan}
+                sx={{
+                  width: "75%",
+                  height: "50px",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginBottom: 3,
+                }}
+                fullWidth
+              />
+              <TextField
+                variant="filled"
+                name="city"
+                label="City*"
+                value={values.city}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.city && Boolean(errors.city)}
+                helperText={touched.city && errors.city}
+                sx={{
+                  width: "75%",
+                  height: "50px",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginBottom: 3,
+                }}
+                fullWidth
+              />
+              <FormControl
+                variant="filled"
+                sx={{
+                  width: "75%",
+                  height: "50px",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginBottom: 3,
+                }}
+                error={touched.occupation_type && Boolean(errors.occupation_type)}
+              >
+                <InputLabel>Occupation Type*</InputLabel>
+                <Select
+                  variant="filled"
+                  name="occupation_type"
+                  value={values.occupation_type}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                 >
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    label={
-                      <Typography sx={{ fontSize: "0.875rem", color: "gray" }}>
-                        I agree to opt for the product and service of F2fintech.
-                        By opting for F2fintech, I agree to have read,
-                        understood and explicitly consent to the T&C, Privacy
-                        Policy and F2fintech Credit Terms.
-                      </Typography>
-                    }
+                  <MenuItem value="salaried">Salaried</MenuItem>
+                  <MenuItem value="non-salaried">Non-Salaried</MenuItem>
+                </Select>
+                {touched.occupation_type && errors.occupation_type && (
+                  <Typography color="error" variant="caption">
+                    {errors.occupation_type}
+                  </Typography>
+                )}
+              </FormControl>
+              <Box
+                sx={{
+                  width: "75%",
+                  marginBottom: 3,
+                }}
+                error={touched.dob && Boolean(errors.dob)}
+              >
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Enter Date Of Birth*"
+                    value={values.dob}
+                    onChange={(newValue) => setFieldValue("dob", newValue)}
+                    onBlur={handleBlur}
                   />
-                </FormGroup>
-                <FormGroup
-                  sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
-                >
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    label={
-                      <Typography sx={{ fontSize: "0.800rem", color: "gray" }}>
-                        I further consent to receive the loan and product
-                        updates of F2fintech on WhatsApp and allow F2fintech
-                        and/or their authorized third party service providers to
-                        contact me for marketing purposes via SMS, Telephone,
-                        Email, or any other means.
-                      </Typography>
-                    }
-                  />
-                </FormGroup>
-                <Button
-                  color="primary"
-                  disabled={!dirty}
-                  type="submit"
-                  variant="contained"
-                  sx={{
-                    color: "white",
-                    fontWeight: "500",
-                    fontSize: "1rem",
-                    lineHeight: "1.5rem",
-                    mt: 2,
-                    marginBottom: 3,
-                  }}
-                >
-                  Apply Now
-                </Button>
+                </LocalizationProvider>
+                {touched.dob && errors.dob && (
+                  <Typography color="error" variant="caption">
+                    {errors.dob}
+                  </Typography>
+                )}
               </Box>
-            </Container>
-          </Form>
-        )}
-      </Formik>
-    </>
+              <FormGroup
+                sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
+              >
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label={
+                    <Typography sx={{ fontSize: "0.875rem", color: "gray" }}>
+                      I agree to opt for the product and service of F2fintech.
+                      By opting for F2fintech, I agree to have read, understood
+                      and explicitly consent to the T&C, Privacy Policy and
+                      F2fintech Credit Terms.
+                    </Typography>
+                  }
+                />
+              </FormGroup>
+              <FormGroup
+                sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
+              >
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label={
+                    <Typography sx={{ fontSize: "0.800rem", color: "gray" }}>
+                      I further consent to receive the loan and product updates
+                      of F2fintech on WhatsApp and allow F2fintech and/or their
+                      authorized third party service providers to contact me for
+                      marketing purposes via SMS, Telephone, Email, or any other
+                      means.
+                    </Typography>
+                  }
+                />
+              </FormGroup>
+              <Button
+                color="primary"
+                disabled={!dirty}
+                type="submit"
+                variant="contained"
+                sx={{
+                  color: "white",
+                  fontWeight: "500",
+                  fontSize: "1rem",
+                  lineHeight: "1.5rem",
+                  mt: 2,
+                  marginBottom: 3,
+                }}
+              >
+                Apply Now
+              </Button>
+            </Box>
+          </Container>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
 Step1Form.propTypes = {
   applicationNumber: PropTypes.any,
-  setApplicationNumber: PropTypes.func.isRequired
+  setApplicationNumber: PropTypes.func.isRequired,
 };
 
 export default Step1Form;

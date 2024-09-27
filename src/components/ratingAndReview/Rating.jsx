@@ -14,20 +14,10 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Formik, Form } from "formik";
-import * as Yup from "yup"; 
+import * as Yup from "yup";
 import Toast from "../toast/Toast";
 import { Utility } from "../utility";
 import { RatingRevAPI } from "../../apis/RatingRevAPI";
-
-
-const ReviewSchema = Yup.object().shape({
-  comment: Yup.string()
-    .test("wordCount", "Review must be between 2 and 200 words", function (value) {
-      const wordCount = value ? value.trim().split(/\s+/).length : 0;
-      return wordCount >= 2 && wordCount <= 200;
-    })
-    .required("Review is required"),
-});
 
 const RatingReview = () => {
   const [rating, setRating] = useState(0);
@@ -50,10 +40,10 @@ const RatingReview = () => {
     }
   }, []);
 
+
   const handleSubmit = (values, { resetForm }) => {
     if (!customer) {
       setLocalStorage("savedRatingReview", { rating: rating, review: values.comment });
-
       setOpenLoginDialog(true);
       return;
     }
@@ -64,23 +54,37 @@ const RatingReview = () => {
       customer_id: customer.id,
     };
 
-    RatingRevAPI.createRating(ratingData).then((response) => {
-      console.log("response", response);
-      toastAndNavigate(dispatch, true, "success", "Review Submitted");
-
-      setRating(0);
-      setInitialComment("");
-
-      remLocalStorage("savedRatingReview");
-
-      resetForm();
-    });
+    RatingRevAPI.createRating(ratingData)
+      .then((response) => {
+        toastAndNavigate(dispatch, true, "success", "Review Submitted");
+        setRating(0);
+        setInitialComment("");
+        remLocalStorage("savedRatingReview");
+        resetForm();
+      })
+      .catch((error) => {
+        dispatch({
+          type: "SET_TOAST",
+          payload: {
+            toastAlert: true,
+            toastMessage: "Failed to submit review",
+            toastSeverity: "error",
+          },
+        });
+      });
   };
 
   const handleLoginRedirect = () => {
     setOpenLoginDialog(false);
     navigate("/login", { state: { from: location } });
   };
+
+  const RatingReviewSchema = Yup.object().shape({
+    comment: Yup.string()
+      .min(4, "Comment must be at least 2 characters")
+      .max(200, "Comment cannot be more than 200 characters")
+      .required("Comment is required"),
+  });
 
   return (
     <Box
@@ -153,17 +157,13 @@ const RatingReview = () => {
       </Box>
       <Formik
         initialValues={{ comment: initialComment }}
+        validationSchema={RatingReviewSchema} 
         enableReinitialize={true}
-        validationSchema={ReviewSchema} 
-        onSubmit={handleSubmit}
+        onSubmit={(values, { resetForm }) => {
+          handleSubmit(values, { resetForm });
+        }}
       >
-        {({
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          values,
-        }) => (
+        {({ errors, touched, handleChange, handleBlur, values }) => (
           <Form
             style={{
               display: "flex",
@@ -217,7 +217,7 @@ const RatingReview = () => {
               type="submit"
               variant="contained"
               color="primary"
-              fullWidth
+              disabled={!!errors.comment} 
             >
               Submit
             </Button>
