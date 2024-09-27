@@ -576,6 +576,8 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   >
                     <MenuItem value="salaried">Salaried </MenuItem>
                     <MenuItem value="non-salaried">Non-Salaried</MenuItem>
+                    <MenuItem value="professional">Professional</MenuItem>
+                    
                   </Select>
                 </FormControl>
                 <Box sx={{
