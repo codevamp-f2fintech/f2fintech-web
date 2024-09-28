@@ -50,18 +50,12 @@ const Step3Form = () => {
       .catch((err) => {
         console.error("Error in upload:", err);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
   return (
     <Formik initialValues={initialValues} onSubmit={handleFormSubmit}>
-      {({
-        dirty,
-        isSubmitting,
-        handleBlur,
-        handleSubmit,
-        setFieldValue,
-      }) => (
+      {({ dirty, isSubmitting, handleBlur, handleSubmit, setFieldValue }) => (
         <Form onSubmit={handleSubmit} encType="multipart/form-data">
           <Container
             sx={{

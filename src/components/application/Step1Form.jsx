@@ -593,7 +593,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               <Box
                 sx={{
                   width: "75%",
-                  marginBottom: 3,
+                      marginBottom: 3,
                 }}
               >
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
