@@ -71,7 +71,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   const [tenure, setTenure] = useState("");
   const [loanStatus, setLoanStatus] = useState(null);
   const [getStarted, setGetStarted] = useState(false);
-  const [isValidAmount, setIsValidAmount] = useState(true); 
+  const [isValidAmount, setIsValidAmount] = useState(true);
 
   const { getLocalStorage, setLocalStorage } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
@@ -120,7 +120,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                 customer_id: res.data.id,
                 ...restValues,
               });
-              return res.data.id; 
+              return res.data.id;
             } else {
               throw new Error(`Registration failed: ${res.message}`);
             }
@@ -364,7 +364,6 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               },
             }}
           >
-            {/* Creates an array with 40 elements, when (index < 4) it labels items as months, then it switches to years. */}
             {[...Array(40)].map((_, index) => {
               const value = (index + 1) * 12;
               const label = index < 4 ? `${value} Months` : `${index + 1} Years`;
@@ -499,33 +498,6 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   borderRadius: "10px",
                   overflow: "hidden",
                   marginBottom: 3,
-                  "& .MuiFilledInput-root": {
-                    borderColor:
-                      touched.contact && errors.contact
-                        ? "#f44336"
-                        : "initial",
-                    color:
-                      touched.contact && !errors.contact
-                        ? "#000000"
-                        : "#f44336",
-                    "&.Mui-focused": {
-                      borderColor:
-                        touched.contact && !errors.contact
-                          ? "#1976d2"
-                          : "#f44336",
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: touched.contact && errors.contact
-                      ? "#f44336"
-                      : "initial",
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color:
-                      touched.contact && !errors.contact
-                        ? "#1976d2"
-                        : "#f44336",
-                  },
                 }}
                 fullWidth
               />
@@ -597,97 +569,15 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   overflow: "hidden",
                   marginBottom: 3,
                 }}
-                error={touched.occupation_type && Boolean(errors.occupation_type)}
+                error={
+                  touched.occupation_type && Boolean(errors.occupation_type)
+                }
               >
                 <InputLabel>Occupation Type*</InputLabel>
                 <Select
                   variant="filled"
                   name="occupation_type"
                   value={values.occupation_type}
-
-                <TextField
-                  variant="filled"
-                  name="name"
-                  label="Name*"
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && Boolean(errors.name)}
-                  helperText={touched.name && errors.name}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  type="number"
-                  variant="filled"
-                  name="contact"
-                  label="Contact*"
-                  value={values.contact}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.contact && Boolean(errors.contact)}
-                  helperText={touched.contact && errors.contact}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  variant="filled"
-                  type="email"
-                  name="email"
-                  label="E-mail*"
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.email && Boolean(errors.email)}
-                  helperText={touched.email && errors.email}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  variant="filled"
-                  name="pan"
-                  label="PAN*"
-                  value={values.pan}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.pan && Boolean(errors.pan)}
-                  helperText={touched.pan && errors.pan}
-                  sx={{
-                    width: "75%",
-                    height: "50px",
-                    fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: 3,
-                  }}
-                  fullWidth
-                />
-                <TextField
-                  variant="filled"
-                  name="city"
-                  label="City*"
-                  value={values.city}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 >
@@ -705,67 +595,12 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   width: "75%",
                   marginBottom: 3,
                 }}
-                error={touched.dob && Boolean(errors.dob)}
               >
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Enter Date Of Birth*"
                     value={values.dob}
                     onChange={(newValue) => setFieldValue("dob", newValue)}
-                    onBlur={handleBlur}
-                  <InputLabel>Occupation Type*</InputLabel>
-                  <Select
-                    variant="filled"
-                    name="occupation_type"
-                    value={values.occupation_type}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  >
-                    <MenuItem value="salaried">Salaried </MenuItem>
-                    <MenuItem value="non-salaried">Non-Salaried</MenuItem>
-                  </Select>
-                </FormControl>
-                <Box sx={{
-                  width: '75%',
-                  marginBottom: 3,
-                }}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="Enter Date Of Birth*"
-                      value={values.dob}
-                      onChange={(newValue) => setFieldValue("dob", newValue)}
-                    />
-                  </LocalizationProvider>
-                </Box>
-                <FormGroup
-                  sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
-                >
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    label={
-                      <Typography sx={{ fontSize: "0.875rem", color: "gray" }}>
-                        I agree to opt for the product and service of F2fintech.
-                        By opting for F2fintech, I agree to have read,
-                        understood and explicitly consent to the T&C, Privacy
-                        Policy and F2fintech Credit Terms.
-                      </Typography>
-                    }
-                  />
-                </FormGroup>
-                <FormGroup
-                  sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
-                >
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    label={
-                      <Typography sx={{ fontSize: "0.800rem", color: "gray" }}>
-                        I further consent to receive the loan and product
-                        updates of F2fintech on WhatsApp and allow F2fintech
-                        and/or their authorized third party service providers to
-                        contact me for marketing purposes via SMS, Telephone,
-                        Email, or any other means.
-                      </Typography>
-                    }
                   />
                 </LocalizationProvider>
                 {touched.dob && errors.dob && (
