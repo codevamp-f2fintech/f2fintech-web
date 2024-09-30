@@ -1,155 +1,194 @@
 import { useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form } from "formik";
-import {
-  Box,
-  Typography,
-  Container,
-  Button,
-  TextField,
-  IconButton,
-} from "@mui/material";
+import { Box, Typography, Container, Button, IconButton } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import API from "../../apis";
+import Toast from "../toast/Toast";
 import { Utility } from "../utility";
 
 const initialValues = {
-  data: "",
+  data: [],
 };
 
 const Step3Form = () => {
-  const [filename, setFilename] = useState("");
-
-  const { formatName, getLocalStorage } = Utility();
-
+  const [selectedFiles, setSelectedFiles] = useState([]); // To store selected files
+  const dispatch = useDispatch();
+  const toastInfo = useSelector((state) => state.toastInfo);
+  const { formatName, getLocalStorage, toastAndNavigate } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
+
   console.log("customer", customerId);
 
-  const handleFormSubmit = useCallback((values) => {
-    console.log("these are form values=>", values.data);
-    const formattedName = formatName(values.data.name);
+  // Handle deleting a file from the selected files array
+  const handleAttachmentDelete = (index) => {
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(updatedFiles);
+  };
 
-    API.DocumentAPI.uploadDocument({
-      document: values.data,
-      folder: `document/${formattedName}`,
-    })
-      .then((res) => {
-        if (res.data.status === "Success") {
-          API.DocumentAPI.createDocument({
-            document_url: res.data.data,
-            customer_id: customerId,
+  // Submitting the form and uploading files
+  const handleFormSubmit = useCallback(
+    (values) => {
+      console.log("these are form values=>", values.data);
+
+      values.data.forEach((file) => {
+        const formattedName = formatName(file.name);
+
+        // Uploading each document
+        API.DocumentAPI.uploadDocument({
+          document: file,
+          folder: `document/${formattedName}`,
+        })
+          .then((res) => {
+            if (res.data.status === "Success") {
+              // Creating document entry in DB
+              API.DocumentAPI.createDocument({
+                document_url: res.data.data,
+                customer_id: customerId,
+              }).catch((err) => {
+                console.log("Error in creating document inside DB", err);
+              });
+            } else {
+              console.error("Upload failed");
+            }
           })
-            .then()
-            .catch((err) => {
-              console.log("Error in Creating image inside db", err);
-            });
-        } else {
-          console.error("Upload failed");
-        }
-      })
-      .catch((err) => {
-        console.error("Error in upload:", err);
+          .catch((err) => {
+            console.error("Error in upload:", err);
+          });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    },
+    [customerId, formatName]
+  );
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleFormSubmit}>
-      {({ dirty, isSubmitting, handleBlur, handleSubmit, setFieldValue }) => (
-        <Form onSubmit={handleSubmit} encType="multipart/form-data">
-          <Container
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "100%",
-              marginBottom: "15px",
-            }}
-          >
-            <Box
+    <>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values) =>
+          handleFormSubmit({ ...values, data: selectedFiles })
+        }
+      >
+        {({ dirty, isSubmitting, handleBlur, handleSubmit, setFieldValue }) => (
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Container
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                width: "100%",
+                marginBottom: "15px",
               }}
             >
-              <Typography
+              {/* Header section */}
+              <Box sx={{ textAlign: "center", mb: 2 }}>
+                <Typography variant="h4">Statement Upload</Typography>
+                <Typography
+                  sx={{ padding: "10px" }}
+                  variant="subtitle1"
+                  color="gray"
+                >
+                  Step 2/3
+                </Typography>
+
+                <Typography
+                  sx={{ display: "flex", color: "gray", padding: "10px" }}
+                >
+                  ( Upload your recent 6 months Bank Statement )
+                </Typography>
+              </Box>
+
+              {/* File input and display */}
+              <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  fontFamily: "bold 10px",
-                  fontSize: "4vh",
-                  fontWeight: "300vh",
+                  alignItems: "center",
                 }}
               >
-                Statement Upload
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "-moz-initial",
-                  fontSize: "2.5vh",
-                  color: "gray",
-                }}
-              >
-                Step 2/3
-              </Typography>
-            </Box>
+                {/* File picker with multiple file upload support */}
+                <IconButton component="label" sx={{ width: "88%", mb: 2 }}>
+                  <AddPhotoAlternateIcon />
+                  <input
+                    hidden
+                    multiple
+                    outline={true}
+                    type="file"
+                    accept=".jpg, .gif, .png, .jpeg, .svg, .webp, application/pdf, .doc, .docx, .txt"
+                    onChange={(event) => {
+                      const newFiles = Array.from(event.target.files); // Get all selected files from input
+                      const totalFiles = selectedFiles.length + newFiles.length; // Calculate total files including the new selection
 
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                accept=".jpg, .gif, .png, .jpeg, .svg, .webp, application/pdf, .doc, .docx, .txt "
-                name="file"
-                label="Upload Document"
-                size="small"
-                onBlur={handleBlur}
-                InputProps={{
-                  startAdornment: (
-                    <IconButton component="label" sx={{ width: "88%" }}>
-                      <AddPhotoAlternateIcon />
-                      <input
-                        hidden
-                        type="file"
-                        name="file"
-                        onChange={(event) => {
-                          const newFile = Array.from(event.target.files); //iski vajah se name gayab hua
-                          console.log("Selected file:", newFile[0]);
-                          setFieldValue("data", newFile[0]);
-                          setFilename(newFile[0]?.name || "");
+                      if (totalFiles > 6) {
+                        toastAndNavigate(dispatch, true, "error", "Maximum limit reached 6");
+                        return;
+                      }
+
+                      setSelectedFiles((prevFiles) => [
+                        ...prevFiles,
+                        ...newFiles,
+                      ]); // Append new files to the state
+                      setFieldValue("data", [...selectedFiles, ...newFiles]); // Set form field value for 'data'
+                    }}
+                  />
+                </IconButton>
+
+                {/* Display selected file names with delete icons */}
+                {selectedFiles.length > 0 && (
+                  <Box sx={{ width: "100%", mt: 2 }}>
+                    {selectedFiles.map((file, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mb: 1,
                         }}
-                      />
-                    </IconButton>
-                  ),
-                }}
-                sx={{ m: 1, outline: "none", width: "70%" }}
-              />
-              <Typography>Filename: {filename}</Typography>
-              <Button
-                color="primary"
-                disabled={!dirty || isSubmitting}
-                type="submit"
-                variant="contained"
-                sx={{
-                  color: "white",
-                  fontWeight: "500",
-                  fontSize: "1rem",
-                  lineHeight: "1.5rem",
-                  mt: 2,
-                }}
-              >
-                Upload
-              </Button>
-            </Box>
-          </Container>
-        </Form>
-      )}
-    </Formik>
+                      >
+                        <Typography>{file.name}</Typography>
+                        <IconButton
+                          onClick={() => handleAttachmentDelete(index)}
+                          sx={{ ml: 2 }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+
+                {/* Upload button */}
+                <Button
+                  color="primary"
+                  disabled={
+                    !dirty || isSubmitting || selectedFiles.length === 0
+                  }
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    color: "white",
+                    fontWeight: "500",
+                    fontSize: "1rem",
+                    lineHeight: "1.5rem",
+                    mt: 2,
+                  }}
+                >
+                  Upload
+                </Button>
+              </Box>
+            </Container>
+          </Form>
+        )}
+      </Formik>
+      <Toast
+        alerting={toastInfo.toastAlert}
+        message={toastInfo.toastMessage}
+        severity={toastInfo.toastSeverity}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+      />
+    </>
   );
 };
 
