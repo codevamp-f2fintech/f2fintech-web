@@ -1,57 +1,73 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
-import { Box, TextField, Typography, Button, IconButton, Tooltip } from "@mui/material";
-
+import { Box, Typography, Button, IconButton, Tooltip } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
-
-import API from "../../apis";
+import Webcam from "./webcam/webcam"; // Import the Webcam component
 
 import { Utility } from "../utility";
 
+// Validation schema
 const validationSchema = Yup.object({
   aadharFront: Yup.mixed().required("Required"),
   aadharBack: Yup.mixed().required("Required"),
-  passportSizePhoto: Yup.mixed().required("Required"),
+  passportSizePhoto: Yup.mixed().nullable(),
 });
 
+// Initial values
 const initialValues = {
   aadharFront: null,
   aadharBack: null,
   passportSizePhoto: null,
 };
 
-const FileInput = ({ name, label, preview, onFileChange, onDelete }) => (
+// FileInput component for file selection and preview
+const FileInput = ({
+  name,
+  label,
+  preview,
+  onFileChange,
+  onDelete,
+  showWebcamCapture,
+  onCapturePhoto,
+}) => (
   <>
-    <Typography sx={{ fontFamily: "-moz-initial", fontSize: "2.5vh", color: "black" }}>
+    <Typography
+      sx={{ fontFamily: "-moz-initial", fontSize: "2.5vh", color: "black" }}
+    >
       {label}
     </Typography>
-    <TextField
-      accept="image/*, application/pdf"
-      name="file"
-      label="Upload"
-      size="small"
-      InputProps={{
-        startAdornment: (
-          <IconButton component="label" sx={{ width: "92%" }}>
-            <AddPhotoAlternateIcon />
-            <input
-              hidden
-              type="file"
-              accept="image/*"
-              onChange={(event) => onFileChange(event, name)}
-            />
-          </IconButton>
-        ),
-      }}
-      sx={{ m: 1, outline: "none", width: "35%" }}
-    />
+
+    {!preview && (
+      <IconButton component="label">
+        <AddPhotoAlternateIcon />
+        <input
+          hidden
+          type="file"
+          accept="image/*"
+          onChange={(event) => onFileChange(event, name)}
+        />
+      </IconButton>
+    )}
+
+    {/* Button for opening the camera */}
+    {!preview && showWebcamCapture && (
+      <Button variant="outlined" onClick={onCapturePhoto} sx={{ mt: 1, mb: 2 }}>
+        Capture Photo
+      </Button>
+    )}
+
     {preview && (
-      <Box sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}>
-        <img src={preview} alt={label} style={{ maxWidth: "100%", height: "auto" }} />
+      <Box
+        sx={{ mt: 2, width: "40%", textAlign: "center", position: "relative" }}
+      >
+        <img
+          src={preview}
+          alt={label}
+          style={{ maxWidth: "100%", height: "auto" }}
+        />
         <IconButton
           onClick={() => onDelete(name)}
           sx={{
@@ -60,7 +76,7 @@ const FileInput = ({ name, label, preview, onFileChange, onDelete }) => (
             right: 20,
             transform: "translate(50%, -50%)",
             borderRadius: "50%",
-            padding: "5px"
+            padding: "5px",
           }}
         >
           <Tooltip title="DELETE">
@@ -82,59 +98,26 @@ const FileInput = ({ name, label, preview, onFileChange, onDelete }) => (
   </>
 );
 
+// Main form component
 const Step4Form = () => {
   const [previews, setPreviews] = useState({
     aadharFront: "",
     aadharBack: "",
     passportSizePhoto: "",
   });
+  const [showWebcam, setShowWebcam] = useState(false);
+  const { uploadFileToS3, getLocalStorage } = Utility();
 
-  const { formatName, getLocalStorage } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
 
-  const uploadFileToS3 = (file, type) => {
-    const formattedName = formatName(file.name);
-    API.DocumentAPI.uploadDocument({
-      document: file,
-      folder: `document/${formattedName}`,
-    })
-      .then((res) => {
-        if (res.data.status === "Success") {
-          API.DocumentAPI.createDocument({
-            document_url: res.data.data,
-            customer_id: customerId,
-            type: type
-          });
-          console.log(`Document of ${type} uploaded successfully`);
-        } else {
-          console.error("Upload failed");
-        }
-      })
-      .catch((err) => {
-        console.error("Error in document creation:", err);
-      });
+  // Function to handle capturing photo blob via webcam
+  const handleCapturePhoto = (capturedImage) => {
+    setPreviews((prev) => ({
+      ...prev,
+      passportSizePhoto: capturedImage,
+    }));
+    setShowWebcam(false);
   };
-
-  const handleFormSubmit = useCallback(async (values) => {
-    const uploadPromises = [];
-
-    if (values.aadharFront) {
-      uploadPromises.push(uploadFileToS3(values.aadharFront, "aadhaar front"));
-    }
-    if (values.aadharBack) {
-      uploadPromises.push(uploadFileToS3(values.aadharBack, "aadhaar back"));
-    }
-    if (values.passportSizePhoto) {
-      uploadPromises.push(uploadFileToS3(values.passportSizePhoto, "photo"));
-    }
-
-    try {
-      await Promise.all(uploadPromises);
-      console.log("All documents uploaded successfully");
-    } catch (err) {
-      console.log("Error in uploading one or more documents:", err);
-    }
-  }, [customerId]);
 
   const handleFileChange = (event, name) => {
     const file = event.target.files[0];
@@ -147,6 +130,36 @@ const Step4Form = () => {
     setPreviews((prev) => ({ ...prev, [name]: "" }));
   };
 
+  // Form submission handler
+  const handleFormSubmit = useCallback(
+    async (values) => {
+      const uploadPromises = [];
+
+      if (values.aadharFront) {
+        uploadPromises.push(
+          uploadFileToS3(values.aadharFront, "aadhaar front", customerId)
+        );
+      }
+      if (values.aadharBack) {
+        uploadPromises.push(
+          uploadFileToS3(values.aadharBack, "aadhaar back", customerId)
+        );
+      }
+      if (values.passportSizePhoto) {
+        uploadPromises.push(
+          uploadFileToS3(values.passportSizePhoto, "photo", customerId)
+        );
+      }
+
+      try {
+        await Promise.all(uploadPromises);
+        console.log("All documents uploaded successfully");
+      } catch (err) {
+        console.error("Error in uploading one or more documents:", err);
+      }
+    },
+    [customerId]
+  );
 
   return (
     <Formik
@@ -154,12 +167,7 @@ const Step4Form = () => {
       validationSchema={validationSchema}
       onSubmit={handleFormSubmit}
     >
-      {({
-        dirty,
-        isSubmitting,
-        handleSubmit,
-        setFieldValue,
-      }) => (
+      {({ dirty, isSubmitting, handleSubmit, setFieldValue }) => (
         <Form onSubmit={handleSubmit} encType="multipart/form-data">
           <Box
             sx={{
@@ -173,8 +181,6 @@ const Step4Form = () => {
           >
             <Typography
               sx={{
-                display: "flex",
-                flexDirection: "column",
                 fontFamily: "bold 10px",
                 fontSize: "4vh",
                 fontWeight: "300vh",
@@ -235,14 +241,30 @@ const Step4Form = () => {
                 handleDelete("passportSizePhoto");
                 setFieldValue("passportSizePhoto", null);
               }}
+              showWebcamCapture={true}
+              onCapturePhoto={() => setShowWebcam(true)}
             />
+
+            {showWebcam && (
+              <Webcam
+                setCapturedImage={(image) => handleCapturePhoto(image)}
+                setFieldValue={setFieldValue}
+              />
+            )}
 
             <Button
               color="primary"
               disabled={!dirty || isSubmitting}
               type="submit"
               variant="contained"
-              sx={{ color: "white", fontWeight: "500", fontSize: "1rem", lineHeight: "1.5rem", mt: 2, ml: 1 }}
+              sx={{
+                color: "white",
+                fontWeight: "500",
+                fontSize: "1rem",
+                lineHeight: "1.5rem",
+                mt: 2,
+                ml: 1,
+              }}
             >
               Upload
             </Button>
@@ -254,11 +276,13 @@ const Step4Form = () => {
 };
 
 FileInput.propTypes = {
-  name: PropTypes.string,
-  label: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
   preview: PropTypes.string,
-  onFileChange: PropTypes.func,
-  onDelete: PropTypes.func
+  onFileChange: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  showWebcamCapture: PropTypes.bool,
+  onCapturePhoto: PropTypes.func,
 };
 
 export default Step4Form;

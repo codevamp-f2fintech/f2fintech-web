@@ -51,7 +51,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const toastInfo = useSelector((state) => state.toastInfo);
 
-  const { formatName, getLocalStorage, toastAndNavigate } = Utility();
+  const { getLocalStorage, toastAndNavigate , uploadFileToS3 } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
   const isMobile = useMediaQuery("(max-width:900px)");
   const isTab = useMediaQuery("(max-width:1200px)");
@@ -73,7 +73,6 @@ export default function Profile() {
 
     API.DocumentAPI.getCustomerDocuments(customerId)
       .then(({ data }) => {
-        console.log(data.data.document_url, 'data')
         if (data.status === "Success") {
           setImageSrc(data.data.document_url);
         }
@@ -86,32 +85,9 @@ export default function Profile() {
       });
   }, [!editMode]);
 
-  const uploadFileToS3 = (file, type) => {
-    const formattedName = formatName(file.name);
-    API.DocumentAPI.uploadDocument({
-      document: file,
-      folder: `profile/${formattedName}`,
-    })
-      .then((res) => {
-        if (res.data.status === "Success") {
-          API.DocumentAPI.createDocument({
-            document_url: res.data.data,
-            customer_id: customerId,
-            type: type
-          });
-          console.log(`Document of ${type} uploaded successfully`);
-        } else {
-          console.error("Upload failed");
-        }
-      })
-      .catch((err) => {
-        console.error("Error in document creation:", err);
-      });
-  };
-
   const handleUploadClick = useCallback(() => {
     if (selectedPhoto) {
-      uploadFileToS3(selectedPhoto, "profile");
+      uploadFileToS3(selectedPhoto, "profile", customerId);
     }
   }, [selectedPhoto]);
 
@@ -121,14 +97,12 @@ export default function Profile() {
   };
 
   const handleSubmit = (formData, resetForm) => {
-    console.log("handlesubmit", formData);
     setLoading(true);
     API.CustomerAPI.updateCustomerProfile({
       ...formData,
       customerId,
     })
       .then((res) => {
-        console.log("response", res);
         if (res.status === "Success") {
           setEditMode(false);
           resetForm();
@@ -167,8 +141,6 @@ export default function Profile() {
       </Container>
     );
   }
-
-  console.log("userData", userData);
 
   return (
     <Container
@@ -224,7 +196,6 @@ export default function Profile() {
               }}
               validationSchema={validationSchema}
               onSubmit={(values, { resetForm }) => {
-                console.log("value");
                 handleSubmit(values, resetForm);
               }}
             >

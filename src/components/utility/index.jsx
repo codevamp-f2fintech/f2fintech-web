@@ -9,6 +9,7 @@
 
 import { displayToast } from "../../redux/actions/ToastAction";
 import { parseISO, isValid, formatDistanceToNow, format } from "date-fns";
+import API from "../../apis";
 
 export const Utility = () => {
   /** Formats an image name by appending a random number and removing special characters.
@@ -22,6 +23,34 @@ export const Utility = () => {
       .replace(/[!@#$%^&*();:'"`~`'$]/g, "")
       .replace(/\s+/g, "_");
     return formattedName;
+  };
+
+  /** Uploads a file to S3 and creates a document in the database.
+   * @param {File} file - The file to be uploaded.
+   * @param {string} type - The document type or folder name.
+   * @returns {void}
+   */
+  const uploadFileToS3 = (file, type, customerId = null) => {
+    const formattedName = formatName(file.name);
+    API.DocumentAPI.uploadDocument({
+      document: file,
+      folder: `document/${formattedName}`,
+    })
+      .then((res) => {
+        if (res.data.status === "Success") {
+          API.DocumentAPI.createDocument({
+            document_url: res.data.data,
+            customer_id: customerId,
+            type: type,
+          });
+          console.log(`Document of ${type} uploaded successfully`);
+        } else {
+          console.log("Upload failed");
+        }
+      })
+      .catch((err) => {
+        console.log("Error in document creation:", err);
+      });
   };
 
   /** Gets the value associated with a key from local storage.
@@ -48,7 +77,7 @@ export const Utility = () => {
     try {
       localStorage.removeItem(key);
     } catch (err) {
-      console.error(`Error removing ${key} from localStorage:`, err);
+      console.log(`Error removing ${key} from localStorage:`, err);
     }
   };
 
@@ -61,7 +90,7 @@ export const Utility = () => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (err) {
-      console.error(`Error setting ${key} in localStorage:`, err);
+      console.log(`Error setting ${key} in localStorage:`, err);
     }
   };
 
@@ -84,7 +113,6 @@ export const Utility = () => {
     reload = false,
     callback = () => {}
   ) => {
-    console.log("showTost1");
     dispatch(
       displayToast({
         toastAlert: display,
@@ -102,7 +130,6 @@ export const Utility = () => {
         })
       );
       callback();
-      console.log("showTost");
       if (path) {
         navigateTo(path);
         if (reload) {
@@ -114,34 +141,35 @@ export const Utility = () => {
 
   const groupNotificationsByDate = (notifications) => {
     const now = new Date();
-  
+
     const formatCustomDate = (date) => {
       const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
       if (diffInDays < 1) return "Today";
       if (diffInDays === 1) return "Yesterday";
       if (diffInDays < 7) return `${diffInDays} days ago`;
-      return format(date, 'MMM d, yyyy');
+      return format(date, "MMM d, yyyy");
     };
-  
+
     return notifications.reduce((grouped, notif) => {
       const parsedDate = parseISO(notif.created_at);
-  
+
       if (!isValid(parsedDate)) {
         console.error("Invalid date encountered:", notif.created_at);
-        return grouped; 
+        return grouped;
       }
-  
+
       const formattedDate = formatCustomDate(parsedDate);
-  
+
       if (!grouped[formattedDate]) grouped[formattedDate] = [];
       grouped[formattedDate].push(notif);
-  
+
       return grouped;
     }, {});
   };
 
   return {
     formatName,
+    uploadFileToS3,
     getLocalStorage,
     remLocalStorage,
     setLocalStorage,
