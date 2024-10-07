@@ -69,37 +69,89 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   const [getStarted, setGetStarted] = useState(false);    // To toggle form fields display
 
   const { getLocalStorage, setLocalStorage } = Utility();
-  const customerId = getLocalStorage("customerInfo")?.id;
+  const storedCustomerId = getLocalStorage("customerInfo")?.id;
 
   // Generate random application number
   const randomNumberGenerator = () => Math.floor(10000000 + Math.random() * 90000000);
 
-  // Fetch application number and loan status using customer ID
+  // Fetch application number and loan status using stored customer ID
   useEffect(() => {
-    if (customerId) {
-      API.CustomerApplicationAPI.getApplicationById(customerId)
-        .then(({ data: response }) => {
+    const fetchCustomerData = async () => {
+      if (storedCustomerId) {
+        try {
+          const { data: response } = await API.CustomerApplicationAPI.getApplicationById(storedCustomerId);
           if (response.status === "Success") {
-            console.log(response.data, 'get application res');
             setApplicationNumber(response.data.application_no);
-            API.LoanTrackingAPI.getLoanTrackingById(response.data.id)
-              .then(({ data: resp }) => {
-                if (resp.status === "Success") {
-                  console.log(resp.data, 'loan tracking resp');
-                  setLoanStatus(resp.data.status);
-                }
-              })
+            const { data: resp } = await API.LoanTrackingAPI.getLoanTrackingById(response.data.id);
+            if (resp.status === "Success") {
+              setLoanStatus(resp.data.status);
+            }
           }
-        })
-        .catch(err => {
-          console.log("Error fetching customer ID:", err);
-        });
+        } catch (err) {
+          console.error("Error fetching customer data:", err);
+        }
+      }
+    };
+    fetchCustomerData();
+  }, [storedCustomerId]);
+
+  // Function to register the customer
+  async function registerCustomer(customer) {
+    const { data: res } = await API.CustomerAPI.register(customer);
+    if (res.status !== "Success") {
+      throw new Error(`Registration failed: ${res.message}`);
     }
-  }, [customerId]);
+    return res.data.id;
+  }
+
+  // Function to create customer info
+  async function createCustomerInfo(customerId, restValues) {
+    await API.CustomerInfoAPI.create({
+      customer_id: customerId,
+      ...restValues,
+    });
+  }
+
+  // Function to create the customer application
+  async function createCustomerApplication(customerId, applicationNumber, amount, tenure) {
+    const { data: applicationResponse } = await API.CustomerApplicationAPI.createApplication({
+      customer_id: customerId,
+      application_no: applicationNumber,
+      amount,
+      tenure,
+    });
+    return applicationResponse.data.applicationId;
+  }
+
+  // Function to create loan tracking
+  async function createLoanTracking(applicationId) {
+    await API.LoanTrackingAPI.createLoanTracking({
+      customer_application_id: applicationId,
+      status: 'submitted',
+    });
+  }
+
+  // Function to log in the customer
+  async function loginCustomer(contact, name) {
+    const response = await API.CustomerAPI.login({
+      contact,
+      password: `${name.toLowerCase().replace(/\s/g, '')}@9876`,
+    });
+
+    if (response.data.status === "Success") {
+      const customerInfo = {
+        id: response.data.data.id,
+        name: response.data.data.name,
+        token: response.data.data.token,
+      };
+      setLocalStorage("customerInfo", customerInfo);
+      location.reload();
+    }
+  }
 
   // Create new customer with loan application
   const create = useCallback(
-    (values) => {
+    async (values) => {
       const applicationNumber = randomNumberGenerator();
       const { contact, email, name, status, dob, ...restValues } = values;
       const customer = {
@@ -107,82 +159,19 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
         dob,
         email,
         name,
-        password: `${name.toLowerCase()}@9876`,
+        password: `${name.toLowerCase().replace(/\s/g, '')}@9876`,
         status,
       };
-      if (!customerId) {
-        console.log('if condition chali')
-        API.CustomerAPI.register(customer)
-          .then(async ({ data: res }) => {
-            if (res.status === "Success") {
-              // Create customer info
-              await API.CustomerInfoAPI.create({
-                customer_id: res.data.id,
-                ...restValues,
-              });
-              return res.data.id; // Pass customer_id for the next step
-            } else {
-              throw new Error(`Registration failed: ${res.message}`);
-            }
-          })
-          .then((customerId) => {
-            return API.CustomerApplicationAPI.createApplication({
-              customer_id: customerId,
-              application_no: applicationNumber,
-              amount: amount,
-              tenure: tenure,
-            });
-          })
-          .then(({ data: applicationResponse }) => {
-            console.log(applicationResponse.data, 'applicationResponse')
-            return API.LoanTrackingAPI.createLoanTracking({
-              customer_application_id: applicationResponse.data.applicationId,
-              status: 'submitted'
-            });
-          })
-          .then(() => {
-            // Automatically log in the new customer
-            API.CustomerAPI.login({
-              contact,
-              password: `${name.toLowerCase()}@9876`
-            })
-              .then((response) => {
-                if (response.data.status === "Success") {
-                  const customerInfo = {
-                    id: response.data.data.id,
-                    name: response.data.data.name,
-                    token: response.data.data.token,
-                  };
-                  setLocalStorage("customerInfo", customerInfo);
-                  location.reload();
-                  console.log("Customer info, application, and loan tracking created successfully");
-                }
-              })
-          })
-          .catch((err) => {
-            console.log("Error during customer creation:", err);
-          });
-        // If customerId is already present, skip registration and create application
-      } else {
-        console.log('else condition chali')
-        API.CustomerApplicationAPI.createApplication({
-          customer_id: customerId,
-          application_no: applicationNumber,
-          amount: amount,
-          tenure: tenure,
-        })
-          .then(({ data: applicationResponse }) => {
-            console.log(applicationResponse.data, 'applicationResponse')
-            API.LoanTrackingAPI.createLoanTracking({
-              customer_application_id: applicationResponse.data.applicationId,
-              status: 'submitted'
-            });
-            location.reload();
-            console.log("Application and loan tracking completed for existing customer");
-          })
-          .catch((err) => {
-            console.log("Error during customer creation:", err);
-          });
+      try {
+        const customerId = storedCustomerId || await registerCustomer(customer);
+        await createCustomerInfo(customerId, restValues);
+        const applicationId = await createCustomerApplication(customerId, applicationNumber, amount, tenure);
+        await createLoanTracking(applicationId);
+        !storedCustomerId ? await loginCustomer(contact, name) : location.reload();
+
+        console.log("Customer info, application, and loan tracking created successfully");
+      } catch (err) {
+        console.log("Error during customer creation:", err);
       }
     },
     [amount, tenure]
@@ -577,7 +566,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     <MenuItem value="salaried">Salaried </MenuItem>
                     <MenuItem value="non-salaried">Non-Salaried</MenuItem>
                     <MenuItem value="professional">Professional</MenuItem>
-                    
+
                   </Select>
                 </FormControl>
                 <Box sx={{
