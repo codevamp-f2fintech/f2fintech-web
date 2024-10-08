@@ -1,19 +1,25 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import { Box, Typography, Button, IconButton, Tooltip } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
-import Webcam from "./webcam/webcam"; // Import the Webcam component
 
+import Webcam from "./webcam/webcam"; // Import the Webcam component
 import { Utility } from "../utility";
 
 // Validation schema
 const validationSchema = Yup.object({
-  aadharFront: Yup.mixed().required("Required"),
-  aadharBack: Yup.mixed().required("Required"),
-  passportSizePhoto: Yup.mixed().nullable(),
+  aadharFront: Yup
+    .mixed().
+    required("This Field is Required"),
+  aadharBack: Yup
+    .mixed()
+    .nullable(),
+  passportSizePhoto: Yup
+    .mixed()
+    .nullable(),
 });
 
 // Initial values

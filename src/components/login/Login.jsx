@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Container, useMediaQuery } from "@mui/material";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Container, useMediaQuery } from "@mui/material";
+
 import Signin from "./Signin";
 import Signup from "./Signup";
 import Transition from "./Transition";
@@ -10,7 +11,7 @@ const LoginPage = () => {
   const isMobile = useMediaQuery("(max-width:480px)");
   const location = useLocation();
   const navigate = useNavigate();
-  const from = location.state?.from?.pathname || "/providers";
+  const from = '/' || "/providers";
 
   const handleLoginSuccess = () => {
     navigate(from, { replace: true });

@@ -165,11 +165,25 @@ export default function Intro({ title, home, homeimg, interestRate, text }) {
         </Box>
 
         <Box className={styles.interestrateBox} >
-
           <Typography
             sx={{
               color: "rgba(6,55,158,1)",
-              fontSize: "3vw",
+              fontSize: "14px",
+              fontWeight: "700",
+              textShadow: "1px 1px 2px gray",
+              marginBottom: "3px",
+              paddingTop: '3px',
+              paddingBottom: '3px',
+              background: '#21bdc1',
+              textAlign: 'center',
+            }}
+          >
+            Starting From
+          </Typography>
+          <Typography
+            sx={{
+              color: "rgba(6,55,158,1)",
+              fontSize: "2.8vw",
               fontWeight: "700",
               textShadow: "1px 1px 2px gray",
               marginBottom: "5px",

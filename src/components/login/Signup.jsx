@@ -26,17 +26,30 @@ import Toast from "../toast/Toast";
 import axiosClient from "../../api/apiClient";
 import { Utility } from "../utility";
 
+
+const phoneRegExp =
+  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+const emailRegExp = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
 const SignUpSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
-  contact: Yup.string()
-    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
-    .required("Phone number is required"),
+  name: Yup
+    .string()
+    .min(2, "Name is Too Short!")
+    .max(30, "Name is Too Long!")
+    .matches(/^[a-zA-Z\s]+$/, "Name should only contain letters")
+    .required("This Field is Required"),
+  contact: Yup
+    .string()
+    .matches(phoneRegExp, "Contact Number Is Not Valid")
+    .required("Contact Number is required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, 'Password Must Be 8 Characters Long')
+    .matches(/[A-Z]/, 'Password Must Contain At Least 1 Uppercase Letter')
+    .matches(/[a-z]/, 'Password Must Contain At Least 1 Lowercase Letter')
+    .matches(/[0-9]/, 'Password Must Contain At Least 1 Number')
+    .matches(/[^\w]/, 'Password Must Contain At Least 1 Special Character')
     .max(20, "Password cannot be more than 20 characters")
-    .required("Password is required")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/\d/, "Password must contain at least one number"),
+    .required("This Field is Required"),
   gender: Yup.string().required("Gender is required"),
 });
 
@@ -75,7 +88,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           true,
           "success",
           "Signup Successful",
-          () => {},
+          () => { },
           null,
           false,
           () => setIsSignUp(false)
@@ -116,8 +129,8 @@ export default function Signup({ isSignUp, setIsSignUp }) {
         borderRadius: isMobile
           ? "0%"
           : isTab
-          ? "30% 0% 0% 30%"
-          : "30% 0% 0% 30%",
+            ? "30% 0% 0% 30%"
+            : "30% 0% 0% 30%",
         height: "100vh",
 
         backgroundPosition: isMobile ? "right" : "top",
@@ -183,6 +196,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
           }}
         >
           {({
+            dirty,
             errors,
             touched,
             isSubmitting,
@@ -202,7 +216,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
             >
               <TextField
                 name="name"
-                label="*Full Name"
+                label="Full Name*"
                 type="text"
                 variant="filled"
                 value={values.name}
@@ -233,7 +247,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
               />
               <TextField
                 name="contact"
-                label="*Contact Number"
+                label="Contact Number*"
                 type="number"
                 variant="filled"
                 autoComplete="off"
@@ -268,7 +282,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
               />
               <TextField
                 name="password"
-                label="*Password"
+                label="Password*"
                 type={showPassword ? "text" : "password"}
                 variant="filled"
                 value={values.password}
@@ -398,7 +412,7 @@ export default function Signup({ isSignUp, setIsSignUp }) {
 
               <Button
                 variant="contained"
-                disabled={loading}
+                disabled={!dirty || isSubmitting}
                 type="submit"
                 sx={{
                   borderRadius: "20px",

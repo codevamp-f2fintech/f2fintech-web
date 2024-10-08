@@ -70,7 +70,12 @@ const Step3Form = () => {
           handleFormSubmit({ ...values, data: selectedFiles })
         }
       >
-        {({ dirty, isSubmitting, handleBlur, handleSubmit, setFieldValue }) => (
+        {({
+          dirty,
+          isSubmitting,
+          handleSubmit,
+          setFieldValue
+        }) => (
           <Form onSubmit={handleSubmit} encType="multipart/form-data">
             <Container
               sx={{
@@ -95,7 +100,7 @@ const Step3Form = () => {
                 <Typography
                   sx={{ display: "flex", color: "gray", padding: "10px" }}
                 >
-                  ( Upload your recent 6 months Bank Statement )
+                  ( Upload your recent 6 months Bank Statement.<br />Maximum File Upload Limit Is 6 )
                 </Typography>
               </Box>
 
@@ -108,31 +113,31 @@ const Step3Form = () => {
                 }}
               >
                 {/* File picker with multiple file upload support */}
-                <IconButton component="label" sx={{ width: "88%", mb: 2 }}>
-                  <AddPhotoAlternateIcon />
-                  <input
-                    hidden
-                    multiple
-                    outline={true}
-                    type="file"
-                    accept=".jpg, .gif, .png, .jpeg, .svg, .webp, application/pdf, .doc, .docx, .txt"
-                    onChange={(event) => {
-                      const newFiles = Array.from(event.target.files); // Get all selected files from input
-                      const totalFiles = selectedFiles.length + newFiles.length; // Calculate total files including the new selection
+                {selectedFiles.length < 6 && (
+                  <IconButton component="label" sx={{ width: "88%", mb: 2 }}>
+                    <AddPhotoAlternateIcon />
+                    <input
+                      hidden
+                      multiple
+                      type="file"
+                      accept=".jpg, .gif, .png, .jpeg, .svg, .webp, application/pdf, .doc, .docx, .txt"
+                      onChange={(event) => {
+                        const newFiles = Array.from(event.target.files);
+                        const totalFiles = selectedFiles.length + newFiles.length; // Calculate total files including the new selection
 
-                      if (totalFiles > 6) {
-                        toastAndNavigate(dispatch, true, "error", "Maximum limit reached 6");
-                        return;
-                      }
-
-                      setSelectedFiles((prevFiles) => [
-                        ...prevFiles,
-                        ...newFiles,
-                      ]); // Append new files to the state
-                      setFieldValue("data", [...selectedFiles, ...newFiles]); // Set form field value for 'data'
-                    }}
-                  />
-                </IconButton>
+                        if (totalFiles > 6) {
+                          toastAndNavigate(dispatch, true, "error", "Maximum limit reached 6");
+                          return;
+                        }
+                        setSelectedFiles((prevFiles) => [
+                          ...prevFiles,
+                          ...newFiles,
+                        ]);
+                        setFieldValue("data", [...selectedFiles, ...newFiles]);
+                      }}
+                    />
+                  </IconButton>
+                )}
 
                 {/* Display selected file names with delete icons */}
                 {selectedFiles.length > 0 && (
@@ -186,7 +191,7 @@ const Step3Form = () => {
         alerting={toastInfo.toastAlert}
         message={toastInfo.toastMessage}
         severity={toastInfo.toastSeverity}
-        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       />
     </>
   );

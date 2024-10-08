@@ -2,7 +2,7 @@
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Formik, Form } from "formik";
+import { Formik, Form, ErrorMessage } from "formik";
 import {
   Box,
   Button,
@@ -11,14 +11,13 @@ import {
   FormControl,
   FormGroup,
   FormControlLabel,
+  FormHelperText,
   InputAdornment,
   InputLabel,
   MenuItem,
   Select,
-  styled,
   TextField,
   Typography,
-  useRadioGroup,
 } from "@mui/material";
 import { CurrencyRupee as CurrencyRupeeIcon } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -27,29 +26,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import API from "../../apis";
+import step1ValidationSchema from "./step1ValidationSchema";
 import { Utility } from "../utility";
-
-const StyledFormControlLabel = styled((props) => (
-  <FormControlLabel {...props} />
-))(({ theme, checked }) => ({
-  ".MuiFormControlLabel-label": checked && {
-    color: theme.palette.primary.main,
-  },
-}));
-
-// Custom component for handling radio button styles
-function MyFormControlLabel(props) {
-  const radioGroup = useRadioGroup();
-  let checked = false;
-  if (radioGroup) {
-    checked = radioGroup.value === props.value;
-  }
-  return <StyledFormControlLabel checked={checked} {...props} />;
-}
-
-MyFormControlLabel.propTypes = {
-  value: PropTypes.any,
-};
 
 const initialValues = {
   name: "",
@@ -65,14 +43,42 @@ const initialValues = {
 const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   const [amount, setAmount] = useState("");
   const [tenure, setTenure] = useState("");
-  const [loanStatus, setLoanStatus] = useState(null);
+  const [errors, setErrors] = useState({
+    amount: '',
+    tenure: '',
+  });
   const [getStarted, setGetStarted] = useState(false);    // To toggle form fields display
+  const [loanStatus, setLoanStatus] = useState(null);
 
   const { getLocalStorage, setLocalStorage } = Utility();
   const storedCustomerId = getLocalStorage("customerInfo")?.id;
 
   // Generate random application number
   const randomNumberGenerator = () => Math.floor(10000000 + Math.random() * 90000000);
+
+  // Validation function for the amount
+  const validateAmount = (value) => {
+    let error = '';
+    if (!value) {
+      error = 'This Field is required';
+    } else if (isNaN(value)) {
+      error = 'Amount must be a number';
+    } else if (value < 50000 || value > 100000000) {
+      error = 'Amount must be within 50 thousand and 10 crore';
+    } else if (value % 5 !== 0) {
+      error = 'Amount must be divisible by 5';
+    }
+    setErrors((prev) => ({ ...prev, amount: error }));
+  };
+
+  // Validation function for the tenure
+  const validateTenure = (value) => {
+    let error = '';
+    if (!value) {
+      error = 'This Field is required';
+    }
+    setErrors((prev) => ({ ...prev, tenure: error }));
+  };
 
   // Fetch application number and loan status using stored customer ID
   useEffect(() => {
@@ -273,10 +279,16 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             fullWidth
             variant="filled"
             name="amount"
-            label="Enter Amount"
+            label="Enter Amount*"
             placeholder="How Much Loan Do You Require?"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              validateAmount(e.target.value);
+            }}
+            onBlur={() => validateAmount(amount)}
+            error={!!errors.amount}
+            helperText={errors.amount}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -290,33 +302,21 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               overflow: "hidden",
               marginBottom: 1,
               "& .MuiFilledInput-root": {
-                borderRadius: "10px",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s, border-width 0.3s",
-                "&:hover": {
-                  borderColor: "#0000ff",
-                },
-                "&.Mui-focused": {
-                  borderColor: "#0000ff",
-                  borderWidth: "2px",
-                },
+                borderRadius: "4px",
+                border: "1px solid transparent"
               },
               "& .MuiInputAdornment-root": {
                 color: "#000",
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#0000ff",
-              },
+              }
             }}
           />
         </Box>
         <FormControl
           variant="filled"
+          error={!!errors.tenure}
           sx={{
             width: "45%",
             fontSize: "13px",
-            borderRadius: "10px",
-            overflow: "hidden",
             marginBottom: 3,
           }}
         >
@@ -325,7 +325,11 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             variant="filled"
             name="tenure"
             value={tenure}
-            onChange={(e) => setTenure(e.target.value)}
+            onChange={(e) => {
+              setTenure(e.target.value);
+              validateTenure(e.target.value);
+            }}
+            onBlur={() => validateTenure(tenure)}
             sx={{
               "& .MuiFilledInput-root": {
                 borderRadius: "10px",
@@ -358,11 +362,17 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               );
             })}
           </Select>
+          {errors.tenure && (
+            <Typography color="error"
+              sx={{ marginLeft: 1, margin: '3px 14px', fontSize: '10.2857px', fontFamily: 'Verdana, sans-serif', fontWeight: '400' }}>
+              {errors.tenure}
+            </Typography>
+          )}
         </FormControl>
 
         <Button
           color="primary"
-          disabled={!amount || !tenure}
+          disabled={!!errors.amount || !!errors.tenure || !amount || !tenure}
           variant="contained"
           endIcon={<ArrowForwardIcon />}
           onClick={() => setGetStarted(true)}
@@ -387,6 +397,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
     <>
       <Formik
         initialValues={initialValues}
+        validationSchema={step1ValidationSchema}
         onSubmit={(values) => create(values)}
       >
         {({
@@ -395,6 +406,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
           touched,
           values,
           setFieldValue,
+          setFieldTouched,
           handleChange,
           handleBlur,
           handleSubmit,
@@ -449,42 +461,37 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               >
                 <TextField
                   variant="filled"
+                  type='text'
                   name="name"
                   label="Name*"
                   value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.name && Boolean(errors.name)}
+                  error={!!touched.name && !!errors.name}
                   helperText={touched.name && errors.name}
                   sx={{
                     width: "75%",
                     height: "50px",
                     fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
                     marginBottom: 3,
                   }}
-                  fullWidth
                 />
                 <TextField
-                  type="number"
                   variant="filled"
+                  type="number"
                   name="contact"
                   label="Contact*"
                   value={values.contact}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.contact && Boolean(errors.contact)}
+                  error={!!touched.contact && !!errors.contact}
                   helperText={touched.contact && errors.contact}
                   sx={{
                     width: "75%",
                     height: "50px",
                     fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
                     marginBottom: 3,
                   }}
-                  fullWidth
                 />
                 <TextField
                   variant="filled"
@@ -494,17 +501,14 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                   value={values.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.email && Boolean(errors.email)}
+                  error={!!touched.email && !!errors.email}
                   helperText={touched.email && errors.email}
                   sx={{
                     width: "75%",
                     height: "50px",
                     fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
                     marginBottom: 3,
                   }}
-                  fullWidth
                 />
                 <TextField
                   variant="filled"
@@ -519,11 +523,8 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     width: "75%",
                     height: "50px",
                     fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
                     marginBottom: 3,
                   }}
-                  fullWidth
                 />
                 <TextField
                   variant="filled"
@@ -538,20 +539,16 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     width: "75%",
                     height: "50px",
                     fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
                     marginBottom: 3,
                   }}
-                  fullWidth
                 />
                 <FormControl
                   variant="filled"
+                  error={!!touched.occupation_type && !!errors.occupation_type}
                   sx={{
                     width: "75%",
                     height: "50px",
                     fontSize: "16px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
                     marginBottom: 3,
                   }}
                 >
@@ -566,8 +563,10 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     <MenuItem value="salaried">Salaried </MenuItem>
                     <MenuItem value="non-salaried">Non-Salaried</MenuItem>
                     <MenuItem value="professional">Professional</MenuItem>
-
                   </Select>
+                  <ErrorMessage name="occupation_type" component="div" style={{
+                    color: '#d32f2f', margin: '5px 14px', fontSize: '10.2857px', fontFamily: 'Verdana, sans-serif', fontWeight: '400'
+                  }} />
                 </FormControl>
                 <Box sx={{
                   width: '75%',
@@ -575,12 +574,32 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                 }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      label="Enter Date Of Birth*"
+                      format="DD MMMM YYYY"
+                      views={["day", "month", "year"]}
+                      label="Select Date Of Birth*"
+                      name="dob"
                       value={values.dob}
+                      onBlur={() => setFieldTouched('dob', true)}
                       onChange={(newValue) => setFieldValue("dob", newValue)}
+                      renderInput={(params) => (
+                        <>
+                          <TextField
+                            {...params}
+                            fullWidth
+                            margin="normal"
+                            error={!!touched.dob && !!errors.dob}
+                            helperText={touched.dob && errors.dob}
+                          />
+                          <FormHelperText>
+                            {touched.dob && errors.dob}
+                          </FormHelperText>
+                        </>
+                      )}
                     />
                   </LocalizationProvider>
                 </Box>
+
+                {/* Terms Checkbox */}
                 <FormGroup
                   sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
                 >
@@ -632,14 +651,14 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             </Container>
           </Form>
         )}
-      </Formik>
+      </Formik >
     </>
   );
 };
 
 Step1Form.propTypes = {
-  applicationNumber: PropTypes.any,
-  setApplicationNumber: PropTypes.func.isRequired
+  applicationNumber: PropTypes.number,
+  setApplicationNumber: PropTypes.func
 };
 
 export default Step1Form;

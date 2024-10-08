@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   TextField,
@@ -14,28 +14,38 @@ import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import PasswordIcon from "@mui/icons-material/Password";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
+import PropTypes from "prop-types";
+
 import Toast from "../toast/Toast";
 import { CustomerAPI } from "../../apis/CustomerAPI";
 import { Utility } from "../utility";
 
+const phoneRegExp =
+  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+
 const SignInSchema = Yup.object().shape({
-  contact: Yup.string()
-    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
-    .required("Contact number is required"),
+  contact: Yup
+    .string()
+    .matches(phoneRegExp, "Contact Number Is Not Valid")
+    .required("This Field is required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, 'Password Must Be 8 Characters Long')
+    .matches(/[A-Z]/, 'Password Must Contain At Least 1 Uppercase Letter')
+    .matches(/[a-z]/, 'Password Must Contain At Least 1 Lowercase Letter')
+    .matches(/[0-9]/, 'Password Must Contain At Least 1 Number')
+    .matches(/[^\w]/, 'Password Must Contain At Least 1 Special Character')
     .max(20, "Password cannot be more than 20 characters")
-    .required("Password is required"),
+    .required("This Field is Required"),
 });
 
-export default function Signin({ isSignUp, onLoginSuccess }) {
+function Signin({ isSignUp, onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [forgotPasswordContact, setForgotPasswordContact] = useState("");
   const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [showError, setShowError] = useState("");
+  // const [otpSent, setOtpSent] = useState(false);
+  // const [showError, setShowError] = useState("");
 
   const dispatch = useDispatch();
   const toastInfo = useSelector((state) => state.toastInfo);
@@ -44,7 +54,6 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
   const isTab = useMediaQuery("(max-width:820px)");
 
   const handleSubmit = (formData, resetForm) => {
-    setLoading(true);
     CustomerAPI.login(formData)
       .then((response) => {
         setLoading(false);
@@ -55,28 +64,21 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
             token: response.data.data.token,
           };
           setLocalStorage("customerInfo", customerInfo);
-          // Show toast
-          dispatch({
-            type: "SET_TOAST",
-            payload: {
-              toastAlert: true,
-              toastMessage: "Signin Successful",
-              toastSeverity: "success",
-            },
-          });
+          toastAndNavigate(dispatch, true, "success", "SignIn Successful");
           onLoginSuccess(); // Navigate to the previous page
         }
       })
       .catch((error) => {
         setLoading(false);
-        dispatch({
-          type: "SET_TOAST",
-          payload: {
-            toastAlert: true,
-            toastMessage: error?.response?.data?.msg || "Signin Failed",
-            toastSeverity: "error",
-          },
-        });
+        toastAndNavigate(dispatch, true, "error", error?.response?.data?.msg || "Signin Failed");
+        // dispatch({
+        //   type: "SET_TOAST",
+        //   payload: {
+        //     toastAlert: true,
+        //     toastMessage: error?.response?.data?.msg || "Signin Failed",
+        //     toastSeverity: "error",
+        //   },
+        // });
       });
   };
 
@@ -84,41 +86,41 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
     setForgotPasswordOpen(true);
   };
 
-  const handleSendOtp = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosClient.post("/send-otp", {
-        contact: forgotPasswordContact,
-      });
-      setLoading(false);
-      if (response.data.status === "Success") {
-        setOtpSent(true);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error("OTP send error", error);
-    }
-  };
+  // const handleSendOtp = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axiosClient.post("/send-otp", {
+  //       contact: forgotPasswordContact,
+  //     });
+  //     setLoading(false);
+  //     if (response.data.status === "Success") {
+  //       setOtpSent(true);
+  //     }
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.error("OTP send error", error);
+  //   }
+  // };
 
-  const handleForgotPasswordSubmit = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosClient.post("/verify-otp", {
-        contact: forgotPasswordContact,
-        otp,
-      });
-      if (response.data.status === "Success") {
-        setForgotPasswordOpen(false);
-        setOtpSent(false);
-      } else {
-        setShowError("Invalid OTP");
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error("Forgot password error", error);
-    }
-  };
+  // const handleForgotPasswordSubmit = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axiosClient.post("/verify-otp", {
+  //       contact: forgotPasswordContact,
+  //       otp,
+  //     });
+  //     if (response.data.status === "Success") {
+  //       setForgotPasswordOpen(false);
+  //       setOtpSent(false);
+  //     } else {
+  //       setShowError("Invalid OTP");
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.error("Forgot password error", error);
+  //   }
+  // };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -142,8 +144,8 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
         backgroundRepeat: isMobile
           ? "no-repeat"
           : isTab
-          ? "no-repeat"
-          : "no-repeat",
+            ? "no-repeat"
+            : "no-repeat",
         height: "100vh",
         margin: "auto",
         display: "flex",
@@ -152,8 +154,8 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
         borderRadius: isMobile
           ? "0% 0% 0% 0%"
           : isTab
-          ? "0% 30% 30% 0%"
-          : "0% 30% 30% 0%",
+            ? "0% 30% 30% 0%"
+            : "0% 30% 30% 0%",
         ...(isSignUp && {
           display: isMobile ? "none" : "",
         }),
@@ -205,6 +207,7 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
           }}
         >
           {({
+            dirty,
             errors,
             touched,
             isSubmitting,
@@ -222,7 +225,7 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
               }}
             >
               <TextField
-                label="*Contact Number"
+                placeholder="Enter Contact Number*"
                 type="number"
                 name="contact"
                 variant="filled"
@@ -256,7 +259,7 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
                 helperText={touched.contact && errors.contact}
               />
               <TextField
-                label="*Password"
+                placeholder="Enter Your Password*"
                 type={showPassword ? "text" : "password"}
                 variant="filled"
                 name="password"
@@ -301,7 +304,7 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
                 helperText={touched.password && errors.password}
               />
 
-              <Button
+              {/* <Button
                 onClick={handleForgotPassword}
                 sx={{
                   display: "flex",
@@ -311,12 +314,12 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
                 }}
               >
                 Forgot Password? <span> Click here</span>
-              </Button>
+              </Button> */}
 
               <Button
                 variant="contained"
                 type="submit"
-                disabled={loading}
+                disabled={!dirty || isSubmitting}
                 sx={{
                   width: {
                     xs: "50%", // For extra small screens
@@ -388,7 +391,7 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
             {!otpSent ? (
               <Button
                 variant="contained"
-                onClick={handleSendOtp}
+                // onClick={handleSendOtp}
                 disabled={loading || forgotPasswordContact.length !== 10}
                 sx={{
                   color: "white",
@@ -432,7 +435,7 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
                 />
                 <Button
                   variant="contained"
-                  onClick={handleForgotPasswordSubmit}
+                  // onClick={handleForgotPasswordSubmit}
                   disabled={loading || otp.length !== 6}
                   sx={{
                     color: "white",
@@ -458,4 +461,9 @@ export default function Signin({ isSignUp, onLoginSuccess }) {
   );
 }
 
+Signin.propTypes = {
+  isSignUp: PropTypes.bool,
+  onLoginSuccess: PropTypes.func,
+};
 
+export default Signin;

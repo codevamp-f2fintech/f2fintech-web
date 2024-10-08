@@ -74,7 +74,7 @@ export default function ResponsiveAppBar() {
             notif.id === id ? { ...notif, status: "read" } : notif
           )
         );
-        if(type === "loan"){
+        if (type === "loan") {
           navigate('/loan-tracker');
           handleNotificationMenuClose();
         }
@@ -188,10 +188,7 @@ export default function ResponsiveAppBar() {
                 alt="Logo"
                 style={{
                   height: "auto",
-                  width: "10vh",
-                  backgroundColor: "white",
-                  borderRadius: "20px",
-                  marginTop: ".5vh",
+                  width: "15vh",
                 }}
               />
             </Link>

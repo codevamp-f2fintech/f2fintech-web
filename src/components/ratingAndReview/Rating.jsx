@@ -14,10 +14,21 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
 import Toast from "../toast/Toast";
 import { Utility } from "../utility";
 import { RatingRevAPI } from "../../apis/RatingRevAPI";
+
+const commentValidationSchema = Yup.object().shape({
+  comment: Yup.string()
+    .min(5, 'Comment must be at least 5 characters long')
+    .max(400, 'Comment cannot be longer than 400 characters')
+    .matches(
+      /^[a-zA-Z0-9\s,.!?'-]+$/,   // Allow letters, numbers, spaces, and common punctuation
+      'Comment can only contain letters, numbers, and basic punctuation'
+    )
+});
 
 const RatingReview = () => {
   const [rating, setRating] = useState(0);
@@ -54,7 +65,7 @@ const RatingReview = () => {
     RatingRevAPI.createRating(ratingData)
       .then((response) => {
         console.log("response", response);
-        toastAndNavigate(dispatch, true, "success", "Review Submitted");
+        toastAndNavigate(dispatch, true, "info", "Review Submitted");
         setRating(0);
         setInitialComment("");
         remLocalStorage("savedRatingReview");
@@ -62,6 +73,7 @@ const RatingReview = () => {
       })
       .catch((err) => {
         console.log("An Error Occurred", err);
+        toastAndNavigate(dispatch, true, "error", "Failed to submit review");
       })
   };
 
@@ -147,12 +159,16 @@ const RatingReview = () => {
         </Box>
         <Formik
           initialValues={{ comment: initialComment }}
+          validationSchema={commentValidationSchema}
           enableReinitialize={true}
-          onSubmit={handleSubmit}
+          onSubmit={(values, { resetForm }) => {
+            handleSubmit(values, { resetForm });
+          }}
         >
           {({
             errors,
             touched,
+            isSubmitting,
             handleChange,
             handleBlur,
             values,
@@ -207,6 +223,7 @@ const RatingReview = () => {
               />
               <Button
                 sx={{ width: "12vw", borderRadius: "20px", marginTop: "2vh" }}
+                disabled={!rating || isSubmitting}
                 type="submit"
                 variant="contained"
                 color="primary"
@@ -242,7 +259,7 @@ const RatingReview = () => {
           alerting={toastInfo.toastAlert}
           message={toastInfo.toastMessage}
           severity={toastInfo.toastSeverity}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         />
       </Box>
     </Box>
