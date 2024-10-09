@@ -51,9 +51,7 @@ const MultiStepForm = () => {
   const [applicationNumber, setApplicationNumber] = useState(null);   //for step form 1
 
   const handleNext = () => {
-    if (applicationNumber) {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
@@ -117,7 +115,7 @@ const MultiStepForm = () => {
                   Back
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                {activeStep < steps.length - 1 && (
+                {(activeStep < steps.length - 1) && applicationNumber && (
                   <Button onClick={handleNext} sx={{ mr: 10 }}>
                     Next
                   </Button>

@@ -47,6 +47,7 @@ const Step3Form = () => {
               API.DocumentAPI.createDocument({
                 document_url: res.data.data,
                 customer_id: customerId,
+                type: 'bank statement'
               }).catch((err) => {
                 console.log("Error in creating document inside DB", err);
               });
