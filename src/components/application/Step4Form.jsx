@@ -6,7 +6,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
 
-import Webcam from "./webcam/webcam"; // Import the Webcam component
+import Webcam from "./webcam/Webcam"; // Import the Webcam component
 import { Utility } from "../utility";
 
 // Validation schema
