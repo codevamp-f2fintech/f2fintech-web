@@ -32,7 +32,7 @@ const LoginPage = () => {
       }}
     >
       <Signin isSignUp={isSignUp} onLoginSuccess={handleLoginSuccess} />
-      <Signup isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
+      <Signup isSignUp={isSignUp} setIsSignUp={setIsSignUp} onLoginSuccess={handleLoginSuccess}/>
       <Transition isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
     </Container>
   );

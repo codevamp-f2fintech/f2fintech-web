@@ -53,13 +53,13 @@ const SignUpSchema = Yup.object().shape({
   gender: Yup.string().required("Gender is required"),
 });
 
-export default function Signup({ isSignUp, setIsSignUp }) {
+export default function Signup({ isSignUp, setIsSignUp, onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showError, setShowError] = useState("");
   const dispatch = useDispatch();
   const toastInfo = useSelector((state) => state.toastInfo);
-  const { toastAndNavigate } = Utility();
+  const { setLocalStorage, toastAndNavigate } = Utility();
   const isMobile = useMediaQuery("(max-width:480px)");
   const isTab = useMediaQuery("(max-width:820px)");
 
@@ -81,19 +81,29 @@ export default function Signup({ isSignUp, setIsSignUp }) {
         "/create-customer",
         JSON.stringify(formData)
       );
+
+      console.log("RESPONSEE",response)
       setLoading(false);
       if (response.data.status === "Success") {
-        toastAndNavigate(
-          dispatch,
-          true,
-          "success",
-          "Signup Successful",
-          () => { },
-          null,
-          false,
-          () => setIsSignUp(false)
-        );
+        const customerInfo = {
+          id: response.data.data.id,
+          name: response.data.data.name,
+          token: response.data.data.token,
+        };
+        setLocalStorage("customerInfo", customerInfo);
+        toastAndNavigate(dispatch, true, "success", "SignUp Successful");
         resetForm();
+        onLoginSuccess();
+        // toastAndNavigate(
+        //   dispatch,
+        //   true,
+        //   "success",
+        //   "Signup Successful",
+        //   () => { },
+        //   null,
+        //   false,
+        //   () => setIsSignUp(false)
+        // );
       }
     } catch (error) {
       setLoading(false);
