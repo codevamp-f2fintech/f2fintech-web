@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, ErrorMessage } from "formik";
 import { Box, Typography, Button, IconButton, Tooltip } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -6,6 +7,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
 
+import Toast from "../toast/Toast";
 import Webcam from "./webcam/Webcam"; // Import the Webcam component
 import { Utility } from "../utility";
 
@@ -112,8 +114,10 @@ const Step4Form = () => {
     passportSizePhoto: "",
   });
   const [showWebcam, setShowWebcam] = useState(false);
-  const { uploadFileToS3, getLocalStorage } = Utility();
+  const dispatch = useDispatch();
+  const toastInfo = useSelector((state) => state.toastInfo);
 
+  const { uploadFileToS3, getLocalStorage, toastAndNavigate } = Utility();
   const customerId = getLocalStorage("customerInfo")?.id;
 
   // Function to handle capturing photo blob via webcam
@@ -160,6 +164,7 @@ const Step4Form = () => {
       try {
         await Promise.all(uploadPromises);
         console.log("All documents uploaded successfully");
+        toastAndNavigate(dispatch, true, "info", "Upload Successful");
       } catch (err) {
         console.error("Error in uploading one or more documents:", err);
       }
@@ -168,116 +173,124 @@ const Step4Form = () => {
   );
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleFormSubmit}
-    >
-      {({ dirty, isSubmitting, handleSubmit, setFieldValue }) => (
-        <Form onSubmit={handleSubmit} encType="multipart/form-data">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              margin: "15px 15px",
-              gap: 2,
-            }}
-          >
-            <Typography
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleFormSubmit}
+      >
+        {({ dirty, isSubmitting, handleSubmit, setFieldValue }) => (
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Box
               sx={{
-                fontFamily: "bold 10px",
-                fontSize: "4vh",
-                fontWeight: "300vh",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "15px 15px",
+                gap: 2,
               }}
             >
-              Profile Details and Proof
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: "-moz-initial",
-                fontSize: "2.5vh",
-                color: "gray",
-              }}
-            >
-              Step 3/3
-            </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "bold 10px",
+                  fontSize: "4vh",
+                  fontWeight: "300vh",
+                }}
+              >
+                Profile Details and Proof
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "-moz-initial",
+                  fontSize: "2.5vh",
+                  color: "gray",
+                }}
+              >
+                Step 3/3
+              </Typography>
 
-            {/* Aadhar Card Front */}
-            <FileInput
-              name="aadharFront"
-              label="Aadhar Card Front"
-              preview={previews.aadharFront}
-              onFileChange={(event) => {
-                handleFileChange(event, "aadharFront");
-                setFieldValue("aadharFront", event.target.files[0]);
-              }}
-              onDelete={() => {
-                handleDelete("aadharFront");
-                setFieldValue("aadharFront", null);
-              }}
-            />
-
-            {/* Aadhar Card Back */}
-            <FileInput
-              name="aadharBack"
-              label="Aadhar Card Back"
-              preview={previews.aadharBack}
-              onFileChange={(event) => {
-                handleFileChange(event, "aadharBack");
-                setFieldValue("aadharBack", event.target.files[0]);
-              }}
-              onDelete={() => {
-                handleDelete("aadharBack");
-                setFieldValue("aadharBack", null);
-              }}
-            />
-
-            {/* Passport Size Photo */}
-            <FileInput
-              name="passportSizePhoto"
-              label="Passport Size Photo"
-              preview={previews.passportSizePhoto}
-              onFileChange={(event) => {
-                handleFileChange(event, "passportSizePhoto");
-                setFieldValue("passportSizePhoto", event.target.files[0]);
-              }}
-              onDelete={() => {
-                handleDelete("passportSizePhoto");
-                setFieldValue("passportSizePhoto", null);
-              }}
-              showWebcamCapture={true}
-              onCapturePhoto={() => setShowWebcam(true)}
-            />
-
-            {showWebcam && (
-              <Webcam
-                setCapturedImage={(image) => handleCapturePhoto(image)}
-                setFieldValue={setFieldValue}
+              {/* Aadhar Card Front */}
+              <FileInput
+                name="aadharFront"
+                label="Aadhar Card Front"
+                preview={previews.aadharFront}
+                onFileChange={(event) => {
+                  handleFileChange(event, "aadharFront");
+                  setFieldValue("aadharFront", event.target.files[0]);
+                }}
+                onDelete={() => {
+                  handleDelete("aadharFront");
+                  setFieldValue("aadharFront", null);
+                }}
               />
-            )}
 
-            <Button
-              color="primary"
-              disabled={!dirty || isSubmitting}
-              type="submit"
-              variant="contained"
-              sx={{
-                color: "white",
-                fontWeight: "500",
-                fontSize: "1rem",
-                lineHeight: "1.5rem",
-                mt: 2,
-                ml: 1,
-              }}
-            >
-              Upload
-            </Button>
-          </Box>
-        </Form>
-      )}
-    </Formik>
+              {/* Aadhar Card Back */}
+              <FileInput
+                name="aadharBack"
+                label="Aadhar Card Back"
+                preview={previews.aadharBack}
+                onFileChange={(event) => {
+                  handleFileChange(event, "aadharBack");
+                  setFieldValue("aadharBack", event.target.files[0]);
+                }}
+                onDelete={() => {
+                  handleDelete("aadharBack");
+                  setFieldValue("aadharBack", null);
+                }}
+              />
+
+              {/* Passport Size Photo */}
+              <FileInput
+                name="passportSizePhoto"
+                label="Passport Size Photo"
+                preview={previews.passportSizePhoto}
+                onFileChange={(event) => {
+                  handleFileChange(event, "passportSizePhoto");
+                  setFieldValue("passportSizePhoto", event.target.files[0]);
+                }}
+                onDelete={() => {
+                  handleDelete("passportSizePhoto");
+                  setFieldValue("passportSizePhoto", null);
+                }}
+                showWebcamCapture={true}
+                onCapturePhoto={() => setShowWebcam(true)}
+              />
+
+              {showWebcam && (
+                <Webcam
+                  setCapturedImage={(image) => handleCapturePhoto(image)}
+                  setFieldValue={setFieldValue}
+                />
+              )}
+
+              <Button
+                color="primary"
+                disabled={!dirty || isSubmitting}
+                type="submit"
+                variant="contained"
+                sx={{
+                  color: "white",
+                  fontWeight: "500",
+                  fontSize: "1rem",
+                  lineHeight: "1.5rem",
+                  mt: 2,
+                  ml: 1,
+                }}
+              >
+                Upload
+              </Button>
+            </Box>
+          </Form>
+        )}
+      </Formik>
+      <Toast
+        alerting={toastInfo.toastAlert}
+        message={toastInfo.toastMessage}
+        severity={toastInfo.toastSeverity}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      />
+    </>
   );
 };
 

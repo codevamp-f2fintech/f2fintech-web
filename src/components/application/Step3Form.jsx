@@ -48,9 +48,13 @@ const Step3Form = () => {
                 document_url: res.data.data,
                 customer_id: customerId,
                 type: 'bank statement'
-              }).catch((err) => {
-                console.log("Error in creating document inside DB", err);
-              });
+              })
+                .then(() => {
+                  toastAndNavigate(dispatch, true, "info", "Upload Successful");
+                })
+                .catch((err) => {
+                  console.log("Error in creating document inside DB", err);
+                });
             } else {
               console.error("Upload failed");
             }
