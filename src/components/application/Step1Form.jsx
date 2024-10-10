@@ -56,6 +56,8 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   // Generate random application number
   const randomNumberGenerator = () => Math.floor(10000000 + Math.random() * 90000000);
 
+  const randomFourDigitNumber = Math.floor(1000 + Math.random() * 9000);  // Generate random 4-digit number
+
   // Validation function for the amount
   const validateAmount = (value) => {
     let error = '';
@@ -141,7 +143,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   async function loginCustomer(contact, name) {
     const response = await API.CustomerAPI.login({
       contact,
-      password: `${name.toLowerCase().replace(/\s/g, '')}@9876`,
+      password: `${name.toLowerCase().replace(/\s/g, '')}@${randomFourDigitNumber}`,
     });
 
     if (response.data.status === "Success") {
@@ -165,7 +167,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
         dob,
         email,
         name,
-        password: `${name.toLowerCase().replace(/\s/g, '')}@9876`,
+        password: `${name.toLowerCase().replace(/\s/g, '')}@${randomFourDigitNumber}`,
         status,
       };
       try {
