@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { subYears } from "date-fns"; // To handle date calculations
 
 const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
@@ -32,13 +33,20 @@ const step1ValidationSchema = yup.object().shape({
     .min(3, "City name is too short")
     .max(30, "City name is too long")
     .required("City name is required"),
-  occupation_type: yup
-    .string()
-    .required("This Field is required"),
+  occupation_type: yup.string().required("This Field is required"),
   dob: yup
     .date()
     .nullable()
     .typeError("Invalid date")
+    // Custom validation for future or present date
+    .test("not-future", "Invalid age", (value) => {
+      return value ? value < new Date() : true;
+    })
+    // Age should not be less than 20 years
+    .max(
+      subYears(new Date(), 20),
+      "You are under age to apply. Minimum age should be 20"
+    )
     .required("Date of birth is required"),
 });
 
