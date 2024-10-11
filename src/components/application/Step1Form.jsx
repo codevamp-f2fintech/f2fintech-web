@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Formik, Form, ErrorMessage } from "formik";
+import dayjs from "dayjs";
 import {
   Box,
   Button,
@@ -11,7 +12,6 @@ import {
   FormControl,
   FormGroup,
   FormControlLabel,
-  FormHelperText,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -44,40 +44,45 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   const [amount, setAmount] = useState("");
   const [tenure, setTenure] = useState("");
   const [errors, setErrors] = useState({
-    amount: '',
-    tenure: '',
+    amount: "",
+    tenure: "",
   });
-  const [getStarted, setGetStarted] = useState(false);    // To toggle form fields display
+  const [getStarted, setGetStarted] = useState(false); // To toggle form fields display
   const [loanStatus, setLoanStatus] = useState(null);
 
   const { getLocalStorage, setLocalStorage } = Utility();
   const storedCustomerId = getLocalStorage("customerInfo")?.id;
 
   // Generate random application number
-  const randomNumberGenerator = () => Math.floor(10000000 + Math.random() * 90000000);
+  const randomNumberGenerator = () =>
+    Math.floor(10000000 + Math.random() * 90000000);
 
-  const randomFourDigitNumber = Math.floor(1000 + Math.random() * 9000);  // Generate random 4-digit number
+  const randomFourDigitNumber = Math.floor(1000 + Math.random() * 9000); // Generate random 4-digit number
+
+  // Get the current date and calculate 20 years ago
+  const minDate = dayjs("1900-01-01");
+  const maxDate = dayjs().subtract(20, "year");
 
   // Validation function for the amount
   const validateAmount = (value) => {
-    let error = '';
+    let error = "";
     if (!value) {
-      error = 'This Field is required';
+      error = "This Field is required";
     } else if (isNaN(value)) {
-      error = 'Amount must be a number';
+      error = "Amount must be a number";
     } else if (value < 50000 || value > 100000000) {
-      error = 'Amount must be within 50 thousand and 10 crore';
+      error = "Amount must be within 50 thousand and 10 crore";
     } else if (value % 5 !== 0) {
-      error = 'Amount must be divisible by 5';
+      error = "Amount must be divisible by 5";
     }
     setErrors((prev) => ({ ...prev, amount: error }));
   };
 
   // Validation function for the tenure
   const validateTenure = (value) => {
-    let error = '';
+    let error = "";
     if (!value) {
-      error = 'This Field is required';
+      error = "This Field is required";
     }
     setErrors((prev) => ({ ...prev, tenure: error }));
   };
@@ -87,16 +92,20 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
     const fetchCustomerData = async () => {
       if (storedCustomerId) {
         try {
-          const { data: response } = await API.CustomerApplicationAPI.getApplicationById(storedCustomerId);
+          const { data: response } =
+            await API.CustomerApplicationAPI.getApplicationById(
+              storedCustomerId
+            );
           if (response.status === "Success") {
             setApplicationNumber(response.data.application_no);
-            const { data: resp } = await API.LoanTrackingAPI.getLoanTrackingById(response.data.id);
+            const { data: resp } =
+              await API.LoanTrackingAPI.getLoanTrackingById(response.data.id);
             if (resp.status === "Success") {
               setLoanStatus(resp.data.status);
             }
           }
         } catch (err) {
-          console.error("Error fetching customer data:", err);
+          console.log("Error fetching customer data:", err);
         }
       }
     };
@@ -121,13 +130,19 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   }
 
   // Function to create the customer application
-  async function createCustomerApplication(customerId, applicationNumber, amount, tenure) {
-    const { data: applicationResponse } = await API.CustomerApplicationAPI.createApplication({
-      customer_id: customerId,
-      application_no: applicationNumber,
-      amount,
-      tenure,
-    });
+  async function createCustomerApplication(
+    customerId,
+    applicationNumber,
+    amount,
+    tenure
+  ) {
+    const { data: applicationResponse } =
+      await API.CustomerApplicationAPI.createApplication({
+        customer_id: customerId,
+        application_no: applicationNumber,
+        amount,
+        tenure,
+      });
     return applicationResponse.data.applicationId;
   }
 
@@ -135,7 +150,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   async function createLoanTracking(applicationId) {
     await API.LoanTrackingAPI.createLoanTracking({
       customer_application_id: applicationId,
-      status: 'submitted',
+      status: "submitted",
     });
   }
 
@@ -143,7 +158,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   async function loginCustomer(contact, name) {
     const response = await API.CustomerAPI.login({
       contact,
-      password: `${name.toLowerCase().replace(/\s/g, '')}@${randomFourDigitNumber}`,
+      password: `${name.replace(/\s/g, "")}@${randomFourDigitNumber}`,
     });
 
     if (response.data.status === "Success") {
@@ -167,17 +182,27 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
         dob,
         email,
         name,
-        password: `${name.toLowerCase().replace(/\s/g, '')}@${randomFourDigitNumber}`,
+        password: `${name.replace(/\s/g, "")}@${randomFourDigitNumber}`,
         status,
       };
       try {
-        const customerId = storedCustomerId || await registerCustomer(customer);
+        const customerId =
+          storedCustomerId || (await registerCustomer(customer));
         await createCustomerInfo(customerId, restValues);
-        const applicationId = await createCustomerApplication(customerId, applicationNumber, amount, tenure);
+        const applicationId = await createCustomerApplication(
+          customerId,
+          applicationNumber,
+          amount,
+          tenure
+        );
         await createLoanTracking(applicationId);
-        !storedCustomerId ? await loginCustomer(contact, name) : location.reload();
+        !storedCustomerId
+          ? await loginCustomer(contact, name)
+          : location.reload();
 
-        console.log("Customer info, application, and loan tracking created successfully");
+        console.log(
+          "Customer info, application, and loan tracking created successfully"
+        );
       } catch (err) {
         console.log("Error during customer creation:", err);
       }
@@ -186,7 +211,10 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
   );
 
   // If application number and loan status exists, display success message without making user to fill the form again
-  if (applicationNumber && !(loanStatus === 'disbursed' || loanStatus === 'rejected')) {
+  if (
+    applicationNumber &&
+    !(loanStatus === "disbursed" || loanStatus === "rejected")
+  ) {
     return (
       <Box
         sx={{
@@ -233,7 +261,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             marginBottom: 2,
           }}
         >
-          <Link to='/loan-tracker'>
+          <Link to="/loan-tracker">
             Track Your Loan Status By Clicking Here
           </Link>
         </Typography>
@@ -305,11 +333,11 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               marginBottom: 1,
               "& .MuiFilledInput-root": {
                 borderRadius: "4px",
-                border: "1px solid transparent"
+                border: "1px solid transparent",
               },
               "& .MuiInputAdornment-root": {
                 color: "#000",
-              }
+              },
             }}
           />
         </Box>
@@ -356,7 +384,8 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             {/* Creates an array with 40 elements, when (index < 4) it labels items as months, then it switches to years. */}
             {[...Array(40)].map((_, index) => {
               const value = (index + 1) * 12;
-              const label = index < 4 ? `${value} Months` : `${index + 1} Years`;
+              const label =
+                index < 4 ? `${value} Months` : `${index + 1} Years`;
               return (
                 <MenuItem key={value} value={value}>
                   {label}
@@ -365,8 +394,16 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             })}
           </Select>
           {errors.tenure && (
-            <Typography color="error"
-              sx={{ marginLeft: 1, margin: '3px 14px', fontSize: '10.2857px', fontFamily: 'Verdana, sans-serif', fontWeight: '400' }}>
+            <Typography
+              color="error"
+              sx={{
+                marginLeft: 1,
+                margin: "3px 14px",
+                fontSize: "10.2857px",
+                fontFamily: "Verdana, sans-serif",
+                fontWeight: "400",
+              }}
+            >
               {errors.tenure}
             </Typography>
           )}
@@ -463,7 +500,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
               >
                 <TextField
                   variant="filled"
-                  type='text'
+                  type="text"
                   name="name"
                   label="Name*"
                   value={values.name}
@@ -566,39 +603,59 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     <MenuItem value="non-salaried">Non-Salaried</MenuItem>
                     <MenuItem value="professional">Professional</MenuItem>
                   </Select>
-                  <ErrorMessage name="occupation_type" component="div" style={{
-                    color: '#d32f2f', margin: '5px 14px', fontSize: '10.2857px', fontFamily: 'Verdana, sans-serif', fontWeight: '400'
-                  }} />
+                  <ErrorMessage
+                    name="occupation_type"
+                    component="div"
+                    style={{
+                      color: "#d32f2f",
+                      margin: "5px 14px",
+                      fontSize: "10.2857px",
+                      fontFamily: "Verdana, sans-serif",
+                      fontWeight: "400",
+                    }}
+                  />
                 </FormControl>
-                <Box sx={{
-                  width: '75%',
-                  marginBottom: 3,
-                }}>
+                <Box
+                  sx={{
+                    width: "75%",
+                    marginBottom: 3,
+                  }}
+                >
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       format="DD MMMM YYYY"
                       views={["day", "month", "year"]}
                       label="Select Date Of Birth*"
                       name="dob"
+                      minDate={minDate} // Start at 1900
+                      maxDate={maxDate} // End at 20 years before today
+                      error={touched.dob && !!errors.dob}
+                      helperText={touched.dob && errors.dob}
                       value={values.dob}
-                      onBlur={() => setFieldTouched('dob', true)}
+                      onBlur={() => setFieldTouched("dob", true)}
                       onChange={(newValue) => setFieldValue("dob", newValue)}
                       renderInput={(params) => (
-                        <>
-                          <TextField
-                            {...params}
-                            fullWidth
-                            margin="normal"
-                            error={!!touched.dob && !!errors.dob}
-                            helperText={touched.dob && errors.dob}
-                          />
-                          <FormHelperText>
-                            {touched.dob && errors.dob}
-                          </FormHelperText>
-                        </>
+                        <TextField {...params} fullWidth margin="normal" />
                       )}
                     />
+
+                    <ErrorMessage
+                      name="dob"
+                      component="div"
+                      style={{
+                        color: "#d32f2f",
+                        margin: "5px 14px",
+                        fontSize: "10.2857px",
+                        fontFamily: "Verdana, sans-serif",
+                        fontWeight: "400",
+                      }}
+                    />
                   </LocalizationProvider>
+                  <Typography
+                    sx={{ fontSize: "0.600rem", color: "gray", ml: "16px" }}
+                  >
+                    Minimum age 20 required
+                  </Typography>
                 </Box>
 
                 {/* Terms Checkbox */}
@@ -617,9 +674,7 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
                     }
                   />
                 </FormGroup>
-                <FormGroup
-                  sx={{ display: "flex", ml: 5, mr: 8, marginBottom: 3 }}
-                >
+                <FormGroup sx={{ display: "flex", ml: 5, mr: 8, mb: 3 }}>
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
                     label={
@@ -653,14 +708,14 @@ const Step1Form = ({ applicationNumber, setApplicationNumber }) => {
             </Container>
           </Form>
         )}
-      </Formik >
+      </Formik>
     </>
   );
 };
 
 Step1Form.propTypes = {
   applicationNumber: PropTypes.number,
-  setApplicationNumber: PropTypes.func
+  setApplicationNumber: PropTypes.func,
 };
 
 export default Step1Form;
