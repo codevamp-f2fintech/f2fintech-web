@@ -106,6 +106,7 @@ const CustomerFeedback = lazy(() => import("./components/feedback/CustomerFeedba
 
 const DSA = lazy(() => import("./components/dsa/DSA.jsx"));
 const Realtor = lazy(() => import("./components/realtor/Realtor.jsx"));
+const TestimonialPage = lazy(() => import("./components/customers/TestimonialPage.jsx"));
 const OfferPage = lazy(() => import("./components/offer/OfferPage.jsx"));
 const BankDetailPage = lazy(() => import("./components/homeLoanBanks/BankDetailPage.jsx"));
 const CreditCards = lazy(() => import("./components/creditCards/CreditCards.jsx"));
@@ -277,6 +278,7 @@ function App() {
                         <Route exact path="/realtor" element={<Realtor />} />
                         <Route exact path="/offer" element={<OfferPage />} />
                         <Route path="/home-loans/:bankSlug" element={<BankDetailPage />} />
+                        <Route path="/testimonial/:id" element={<TestimonialPage />} />
                         <Route path="/:loanType/:bankSlug" element={<BankDetailPage />} />
                       </Routes>
                     </main>

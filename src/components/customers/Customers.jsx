@@ -45,9 +45,9 @@ const Customers = () => {
 
     const reviewId = reviewItem.review_id || reviewItem.id;
     const origin = window.location.origin;
-    // Share full website URL with anchor to the testimonial
+    // Share a dedicated testimonial page URL so recipients see only that testimonial
     const shareUrl = reviewId
-      ? `${origin}/#testimonial-${reviewId}`
+      ? `${origin}/testimonial/${reviewId}`
       : `${origin}/#testimonials`;
 
     const reviewerName = reviewItem.name ? formatNameDr(reviewItem.name) : "Customer";
