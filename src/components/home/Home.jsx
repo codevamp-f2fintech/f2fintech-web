@@ -183,7 +183,16 @@ const Home = () => {
       {/* Customers / Reviews — this is the section with API calls.       */}
       {/* With LazySection, getRating() + getCustomerProfile() only fire  */}
       {/* when the user scrolls near the testimonials section.            */}
-      <LazySection minHeight={600}>
+      <LazySection
+        minHeight={600}
+        forceRender={
+          !!location.state?.scrollToTopBanks ||
+          (typeof window !== "undefined" && (
+            window.location.hash.includes("testimonial") ||
+            window.location.search.includes("testimonial")
+          ))
+        }
+      >
         <Customers customersdata={customersdata} />
       </LazySection>
 
