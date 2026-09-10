@@ -37,18 +37,23 @@ const Customers = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [highlightedId, setHighlightedId] = useState(null);
 
   const handleShare = async (reviewItem, e) => {
     if (e) e.stopPropagation();
     if (!reviewItem) return;
 
-    const shareUrl = reviewItem.review?.startsWith("http")
-      ? reviewItem.review
-      : window.location.href;
+    const reviewId = reviewItem.review_id || reviewItem.id;
+    const origin = window.location.origin;
+    // Share full website URL with anchor to the testimonial
+    const shareUrl = reviewId
+      ? `${origin}/#testimonial-${reviewId}`
+      : `${origin}/#testimonials`;
+
     const reviewerName = reviewItem.name ? formatNameDr(reviewItem.name) : "Customer";
     const shareData = {
       title: `${reviewerName}'s Testimonial | F2 Fintech`,
-      text: `Check out ${reviewerName}'s testimonial for F2 Fintech:`,
+      text: `Check out ${reviewerName}'s testimonial on F2 Fintech: ${shareUrl}`,
       url: shareUrl,
     };
 
@@ -72,7 +77,7 @@ const Customers = () => {
         document.execCommand("copy");
         document.body.removeChild(textArea);
       }
-      setSnackbarMessage("Testimonial review link copied to clipboard!");
+      setSnackbarMessage("Testimonial link copied to clipboard!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
     } catch (err) {
@@ -162,6 +167,73 @@ const Customers = () => {
 
   const textReviews = customerRatings.filter((c) => !isVideoUrl(c.review));
 
+  // Handle URL hash / search param landing (e.g. /#testimonials or /#testimonial-12)
+  useEffect(() => {
+    if (!customerRatings.length) return;
+
+    const handleScrollToTarget = () => {
+      const hash = window.location.hash;
+      const searchParams = new URLSearchParams(window.location.search);
+      const queryTestimonial = searchParams.get("testimonial");
+
+      let targetReviewId = null;
+      let targetElementId = null;
+
+      if (hash) {
+        if (hash === "#testimonials") {
+          targetElementId = "testimonials";
+        } else if (hash.startsWith("#testimonial-")) {
+          targetReviewId = hash.replace("#testimonial-", "");
+          targetElementId = hash.substring(1);
+        }
+      } else if (queryTestimonial) {
+        targetReviewId = queryTestimonial;
+        targetElementId = `testimonial-${queryTestimonial}`;
+      }
+
+      if (!targetElementId && !targetReviewId) return;
+
+      // If it matches a text review in the carousel, navigate to that slide
+      if (targetReviewId) {
+        const textIdx = textReviews.findIndex(
+          (t) => String(t.review_id || t.id) === String(targetReviewId)
+        );
+        if (textIdx !== -1) {
+          setActiveIndex(textIdx);
+        }
+      }
+
+      // Smooth scroll to target card or testimonial section
+      const timer = setTimeout(() => {
+        const targetEl =
+          (targetElementId && document.getElementById(targetElementId)) ||
+          document.getElementById("testimonials");
+
+        if (targetEl) {
+          targetEl.scrollIntoView({
+            behavior: "smooth",
+            block: targetReviewId ? "center" : "start",
+          });
+
+          if (targetReviewId) {
+            setHighlightedId(String(targetReviewId));
+            setTimeout(() => setHighlightedId(null), 4000);
+          }
+        }
+      }, 350);
+
+      return timer;
+    };
+
+    const timer = handleScrollToTarget();
+
+    window.addEventListener("hashchange", handleScrollToTarget);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("hashchange", handleScrollToTarget);
+    };
+  }, [customerRatings, textReviews]);
+
   const handleOpenPopup = (review) => {
     setSelectedReview(review);
     setOpenPopup(true);
@@ -213,10 +285,12 @@ const Customers = () => {
 
   return (
     <Box
+      id="testimonials"
       sx={{
         bgcolor: "#e3f2fd", // Cream background from screenshot
         width: "100%",
         py: { xs: 6, md: 8 },
+        scrollMarginTop: "80px",
       }}
     >
       <Container
@@ -303,25 +377,33 @@ const Customers = () => {
             }}
           >
             <Grid container spacing={4} justifyContent="center" alignItems="stretch">
-              {videoReviews.map((video, index) => (
-                <Grid item xs={12} sm={4} key={index} sx={{ display: "flex" }}>
-                  <Box
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "20px",
-                      overflow: "hidden",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-                      position: "relative",
-                      transition: "transform 0.3s ease",
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      "&:hover": {
-                        transform: "translateY(-5px)",
-                      },
-                    }}
-                  >
+              {videoReviews.map((video, index) => {
+                const reviewId = video.review_id || video.id;
+                const isHighlighted = highlightedId && String(highlightedId) === String(reviewId);
+                return (
+                  <Grid item xs={12} sm={4} key={reviewId || index} sx={{ display: "flex" }}>
+                    <Box
+                      id={reviewId ? `testimonial-${reviewId}` : undefined}
+                      sx={{
+                        background: "#fff",
+                        borderRadius: "20px",
+                        overflow: "hidden",
+                        boxShadow: isHighlighted
+                          ? "0 0 0 3px #2438f0, 0 12px 36px rgba(36, 56, 240, 0.35)"
+                          : "0 10px 30px rgba(0,0,0,0.08)",
+                        transform: isHighlighted ? "translateY(-6px) scale(1.02)" : "none",
+                        position: "relative",
+                        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        scrollMarginTop: "100px",
+                        "&:hover": {
+                          transform: "translateY(-5px)",
+                        },
+                      }}
+                    >
                     {/* Thumbnail / Video Section */}
                     <Box
                       onClick={() => handleOpenPopup(video)}
@@ -464,7 +546,8 @@ const Customers = () => {
                     </Box>
                   </Box>
                 </Grid>
-              ))}
+                );
+              })}
             </Grid>
           </Box>
         )}
@@ -488,38 +571,45 @@ const Customers = () => {
                   },
                 }}
               >
-                {textReviews.map((customer, i) => (
-                  <Grid
-                    container
-                    spacing={2}
-                    key={i}
-                    sx={{
-                      justifyContent: "center",
-                      px: { xs: 1, sm: 2 },
-                    }}
-                  >
-                    <Grid item xs={12} sm={10} md={8}>
-                      <Box
-                        onClick={() => handleOpenPopup(customer)}
-                        sx={{
-                          position: "relative",
-                          background: "#ffffff",
-                          borderRadius: "24px",
-                          p: { xs: 3, sm: 4, md: 5 },
-                          border: "1px solid #e0e0e0",
-                          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-                          minHeight: { xs: "280px", sm: "300px", md: "320px" },
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          cursor: "pointer",
-                          transition: "transform 0.3s ease",
-                          "&:hover": {
-                            transform: "translateY(-5px)",
-                            boxShadow: "0 15px 40px rgba(0,0,0,0.1)",
-                          },
-                        }}
-                      >
+                {textReviews.map((customer, i) => {
+                  const reviewId = customer.review_id || customer.id;
+                  const isHighlighted = highlightedId && String(highlightedId) === String(reviewId);
+                  return (
+                    <Grid
+                      container
+                      spacing={2}
+                      key={reviewId || i}
+                      sx={{
+                        justifyContent: "center",
+                        px: { xs: 1, sm: 2 },
+                      }}
+                    >
+                      <Grid item xs={12} sm={10} md={8}>
+                        <Box
+                          id={reviewId ? `testimonial-${reviewId}` : undefined}
+                          onClick={() => handleOpenPopup(customer)}
+                          sx={{
+                            position: "relative",
+                            background: "#ffffff",
+                            borderRadius: "24px",
+                            p: { xs: 3, sm: 4, md: 5 },
+                            border: isHighlighted ? "2px solid #2438f0" : "1px solid #e0e0e0",
+                            boxShadow: isHighlighted
+                              ? "0 0 0 3px rgba(36, 56, 240, 0.2), 0 16px 40px rgba(36, 56, 240, 0.25)"
+                              : "0 10px 30px rgba(0,0,0,0.05)",
+                            minHeight: { xs: "280px", sm: "300px", md: "320px" },
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            cursor: "pointer",
+                            scrollMarginTop: "100px",
+                            transition: "all 0.4s ease",
+                            "&:hover": {
+                              transform: "translateY(-5px)",
+                              boxShadow: "0 15px 40px rgba(0,0,0,0.1)",
+                            },
+                          }}
+                        >
                         {/* Quote Icon */}
                         <Box
                           sx={{
@@ -658,7 +748,8 @@ const Customers = () => {
                       </Box>
                     </Grid>
                   </Grid>
-                ))}
+                  );
+                })}
               </Carousel>
             </Box>
 
