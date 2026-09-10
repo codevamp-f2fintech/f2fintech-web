@@ -11,10 +11,13 @@ import {
   Tooltip,
   Snackbar,
   Alert,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ShareIcon from "@mui/icons-material/Share";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import API from "../../apis";
 import { Utility } from "../utility";
 
@@ -22,6 +25,8 @@ const TestimonialPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { capitalizeFirstLetter, formatNameDr } = Utility();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [testimonial, setTestimonial] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +34,8 @@ const TestimonialPage = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  // Tap-to-play: iframe only loads after user taps play on mobile
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const serverBaseUrl =
     import.meta.env.VITE_BASE_URL?.replace("/api/v1", "") || "";
@@ -65,6 +72,8 @@ const TestimonialPage = () => {
 
   const getEmbedUrl = (url) => {
     if (!url) return "";
+    // NOTE: autoplay=1 is intentionally omitted — mobile browsers block it
+    // and it causes black-video rendering bugs on iOS/Android.
     if (url.includes("drive.google.com")) {
       const regExp =
         /(?:https?:\/\/)?(?:drive\.google\.com\/)(?:file\/d\/|open\?id=|uc\?id=)([^?\/&]+)/;
@@ -78,14 +87,15 @@ const TestimonialPage = () => {
         /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^?\/&]+)/;
       const match = url.match(regExp);
       if (match && match[1]) {
-        return `https://www.youtube.com/embed/${match[1]}?autoplay=1`;
+        // rel=0 hides related videos; no autoplay to avoid mobile black-screen bug
+        return `https://www.youtube.com/embed/${match[1]}?rel=0&playsinline=1`;
       }
     }
     if (url.includes("vimeo.com")) {
       const regExp = /(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(\d+)/;
       const match = url.match(regExp);
       if (match && match[1]) {
-        return `https://player.vimeo.com/video/${match[1]}?autoplay=1`;
+        return `https://player.vimeo.com/video/${match[1]}?playsinline=1`;
       }
     }
     return url;
@@ -224,9 +234,9 @@ const TestimonialPage = () => {
           justifyContent: "space-between",
           px: { xs: 2, sm: 4 },
           py: 2,
-          background: "rgba(255,255,255,0.7)",
-          backdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(36,56,240,0.08)",
+          // Solid background — NO backdropFilter which bleeds into iframes on mobile
+          background: "#eef2ff",
+          borderBottom: "1px solid rgba(36,56,240,0.10)",
           position: "sticky",
           top: 0,
           zIndex: 100,
@@ -296,40 +306,144 @@ const TestimonialPage = () => {
           </Typography>
 
           {/* Card */}
+          {/* NOTE: overflow:hidden is kept OFF the outer wrapper for video cards.
+               On mobile (iOS/Android), mixing overflow:hidden + borderRadius on a
+               parent clips the iframe's GPU compositing layer → black video.
+               Instead we clip the inner info strip and use borderRadius only there. */}
           <Box
             sx={{
               background: "#ffffff",
               borderRadius: { xs: "20px", md: "28px" },
-              overflow: "hidden",
+              overflow: isVideo ? "visible" : "hidden",
               boxShadow: "0 24px 80px rgba(36, 56, 240, 0.15)",
               border: "1px solid rgba(36,56,240,0.08)",
+              position: "relative",
+              zIndex: 1,
             }}
           >
             {/* ── Video testimonial ─── */}
             {isVideo && (
               <>
+                {/* TAP-TO-PLAY pattern:
+                    Mobile browsers do NOT render video inside cross-origin iframes
+                    until the user explicitly interacts. Showing the iframe immediately
+                    causes the black/blurred screen. Instead:
+                    1. Show thumbnail + play button overlay first
+                    2. Only swap in the iframe when the user taps Play
+                    This is the same approach used by YouTube embeds on mobile. */}
                 <Box
                   sx={{
                     position: "relative",
-                    paddingTop: "56.25%",
                     width: "100%",
+                    aspectRatio: "16 / 9",
+                    minHeight: { xs: "220px", sm: "320px", md: "400px" },
                     bgcolor: "#000",
+                    borderRadius: { xs: "20px 20px 0 0", md: "28px 28px 0 0" },
+                    overflow: "hidden",
+                    zIndex: 10,
+                    isolation: "isolate",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    // Google Drive embeds render dark/broken on mobile browsers.
+                    // Open directly in Google Drive app / new tab instead.
+                    const isGoogleDrive = testimonial.review?.includes("drive.google.com");
+                    if (isMobile && isGoogleDrive) {
+                      window.open(testimonial.review, "_blank", "noopener,noreferrer");
+                    } else if (!videoLoaded) {
+                      setVideoLoaded(true);
+                    }
                   }}
                 >
-                  <iframe
-                    src={getEmbedUrl(testimonial.review)}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      border: "none",
-                    }}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                    allowFullScreen
-                    title={`${reviewerName}'s Testimonial`}
-                  />
+                  {/* ─ Thumbnail + play button (always shown until iframe loads) ─ */}
+                  {!videoLoaded && (
+                    <>
+                      <img
+                        src={thumbnailSrc}
+                        alt={`${reviewerName} testimonial video thumbnail`}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                        }}
+                      />
+                      {/* Dark overlay */}
+                      <Box sx={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.32)" }} />
+
+                      {/* Play button circle */}
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          width: { xs: 64, md: 80 },
+                          height: { xs: 64, md: 80 },
+                          borderRadius: "50%",
+                          bgcolor: "rgba(255,255,255,0.92)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+                          transition: "transform 0.2s, box-shadow 0.2s",
+                          "&:hover": {
+                            transform: "translate(-50%, -50%) scale(1.12)",
+                            boxShadow: "0 12px 40px rgba(0,0,0,0.45)",
+                          },
+                        }}
+                      >
+                        <PlayArrowIcon sx={{ fontSize: { xs: 32, md: 40 }, color: "#2438f0", ml: "3px" }} />
+                      </Box>
+
+                      {/* Label */}
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          bottom: 14,
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          color: "rgba(255,255,255,0.88)",
+                          fontFamily: "Poppins",
+                          fontWeight: 600,
+                          fontSize: "0.78rem",
+                          letterSpacing: "0.06em",
+                          whiteSpace: "nowrap",
+                          textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        {isMobile && testimonial.review?.includes("drive.google.com")
+                          ? <><OpenInNewIcon sx={{ fontSize: "0.9rem" }} /> Watch on Google Drive</>
+                          : "Tap to play"}
+                      </Typography>
+                    </>
+                  )}
+
+                  {/* ─ Iframe: only for non-Google-Drive on mobile, or on desktop ─ */}
+                  {videoLoaded && (
+                    <iframe
+                      src={getEmbedUrl(testimonial.review)}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        border: "none",
+                        display: "block",
+                        zIndex: 10,
+                      }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                      allowFullScreen
+                      title={`${reviewerName}'s Testimonial`}
+                    />
+                  )}
                 </Box>
                 <Box
                   sx={{
