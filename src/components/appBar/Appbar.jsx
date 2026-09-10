@@ -529,21 +529,29 @@ export default function ResponsiveAppBar() {
                   fontWeight: "100 !important",
                 }}
               >
-                {products.map((product, index) => (
-                  <ListItem key={product.title} disablePadding>
-                    <ListItemButton href={product.href}>
-                      <ListItemText
-                        primary={product.title}
-                        primaryTypographyProps={{
-                          style: {
-                            fontSize: isIpadPro ? "1.1rem" : "0.9rem",
-                            fontWeight: "100",
-                          },
-                        }}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
+                {products.map((product) => {
+                  const isExternal = product.href.startsWith("http");
+                  return (
+                    <ListItem key={product.title} disablePadding>
+                      <ListItemButton
+                        href={product.href}
+                        {...(isExternal
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                      >
+                        <ListItemText
+                          primary={product.title}
+                          primaryTypographyProps={{
+                            style: {
+                              fontSize: isIpadPro ? "1.1rem" : "0.9rem",
+                              fontWeight: "100",
+                            },
+                          }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
               </List>
             )}
 
@@ -1019,7 +1027,9 @@ export default function ResponsiveAppBar() {
                 {products.map((product) => {
                   const isExternal = product.href.startsWith("http");
                   const LinkComponent = isExternal ? "a" : Link;
-                  const linkProps = isExternal ? { href: product.href } : { to: product.href };
+                  const linkProps = isExternal
+                    ? { href: product.href, target: "_blank", rel: "noopener noreferrer" }
+                    : { to: product.href };
                   return (
                     <LinkComponent
                       key={product.title}
