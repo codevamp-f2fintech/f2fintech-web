@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { Container, Typography, Grid, Box, Rating, Dialog, DialogContent, IconButton, Button, DialogTitle, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel, useMediaQuery } from "@mui/material";
+import { Container, Typography, Grid, Box, Rating, Dialog, DialogContent, IconButton, Button, DialogTitle, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel, useMediaQuery, Tooltip, Snackbar, Alert } from "@mui/material";
 import { Link } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
+import ShareIcon from "@mui/icons-material/Share";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Carousel from "react-material-ui-carousel";
@@ -32,6 +33,55 @@ const Customers = () => {
   const { capitalizeFirstLetter } = Utility();
   const { formatNameDr } = Utility();
   const serverBaseUrl = import.meta.env.VITE_BASE_URL?.replace("/api/v1", "") || "";
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const handleShare = async (reviewItem, e) => {
+    if (e) e.stopPropagation();
+    if (!reviewItem) return;
+
+    const shareUrl = reviewItem.review?.startsWith("http")
+      ? reviewItem.review
+      : window.location.href;
+    const reviewerName = reviewItem.name ? formatNameDr(reviewItem.name) : "Customer";
+    const shareData = {
+      title: `${reviewerName}'s Testimonial | F2 Fintech`,
+      text: `Check out ${reviewerName}'s testimonial for F2 Fintech:`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err) {
+        if (err.name === "AbortError") return;
+      }
+    }
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setSnackbarMessage("Testimonial review link copied to clipboard!");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+    } catch (err) {
+      console.error("Failed to copy review link:", err);
+      setSnackbarMessage("Failed to copy link");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+  };
 
   const customerInfo = JSON.parse(localStorage.getItem("customerInfo") || "{}");
   const userRole = customerInfo?.role || "customer";
@@ -337,50 +387,79 @@ const Customers = () => {
 
                     {/* Product Info Box */}
                     <Box sx={{ p: 1.5, background: "#fff", flexGrow: 1 }}>
-                      <Box sx={{ display: 'flex', gap: 1.5, mb: 1.5, alignItems: 'flex-start' }}>
-                        {/* Logo Placeholder */}
-                        <Box
-                          sx={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            flexShrink: 0,
-                            border: "1px solid #eee",
-                          }}
-                        >
-                          <img
-                            src={video.thumbnail?.startsWith("/uploads") ? `${serverBaseUrl}${video.thumbnail}` : (video.thumbnail || "/new/dr.sunilkshastri.webp")}
-                            alt="product icon"
-                            loading="lazy"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          />
+                      <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', minWidth: 0, flex: 1 }}>
+                          {/* Logo Placeholder */}
+                          <Box
+                            sx={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: "8px",
+                              overflow: "hidden",
+                              flexShrink: 0,
+                              border: "1px solid #eee",
+                            }}
+                          >
+                            <img
+                              src={video.thumbnail?.startsWith("/uploads") ? `${serverBaseUrl}${video.thumbnail}` : (video.thumbnail || "/new/dr.sunilkshastri.webp")}
+                              alt="product icon"
+                              loading="lazy"
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          </Box>
+
+                          <Box sx={{ minWidth: 0, overflow: "hidden" }}>
+                            <Typography
+                              noWrap
+                              sx={{
+                                fontSize: ".95rem",
+                                fontWeight: 700,
+                                lineHeight: 1.2,
+                                color: "#1c280f",
+                                fontFamily: "Urbanist",
+                              }}
+                            >
+                              {formatNameDr(video.name)}
+                            </Typography>
+                            <Typography
+                              noWrap
+                              sx={{
+                                fontSize: "0.85rem",
+                                fontWeight: 500,
+                                color: "#666",
+                                mt: 0.5,
+                                fontFamily: "Poppins",
+                              }}
+                            >
+                              {video.city ? capitalizeFirstLetter(video.city) : "Verified Customer"}
+                            </Typography>
+                          </Box>
                         </Box>
 
-                        <Box>
-                          <Typography
+                        {/* Share Button */}
+                        <Tooltip title="Share review link" arrow>
+                          <IconButton
+                            onClick={(e) => handleShare(video, e)}
+                            size="small"
+                            aria-label="Share testimonial"
                             sx={{
-                              fontSize: ".95rem",
-                              fontWeight: 700,
-                              lineHeight: 1.2,
-                              color: "#1c280f",
-                              fontFamily: "Urbanist",
+                              bgcolor: "#f1f5f9",
+                              color: "#475569",
+                              p: "8px",
+                              borderRadius: "50%",
+                              flexShrink: 0,
+                              transition: "all 0.2s ease-in-out",
+                              "&:hover": {
+                                bgcolor: "#2438f0",
+                                color: "#ffffff",
+                                transform: "scale(1.08)",
+                                boxShadow: "0 4px 12px rgba(36, 56, 240, 0.25)",
+                              },
                             }}
                           >
-                            {formatNameDr(video.name)}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: "0.85rem",
-                              fontWeight: 500,
-                              color: "#666",
-                              mt: 0.5,
-                              fontFamily: "Poppins",
-                            }}
-                          >
-                            {video.city ? capitalizeFirstLetter(video.city) : "Verified Customer"}
-                          </Typography>
-                        </Box>
+                            <ShareIcon sx={{ fontSize: "1.15rem" }} />
+                          </IconButton>
+                        </Tooltip>
                       </Box>
                     </Box>
                   </Box>
@@ -460,6 +539,36 @@ const Customers = () => {
                         >
                           ❝
                         </Box>
+
+                        {/* Share Button on Text Review Card */}
+                        <Tooltip title="Share review link" arrow>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare(customer, e);
+                            }}
+                            size="small"
+                            aria-label="Share review"
+                            sx={{
+                              position: "absolute",
+                              top: { xs: 16, md: 20 },
+                              right: { xs: 16, md: 20 },
+                              bgcolor: "#f8fafc",
+                              color: "#64748b",
+                              border: "1px solid #e2e8f0",
+                              zIndex: 2,
+                              transition: "all 0.2s ease-in-out",
+                              "&:hover": {
+                                bgcolor: "#2438f0",
+                                color: "#ffffff",
+                                borderColor: "#2438f0",
+                                transform: "scale(1.08)",
+                              },
+                            }}
+                          >
+                            <ShareIcon sx={{ fontSize: "1.1rem" }} />
+                          </IconButton>
+                        </Tooltip>
 
                         {/* Review Text */}
                         <Box
@@ -612,6 +721,23 @@ const Customers = () => {
             },
           }}
         >
+          <Tooltip title="Share review link" arrow>
+            <IconButton
+              onClick={(e) => handleShare(selectedReview, e)}
+              sx={{
+                position: "absolute",
+                right: 64,
+                top: 16,
+                color: (theme) => theme.palette.grey[600],
+                zIndex: 10,
+                background: "rgba(255,255,255,0.85)",
+                backdropFilter: "blur(4px)",
+                "&:hover": { background: "#fff", color: "#2438f0" },
+              }}
+            >
+              <ShareIcon />
+            </IconButton>
+          </Tooltip>
           <IconButton
             onClick={handleClosePopup}
             sx={{
@@ -849,6 +975,28 @@ const Customers = () => {
         </Box>
 
       </Container>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{
+            width: "100%",
+            borderRadius: "12px",
+            fontFamily: "Poppins",
+            fontWeight: 500,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+          }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

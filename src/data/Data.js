@@ -31,6 +31,10 @@ const products = [
     href: "/loan-against-property",
   },
   {
+    title: "Finheal",
+    href: "https://finheal.netlify.app/login",
+  },
+  {
     title: "SAAS Products",
     href: "https://f2fintech-lendgrid.vercel.app/",
   },
